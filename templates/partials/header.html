@@ -1,0 +1,54 @@
+<div class="header-container" style="display:flex; align-items:stretch; box-sizing:border-box; border-bottom:1px solid #ccc; padding: 2px;">
+  <div class="left" style="display:flex; flex-direction:column; justify-content:space-between; overflow:hidden; white-space: normal;">
+    <div class="basic-info" style="flex-shrink:0;">
+      <span style="display:inline-block; margin: 2px;">
+        <button onclick="window.location='{{ url_for('index') }}'">戻る</button>
+        Title: <input type="text" id="titleInput" value="{{ book_data.title|e }}" style="width:200px">
+        FileName: {{ pdf_name }} / Page: {{ book_data.page_count }} / Update: {{ updated_date }}
+      </span>
+      <span  style="display:inline-block; margin: 2px;">
+      <button onclick="extractParagraphs()">1.パラグラフ抽出</button>
+      <button onclick="dictReplaceAll()">2.全対訳置換</button>
+      <button onclick="translateAll()">3.全翻訳</button>
+      <button onclick="saveStructure()" hidden>4.構成ファイル出力</button>
+      <button onclick="saveTranslation()">5.対訳ファイル出力</button>
+    <button onclick="fetchBookData()" hidden>リロード</button>
+      <button id="renderButton" hidden>レンダリング</button>
+      </span>
+    </div>
+
+    <div class="controls" style="flex-shrink:0;">
+      <span  style="display:inline-block; margin: 2px;">
+        <label><input type="checkbox" id="toggleTocPanelCheckbox" class="restoreCheckboxState" checked> 目次</label>
+        <label><input type="checkbox" id="togglePdfPanelCheckbox" class="restoreCheckboxState" checked> PDF</label>
+        <button onclick="prevPage()">◀</button>
+        <input type="number" id="pageInput" value="1" min="1" max="1" 
+              style="width: 60px; text-align: center; margin: 0 5px;" onchange="jumpToPage(this.value)">
+        <span>/</span>
+        <span id="pageCount">1</span>
+        <button onclick="nextPage()">▶</button>
+      </span>
+      <span  style="display:inline-block; margin: 2px;">
+        <button id="saveOrderButton">順序保存</button>
+        <button id="pageTransButton">ページ翻訳</button>
+        <label><input type="checkbox" id="toggleSrcHtmlCheckbox" class="restoreCheckboxState" checked> Html</label>
+        <label><input type="checkbox" id="toggleSrcCheckbox" class="restoreCheckboxState" checked> 原文</label>
+        <label><input type="checkbox" id="toggleSrcReplacedCheckbox" class="restoreCheckboxState" checked> 置換文</label>
+        <label><input type="checkbox" id="toggleTransAutoCheckbox" class="restoreCheckboxState" checked> Auto</label>
+        <label><input type="checkbox" id="toggleTransCheckbox" class="restoreCheckboxState" checked> 訳文</label>
+      </span>
+      <table style="display:inline-block; vertical-align:middle; border:1px solid #000; border-collapse:collapse; font-size:80%; margin: 2px;">
+        <tr>
+          <th>none</th>
+          <td style="padding:0 5px;">{{ book_data.trans_status_counts.none }}</td>
+          <th>auto</th>
+          <td style="padding:0 5px;">{{ book_data.trans_status_counts.auto }}</td>
+          <th>draft</th>
+          <td style="padding:0 5px;">{{ book_data.trans_status_counts.draft }}</td>
+          <th>fixed</th>
+          <td style="padding:0 5px;">{{ book_data.trans_status_counts.fixed }}</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>

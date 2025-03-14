@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>PDF ParaParaTrans - 初期画面</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='paraparatrans.svg') }}">
+</head>
+<body>
+    <div style="display: flex; align-items: center;">
+        <img src="{{ url_for('static', filename='paraparatrans.svg') }}" alt="Icon" style="height: 50px; margin-right: 10px;">
+        <h1>PDF ParaParaTrans</h1>
+    </div>
+    <form method="GET">
+      <input type="text" name="filter" placeholder="タイトル/ファイル名でフィルタ" value="{{ filter_text|e }}">
+      <button type="submit">フィルタ</button>
+    </form>
+    <table border="1" cellpadding="4" cellspacing="0">
+        <thead>
+            <tr><th>Id</th><th>タイトル</th><th>ファイル名</th><th>自動</th><th>確定</th><th>更新日</th></tr>
+        </thead>
+        <tbody>
+        {% for idx, item in enumerate(pdf_list) %}
+            <tr>
+              <td>{{ idx+1 }}</td>
+              <td>{{ item['title'] }}</td>
+              <td><a href="{{ url_for('detail', pdf_name=item['pdf_name']) }}">{{ item['pdf_name'] }}</a></td>
+              <td>{{ item['auto_count'] }}</td>
+              <td>{{ item['fix_count'] }}</td>
+              <td>{{ item['updated'] }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

@@ -1,0 +1,48 @@
+.container {
+    display: flex;
+}
+
+.panel {
+    border: 1px solid #ccc;
+    margin: 4px;
+    padding: 4px;
+}
+
+.hidden {
+    display: none;
+}
+
+.paragraph-box {
+    border-bottom: 1px dotted #999;
+    padding: 4px;
+    margin: 4px;
+}
+
+.paragraph-id {
+    color: #888;
+    font-size: 8%;
+    font-weight: bold;
+}
+
+.paragraph-struct {
+    color: #888;
+    font-size: 90%;
+}
+
+#tocPanel {
+    resize: horizontal;
+    overflow: auto;
+    min-width: 200px;
+    max-width: 50%;
+}
+
+.flex-panel {
+    flex: 1;
+}
+
+.resizer {
+    width: 5px;
+    cursor: col-resize;
+    background-color: #ccc;
+    position: relative;
+}

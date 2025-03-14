@@ -1,0 +1,25 @@
+# データ
+data/
+
+# Pythonのコンパイル済みファイル
+__pycache__/
+*.pyc
+*.pyo
+
+# エディタ・IDEの設定
+.vscode/
+.idea/
+*.sublime-workspace
+
+# ビルド成果物
+build/
+dist/
+*.spec
+
+# 仮想環境 (venvやpipenv)
+venv/
+.env
+
+# OS特有の不要ファイル
+.DS_Store
+Thumbs.db

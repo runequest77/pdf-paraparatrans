@@ -1,0 +1,60 @@
+<div class="panel flex-panel" id="srcPanel">
+    <div id="srcParagraphs"></div>
+</div>
+
+<style>
+    .paragraph-box {
+        display: flex;
+        align-items: flex-start; /* 上寄せ */
+        border: 1px solid #ccc;
+        margin-bottom: 10px;
+        padding: 5px;
+        position: relative;
+    }
+    /* ドラッグ用ハンドル */
+    .drag-handle {
+        cursor: move;
+        white-space: nowrap;
+        margin-right: 10px;
+        flex: 0 0 auto;
+        align-self: stretch;      /* 親要素の高さに合わせる */
+        display: flex;            /* コンテンツをフレックスコンテナ化 */
+        align-items: center;      /* 垂直方向に中央寄せ */
+    }
+    .src-html, .src-text, .src-replaced, .trans-auto, .trans-text {
+        flex: 1 1 50%;
+        word-wrap: break-word;
+        padding: 5px;
+    }
+    .edit-ui {
+        display: none;
+        position: absolute;
+        right: 0; /* 右寄せ */
+        top: 100%; /* 下に配置 */
+        width: auto; /* 必要な分だけ幅を確保 */
+        background: white;
+        border: 1px solid #ccc;
+        padding: 10px;
+        z-index: 10;
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* 影を追加 */
+    }
+    .paragraph-box {
+        position: relative; /* `edit-ui` を正しく配置するために必要 */
+    }    
+    .editing .src-text, .editing .trans-text {
+        border: 1px solid #000;
+        background: #fff;
+    }
+    .status-none {
+        background-color: #f9f9f9; /* 未翻訳 */
+    }
+    .status-auto {
+        background-color: #e0f7fa; /* 自動翻訳 */
+    }
+    .status-draft {
+        background-color: #fff9c4; /* 下訳 */
+    }
+    .status-fixed {
+        background-color: #c8e6c9; /* 確定 */
+    }
+</style>

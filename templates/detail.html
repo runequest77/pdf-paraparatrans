@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>PDF ParaParaTrans - メイン画面</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100vh; /* ビューポート全体を使用 */
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* 全体のスクロールは防止 */
+        }
+
+        header {
+            /* 固定位置を解除し、自然な高さに */
+            position: static;
+            width: 100%;
+            z-index: 1000;
+            /* header 内の余白等は必要に応じて調整してください */
+        }
+
+        .container {
+            flex: 1;  /* 残りの高さを埋める */
+            display: flex;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        /* 目次パネル・PDFパネルは固定サイズ・スクロールなし */
+        #tocPanel {
+            width: 250px;         /* 初期幅 */
+            flex: 0 0 auto;
+            overflow: hidden;
+            height: 100%;
+        }
+        #pdfPanel {
+            width: 500px;         /* 初期幅 */
+            flex: 0 0 auto;
+            overflow: hidden;
+            position: relative;   /* オーバーレイ用 */
+            height: 100%;
+        }
+
+        /* ソースパネルのみスクロール可能 */
+        #srcPanel {
+            flex: 1;
+            overflow-y: auto;
+            height: 100%;
+        }
+
+        .resizer {
+            width: 5px;
+            cursor: col-resize;
+            background-color: #ccc;
+            flex: 0 0 auto;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0); /* 透明 */
+            display: none; /* 初期は非表示 */
+        }
+    </style>
+</head>
+<body data-pdf-name="{{ pdf_name }}">
+    {% include 'partials/header.html' %}
+
+    <div class="container">
+        <div id="tocPanel" class="panel">
+            <button onclick="showToc('src')">[原文見出し]</button>
+            <button onclick="showToc('trans')">[訳文見出し]</button>
+            <div id="tocContent">(見出しツリーサンプル)</div>
+        </div>
+
+        <div id="resizer1" class="resizer"></div>
+
+        <div id="pdfPanel" class="panel flex-panel" style="min-width: 20;">
+            <iframe id="pdfIframe" style="width:100%; height:100%;"></iframe>
+            <div id="overlay" class="overlay"></div>
+        </div>
+
+        <div id="resizer2" class="resizer"></div>
+
+        {% include 'partials/srcPanel.html' %}
+    </div>
+    <script src="{{ url_for('static', filename='js/tocPanel.js') }}"></script>    
+    <script src="{{ url_for('static', filename='js/pdfPanel.js') }}"></script>    
+    <script src="{{ url_for('static', filename='js/srcPanel.js') }}"></script>    
+    <script src="{{ url_for('static', filename='js/detail.js') }}"></script>    
+</body>
+</html>
