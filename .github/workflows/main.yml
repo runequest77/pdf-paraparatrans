@@ -5,6 +5,9 @@ on:
     tags:
       - 'v*'  # v1.0.0 などのタグをプッシュすると実行
 
+permissions:
+  contents: write  # GitHub Releases への書き込みを許可
+
 jobs:
   build:
     runs-on: windows-latest  # Windows/macOS にも変更可能
@@ -29,7 +32,7 @@ jobs:
           pyinstaller --onefile --add-data "templates:templates" --add-data "static:static" --hidden-import=modules._01_multi_column --hidden-import=modules._02_reading_order_sort  --hidden-import=modules._03_pdf_to_json_structure --hidden-import=modules._04_paragraph_generator --hidden-import=modules.api_translate --hidden-import=modules.parapara_dict_replacer --hidden-import=modules.parapara_pdf2json --hidden-import=modules.parapara_trans --hidden-import=modules.parapara_json2html pdf-paraparatrans.py
 
       - name: リリースにアップロード
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: dist/pdf-paraparatrans.exe
         env:
