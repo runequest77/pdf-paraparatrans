@@ -1,12 +1,9 @@
-name: Build and Release EXE
+name: Build and Release ZIP
 
 on:
   push:
     tags:
       - 'v*'  # v1.0.0 などのタグをプッシュすると実行
-
-permissions:
-  contents: write  # GitHub Releases への書き込みを許可
 
 jobs:
   build:
@@ -31,16 +28,16 @@ jobs:
         run: |
           pyinstaller --onefile --add-data "templates:templates" --add-data "static:static" --hidden-import=modules._01_multi_column --hidden-import=modules._02_reading_order_sort  --hidden-import=modules._03_pdf_to_json_structure --hidden-import=modules._04_paragraph_generator --hidden-import=modules.api_translate --hidden-import=modules.parapara_dict_replacer --hidden-import=modules.parapara_pdf2json --hidden-import=modules.parapara_trans --hidden-import=modules.parapara_json2html pdf-paraparatrans.py
 
+      - name: Compress executable to ZIP
+        run: |
+          cd dist
+          tar -cvzf pdf-paraparatrans.zip pdf-paraparatrans.exe
+          cd ..
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref_name }}  # 現在のタグ名を取得
-          release_name: Release ${{ github.ref_name }}
-          draft: false  # 草稿ではなく、正式リリース
-          prerelease: false  # プレリリースではなく正式版
           files: |
-            dist/pdf-paraparatrans.exe
+            dist/pdf-paraparatrans.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
-
-
