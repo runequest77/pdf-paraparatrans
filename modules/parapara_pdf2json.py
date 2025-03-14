@@ -12,6 +12,10 @@ PDFファイルから段落情報を抽出し、翻訳管理用のparapara形式
 import sys
 import os
 import json
+
+# modulesディレクトリをPythonのモジュール検索パスに追加
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
 from modules._03_pdf_to_json_structure import extract_pdf_structure
 from modules._04_paragraph_generator import generate_paragraphs
 
@@ -41,7 +45,7 @@ def extract_paragraphs(pdf_path, json_path=None):
             "none": 0,
             "auto": 0,
             "draft": 0,
-            "fix": 0
+            "fixed": 0
         },
         "heads_tyles": style_and_paragraphs["head_styles"],
         "paragraphs": style_and_paragraphs["paragraphs"]

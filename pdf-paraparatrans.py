@@ -4,6 +4,7 @@ import json
 import datetime
 import io
 import logging
+import sys
 from PyPDF2 import PdfReader, PdfWriter
 import re
 
@@ -11,18 +12,43 @@ from modules.parapara_pdf2json import extract_paragraphs
 from modules.api_translate import translate_text
 from modules.parapara_trans import paraparatrans_json_file
 from modules.parapara_dict_replacer import file_replace_with_dict
+from modules.parapara_json2html import json2html
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="templates", static_folder="static")
 
 # ログ設定
 logging.basicConfig(level=logging.DEBUG)
-
 
 # PDFとJSONの配置ディレクトリ（必要に応じて変更してください）
 BASE_FOLDER = "./data"  # Windows例。Linux等の場合はパスを変更してください
+DICT_CSV_PATH = os.path.join(BASE_FOLDER, "dict.csv")
+
+# dict.csvのひな形
+DICT_CSV_TEMPLATE = """Rune Quest,ルーンクエスト
+Runequest,ルーンクエスト
+Glorantha,グローランサ
+"""
+
+# dict.csvが存在しない場合にひな形を出力
+if not os.path.exists(DICT_CSV_PATH):
+    print(f"dict.csv が存在しません。ひな形を作成します: {DICT_CSV_PATH}")
+    os.makedirs(BASE_FOLDER, exist_ok=True)
+    with open(DICT_CSV_PATH, "w", encoding="utf-8") as f:
+        f.write(DICT_CSV_TEMPLATE)
 
 # ログ設定
 logging.basicConfig(level=logging.DEBUG)
+
+def get_resource_path(relative_path):
+    """PyInstaller で EXE 化された時のパスを取得する"""
+    if getattr(sys, "frozen", False):
+        # PyInstallerで実行されている場合
+        base_path = sys._MEIPASS
+    else:
+        # 通常の実行
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 def get_paths(pdf_name):
     pdf_path = os.path.join(BASE_FOLDER, pdf_name + ".pdf")
@@ -174,28 +200,16 @@ def save_structure_api(pdf_name):
     return jsonify({"status": "ok"}), 200
 
 # パラグラフの翻訳を保存するAPI
-@app.route("/api/save_translation/<pdf_name>", methods=["POST"])
-def save_translation_api(pdf_name):
+@app.route("/api/export_html/<pdf_name>", methods=["POST"])
+def export_html_api(pdf_name):
     pdf_path, json_path = get_paths(pdf_name)
     if not os.path.exists(json_path):
         return jsonify({"status": "error", "message": "JSONが存在しません"}), 400
-    with open(json_path, "r", encoding="utf-8") as f:
-        book_data = json.load(f)
-    paragraphs = book_data["paragraphs"]
-    paragraphs.sort(key=lambda x: (x["page"], x["order"]))
-    html_paras = []
-    for p in paragraphs:
-        if p["parent_id"] == 0:
-            tag = p["block_tag"] if p["block_tag"] in ["p","h1","h2","h3","h4","h5","h6","ul","li","td"] else "p"
-            html_paras.append(f"<{tag}>{p['trans_text']}</{tag}>")
-    content_html = "\n".join(html_paras)
-    out_html_path = os.path.splitext(pdf_path)[0] + ".html"
-    with open(out_html_path, "w", encoding="utf-8") as f:
-        f.write("<html><head><meta charset='utf-8'></head><body>\n")
-        f.write(content_html)
-        f.write("\n</body></html>")
+    try:
+        json2html(json_path)
+    except Exception as e:
+        return jsonify({"status": "error", "message": f"HTML生成エラー: {str(e)}"}), 500
     return jsonify({"status": "ok"}), 200
-
 
 # 単パラグラフの翻訳を保存するAPI
 @app.route("/api/update_paragraph/<pdf_name>", methods=["POST"])
@@ -235,14 +249,14 @@ def update_paragraph_api(pdf_name):
 # API:ファイルへの辞書全置換
 @app.route("/api/dict_replace_all/<pdf_name>", methods=["POST"])
 def dict_replace_all_api(pdf_name):
-    dict_csv_path = "/data/dict.csv"
-    if not os.path.exists(dict_csv_path):
-        return jsonify({"status": "error", "message": "dict.csvが存在しません"}), 404
+    print("DICT_CSV_PATH" + DICT_CSV_PATH)
+    if not os.path.exists(DICT_CSV_PATH):
+        return jsonify({"status": "error", "message": "dict.csvが存在しません2"}), 404
     pdf_path, json_path = get_paths(pdf_name)
     if not os.path.exists(json_path):
         return jsonify({"status": "error", "message": "対象のJSONファイルが存在しません"}), 404
     try:
-        file_replace_with_dict(json_path, dict_csv_path)
+        file_replace_with_dict(json_path, DICT_CSV_PATH)
     except Exception as e:
         return jsonify({"status": "error", "message": f"辞書適用中のエラー: {str(e)}"}), 500
     return jsonify({"status": "ok"}), 200
@@ -326,4 +340,5 @@ def recalc_trans_status_counts(book_data):
     book_data["trans_status_counts"] = counts
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=False)
+

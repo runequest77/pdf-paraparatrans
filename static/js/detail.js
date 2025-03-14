@@ -11,10 +11,19 @@ async function fetchBookData() {
         document.getElementById("titleInput").value = bookData.title;
         document.getElementById("pageCount").innerText = bookData.page_count;
 
+        updateTransStatusCounts(bookData.trans_status_counts);
+
         jumpToPage(currentPage);
     } catch (error) {
         console.error("Error fetching book data:", error);
     }
+}
+
+function updateTransStatusCounts(counts) {
+    document.getElementById("countNone").innerText = counts.none;
+    document.getElementById("countAuto").innerText = counts.auto;
+    document.getElementById("countDraft").innerText = counts.draft;
+    document.getElementById("countFixed").innerText = counts.fixed;
 }
 
 window.onload = function() {
@@ -54,6 +63,35 @@ function transPage () {
             }
         })
         .catch(error => console.error('Error:', error));
+}
+
+function transAllPages() {
+    const totalPages = bookData.page_count;
+    if (!confirm(`全 ${totalPages} ページを翻訳します。よろしいですか？`)) return;
+
+    fetch(`/api/paraparatrans/${encodeURIComponent(pdfName)}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: '&start_page=' + encodeURIComponent(1) +
+            '&end_page=' + encodeURIComponent(totalPages)
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "ok") {
+                // JSONファイル再読み込み（ページ全体をリロード）
+                fetchBookData();
+                alert("全ページの翻訳が成功しました");
+            } else {
+                console.error('エラー:', data.message);
+                alert("翻訳エラー: " + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("翻訳中にエラーが発生しました: " + error);
+        });
 }
 
 function togglePanel(event, panelId){
@@ -233,6 +271,7 @@ function dictReplaceAll() {
     .then(data => {
         if (data.status === "ok") {
             fetchBookData();
+            alert("全対訳置換が成功しました");
         } else {
             console.error("対訳置換エラー:", data.message);
             alert("対訳置換エラー: " + data.message);
@@ -278,4 +317,25 @@ function saveOrder() {
     });
 }
 
+function exportHtml() {
+    fetch(`/api/export_html/${encodeURIComponent(pdfName)}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: '' // 特に送信するデータがなければ空文字でOK
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "ok") {
+            alert("対訳HTMLが正常に出力されました。");
+        } else {
+            alert("エラー: " + data.message);
+        }
+    })
+    .catch(error => {
+        console.error("Error exporting HTML:", error);
+        alert("対訳HTML出力中にエラーが発生しました");
+    });
+}
 

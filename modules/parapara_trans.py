@@ -8,7 +8,12 @@ parapara形式ファイルを指定ページ範囲内で翻訳する。
 
 import json
 import re
+import sys
+import os
 from datetime import datetime
+
+# modulesディレクトリをPythonのモジュール検索パスに追加
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from modules.api_translate import translate_text  # 翻訳関数は別ファイルで定義済み
 
 def save_json(data, filepath):
@@ -62,6 +67,17 @@ def process_group(paragraphs_group, data, filepath):
     # 翻訳完了後は必ず保存（費用対効果の観点から重要）
     save_json(data, filepath)
 
+def recalc_trans_status_counts(data):
+    """
+    段落の翻訳ステータスを集計し、trans_status_countsに書き込む。
+    """
+    counts = {"none": 0, "auto": 0, "draft": 0, "fixed": 0}
+    for p in data.get("paragraphs", []):
+        status = p.get("trans_status")
+        if status in counts:
+            counts[status] += 1
+    data["trans_status_counts"] = counts
+
 def paraparatrans_json_file(filepath, start_page, end_page):
     """
     JSONファイルを読み込み、指定したページ範囲内の段落について翻訳処理を行い、結果をファイルへ保存する。
@@ -104,7 +120,8 @@ def paraparatrans_json_file(filepath, start_page, end_page):
     if current_group:
         process_group(current_group, data, filepath)
     
-    # 最終的にもう一度保存（グループごとに保存しているので冗長ですが、念のため）
+    # 翻訳ステータスの集計を更新
+    recalc_trans_status_counts(data)
     save_json(data, filepath)
     
     return data
