@@ -1,50 +1,38 @@
-name: Build and Release
+name: Build with PyInstaller
 
 on:
   push:
-    tags:
-      - 'v*.*.*'
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:  # 手動実行を許可
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # Windows/macOS にも変更可能
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.x'
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install pyinstaller
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-    - name: Build with PyInstaller
-      run: |
-        pyinstaller --onefile --add-data "templates;templates" --add-data "static;static" --hidden-import=modules._01_multi_column.py --hidden-import=modules._02_reading_order_sort  --hidden-import=modules._03_pdf_to_json_structure --hidden-import=modules._04_paragraph_generator --hidden-import=modules.api_translate --hidden-import=modules.parapara_dict_replacer --hidden-import=modules.parapara_pdf2json --hidden-import=modules.parapara_trans --hidden-import=modules.parapara_json2html pdf-paraparatrans.py
-      # 生成された実行ファイルは dist/your_script にあります
+      - name: Build executable with PyInstaller
+        run: |
+          pyinstaller --onefile --add-data "templates;templates" --add-data "static;static" --hidden-import=modules._01_multi_column.py --hidden-import=modules._02_reading_order_sort  --hidden-import=modules._03_pdf_to_json_structure --hidden-import=modules._04_paragraph_generator --hidden-import=modules.api_translate --hidden-import=modules.parapara_dict_replacer --hidden-import=modules.parapara_pdf2json --hidden-import=modules.parapara_trans --hidden-import=modules.parapara_json2html pdf-paraparatrans.py
 
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
-        draft: false
-        prerelease: false
-
-    - name: Upload Release Asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./dist/your_script
-        asset_name: your_script
-        asset_content_type: application/octet-stream
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: built-executable
+          path: dist/main  # Windows の場合は dist/main.exe
