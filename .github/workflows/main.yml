@@ -32,4 +32,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: built-executable
-          path: dist/main  # Windows の場合は dist/main.exe
+          path: dist/pdf-paraparatrans*
