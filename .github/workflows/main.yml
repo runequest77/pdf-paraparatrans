@@ -2,12 +2,8 @@ name: Build with PyInstaller
 
 on:
   push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
-  workflow_dispatch:  # 手動実行を許可
+    tags:
+      - 'v*'  # v1.0.0 などのタグをプッシュすると実行
 
 jobs:
   build:
