@@ -23,7 +23,7 @@
 ### 1.exeでの利用
 1. **[pdf_paraparatrans.exe](https://github.com/runequest77/pdf_paraparatrans/releases) をダウンロード**
 2. 実行するフォルダの下に`data`フォルダを作成し、変換したい PDF を入れる。
-3. exeを起動すると、黒いコンソールが表示されます。
+3. exeを起動すると、黒いコンソールが表示されます。<br>コンソールを閉じると実行が終了してしまうので注意。
 4. ブラウザで`http://localhost:5000/`にアクセスすると、dataフォルダ内に置いたpdfの一覧が表示されます。
 →「使い方」セクションへ！
     > ### ⚠️ 注 意 ⚠️
