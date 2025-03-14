@@ -6,19 +6,18 @@
         Title: <input type="text" id="titleInput" value="{{ book_data.title|e }}" style="width:200px">
         FileName: {{ pdf_name }} / Page: {{ book_data.page_count }} / Update: {{ updated_date }}
       </span>
-      <span  style="display:inline-block; margin: 2px;">
-      <button onclick="extractParagraphs()">1.パラグラフ抽出</button>
-      <button onclick="dictReplaceAll()">2.全対訳置換</button>
-      <button onclick="translateAll()">3.全翻訳</button>
-      <button onclick="saveStructure()" hidden>4.構成ファイル出力</button>
-      <button onclick="saveTranslation()">5.対訳ファイル出力</button>
-    <button onclick="fetchBookData()" hidden>リロード</button>
-      <button id="renderButton" hidden>レンダリング</button>
+      <span style="display:inline-block; margin: 2px;">
+        <button onclick="extractParagraphs()" style="border: 2px solid #e74c3c">1.パラグラフ抽出</button>
+        <button onclick="dictReplaceAll()" style="border: 2px solid #3498db">2.全対訳置換</button>
+        <button onclick="translateAll()" style="border: 2px solid #ff9800; font-weight: bold;">3.全翻訳</button>
+        <button onclick="saveStructure()" hidden>4.構成ファイル出力</button>
+        <button onclick="saveTranslation()" style="border: 2px solid #2ecc71;">5.対訳ファイル出力</button>
+        <button onclick="fetchBookData()" hidden>リロード</button>
+        <button id="renderButton" hidden>レンダリング</button>
       </span>
     </div>
-
     <div class="controls" style="flex-shrink:0;">
-      <span  style="display:inline-block; margin: 2px;">
+      <span style="display:inline-block; margin: 2px;">
         <label><input type="checkbox" id="toggleTocPanelCheckbox" class="restoreCheckboxState" checked> 目次</label>
         <label><input type="checkbox" id="togglePdfPanelCheckbox" class="restoreCheckboxState" checked> PDF</label>
         <button onclick="prevPage()">◀</button>
@@ -28,9 +27,9 @@
         <span id="pageCount">1</span>
         <button onclick="nextPage()">▶</button>
       </span>
-      <span  style="display:inline-block; margin: 2px;">
+      <span style="display:inline-block; margin: 2px;">
         <button id="saveOrderButton">順序保存</button>
-        <button id="pageTransButton">ページ翻訳</button>
+        <button id="pageTransButton" style="border: 2px solid #ff9800; font-weight: bold;">ページ翻訳</button>
         <label><input type="checkbox" id="toggleSrcHtmlCheckbox" class="restoreCheckboxState" checked> Html</label>
         <label><input type="checkbox" id="toggleSrcCheckbox" class="restoreCheckboxState" checked> 原文</label>
         <label><input type="checkbox" id="toggleSrcReplacedCheckbox" class="restoreCheckboxState" checked> 置換文</label>
@@ -52,3 +51,9 @@
     </div>
   </div>
 </div>
+
+<!-- 
+<rect x="10" y="10" width="430" height="100" rx="15" ry="15" fill="#e74c3c" />
+<rect x="10" y="120" width="430" height="100" rx="15" ry="15" fill="#3498db" />
+<rect x="10" y="230" width="430" height="100" rx="15" ry="15" fill="#f39c12" />
+<rect x="10" y="340" width="430" height="100" rx="15" ry="15" fill="#2ecc71" /> -->

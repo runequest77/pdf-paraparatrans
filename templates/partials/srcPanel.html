@@ -3,13 +3,25 @@
 </div>
 
 <style>
+    
+    .paragraph-id {
+        color: #888;
+        font-size: 8%;
+        font-weight: bold;
+    }
+    
+    .paragraph-struct {
+        color: #888;
+        font-size: 90%;
+    }
+    
+    
     .paragraph-box {
         display: flex;
-        align-items: flex-start; /* 上寄せ */
-        border: 1px solid #ccc;
-        margin-bottom: 10px;
-        padding: 5px;
+        align-items: stretch; /* 子要素の高さを親要素に合わせる */
         position: relative;
+        border-bottom: 1px dotted #999;
+        position: relative; /* `edit-ui` を正しく配置するために必要 */
     }
     /* ドラッグ用ハンドル */
     .drag-handle {
@@ -17,14 +29,14 @@
         white-space: nowrap;
         margin-right: 10px;
         flex: 0 0 auto;
-        align-self: stretch;      /* 親要素の高さに合わせる */
-        display: flex;            /* コンテンツをフレックスコンテナ化 */
-        align-items: center;      /* 垂直方向に中央寄せ */
+        display: flex;
+        align-items: top;
     }
     .src-html, .src-text, .src-replaced, .trans-auto, .trans-text {
         flex: 1 1 50%;
         word-wrap: break-word;
         padding: 5px;
+        margin: 2px;
     }
     .edit-ui {
         display: none;
@@ -38,12 +50,21 @@
         z-index: 10;
         box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* 影を追加 */
     }
-    .paragraph-box {
-        position: relative; /* `edit-ui` を正しく配置するために必要 */
-    }    
     .editing .src-text, .editing .trans-text {
         border: 1px solid #000;
         background: #fff;
+    }
+    .src-text {
+        border-left: 4px solid #e74c3c;
+    }
+    .src-replaced {
+        border-left: 4px solid #3498db;
+    }
+    .trans-auto {
+        border-left: 4px solid #f39c12;
+    }
+    .trans-text {
+        border-left: 4px solid #2ecc71;
     }
     .status-none {
         background-color: #f9f9f9; /* 未翻訳 */
@@ -56,5 +77,8 @@
     }
     .status-fixed {
         background-color: #c8e6c9; /* 確定 */
+    }
+    .edit-button {
+        height: 24px; /* 固定高さ */
     }
 </style>
