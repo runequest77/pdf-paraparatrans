@@ -39,7 +39,6 @@ jobs:
           draft: false  # 草稿ではなく、正式リリース
           prerelease: false  # プレリリースではなく正式版
           files: |
-            pdf-paraparatrans.zip
             dist/pdf-paraparatrans.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
