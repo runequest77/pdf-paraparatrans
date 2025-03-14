@@ -29,7 +29,7 @@ jobs:
 
       - name: Build executable with PyInstaller
         run: |
-          pyinstaller --onefile --add-data "templates;templates" --add-data "static;static" --hidden-import=modules._01_multi_column.py --hidden-import=modules._02_reading_order_sort  --hidden-import=modules._03_pdf_to_json_structure --hidden-import=modules._04_paragraph_generator --hidden-import=modules.api_translate --hidden-import=modules.parapara_dict_replacer --hidden-import=modules.parapara_pdf2json --hidden-import=modules.parapara_trans --hidden-import=modules.parapara_json2html pdf-paraparatrans.py
+          pyinstaller --onefile --add-data "templates:templates" --add-data "static:static" --hidden-import=modules._01_multi_column --hidden-import=modules._02_reading_order_sort  --hidden-import=modules._03_pdf_to_json_structure --hidden-import=modules._04_paragraph_generator --hidden-import=modules.api_translate --hidden-import=modules.parapara_dict_replacer --hidden-import=modules.parapara_pdf2json --hidden-import=modules.parapara_trans --hidden-import=modules.parapara_json2html pdf-paraparatrans.py
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
