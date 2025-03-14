@@ -11,9 +11,9 @@ __pycache__/
 .idea/
 *.sublime-workspace
 
-# ビルド成果物
-build/
-dist/
+# ルートのビルド成果物
+/build/
+/dist/
 *.spec
 
 # 仮想環境 (venvやpipenv)
@@ -23,3 +23,6 @@ venv/
 # OS特有の不要ファイル
 .DS_Store
 Thumbs.db
+
+# static/pdfjs/buildを除外
+!static/pdfjs/build/
