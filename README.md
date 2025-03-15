@@ -67,7 +67,7 @@ https://chatgpt.com/share/67d3c05b-cfcc-800b-a8d7-930d470dcb0b
 ローカルでセットアップできる方は　`modules\api_translate.py` を編集することで簡単に他の翻訳APIに差し替えられます。
 
 ### 🔠 対訳辞書の準備
-`data\trans.csv` に翻訳前に置換したい単語を登録します。
+`data\dict.csv` に翻訳前に置換したい単語を登録します。
 
 起動時に存在しない場合、サンプルが作成されます。
 
