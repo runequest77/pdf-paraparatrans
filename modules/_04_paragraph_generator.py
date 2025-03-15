@@ -19,6 +19,7 @@ def generate_paragraphs(json_data):
       - id: パラグラフの一意の識別子
       - page: このパラグラフが属するページ番号
       - order: ページ内の表示順（内部リストでの順番をそのまま利用）
+      - first_line_bbox: パラグラフの最初の行のバウンディングボックス（左下と右上の座標のリスト）
       - src_html: 原文のフォント情報を含むHTML（インラインタグを含む可能性あり）
       - src_text: 原文のテキスト。原文の修正はここで行う。
       - src_replaced: src_textを単語辞書で置換したテキスト。自動翻訳にはこのデータを送る。
@@ -84,14 +85,19 @@ def generate_paragraphs(json_data):
         return current_paragraph
 
     def join_line_text(line, current_paragraph):
+        # first_line_bboxが無ければ追加
+        if "first_line_bbox" not in current_paragraph:
+            current_paragraph["first_line_bbox"] = line["line_bbox"]
         for span in line.get("spans", []):
             if current_paragraph["page"] == 0:
                 current_paragraph["page"] = line["page"]
             new_style = get_span_style(span)
+            # スタイルが変わったら span をクローズして新しい span を開く
             if current_paragraph["currentSpanStyle"] != new_style:
                 if current_paragraph["isspanopen"]:
                     current_paragraph["html"] += "</span>"
                     current_paragraph["isspanopen"] = False
+            # span が開いていない場合は新しい span を開く
             if not current_paragraph["isspanopen"]:
                 current_paragraph["currentSpanStyle"] = new_style
                 current_paragraph["html"] += f'<span class="{new_style}">'
@@ -113,14 +119,18 @@ def generate_paragraphs(json_data):
         if current_paragraph["lastY"] == line["line_bbox"][1]:
             current_paragraph = join_line_text(line, current_paragraph)
         else:
+            # 現在の文末がタブ文字の場合はlineのtextを結合
             if current_paragraph["text"].endswith("\t"):
                 current_paragraph = join_line_text(line, current_paragraph)
+            # 現在の文末が句読点の場合はパラグラフをクローズして新しい段落を開始
             elif current_paragraph["text"].rstrip() and current_paragraph["text"].rstrip()[-1] in ".!?":
                 current_paragraph = close_paragraph()
                 current_paragraph = join_line_text(line, current_paragraph)
+            # 文末がスペースの場合は結合
             elif current_paragraph["text"].endswith(" ") and (current_paragraph["currentSpanStyle"] == get_span_style(line["spans"][0])):
                 current_paragraph = join_line_text(line, current_paragraph)
             else:
+                # それ以外の場合はパラグラフをクローズして新しい段落を開始
                 current_paragraph = close_paragraph()
                 current_paragraph = join_line_text(line, current_paragraph)
 
@@ -136,6 +146,7 @@ def generate_paragraphs(json_data):
             "id": idx + 1,
             "page": para.get("page", 0),
             "order": idx + 1,
+            "first_line_bbox": para.get("first_line_bbox", ""),
             "src_html": para.get("html", ""),
             "src_text": para.get("text", ""),
             "src_replaced": para.get("text", ""),
