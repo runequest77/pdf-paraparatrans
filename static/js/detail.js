@@ -107,12 +107,14 @@ function togglePanel(event, panelId){
 
 function restoreCheckboxStates() {
     const checkboxes = document.querySelectorAll('.restoreCheckboxState');
-    console.log("restoreCheckboxStates checkboxes.length:" + checkboxes.length);
     checkboxes.forEach(checkbox => {
         try {
-            const checked = localStorage.getItem(checkbox.id) === 'true';
-            console.log("checkbox.id:" + checkbox.id + " checked:" + checked);
-            checkbox.checked = checked;
+            const storedValue = localStorage.getItem(checkbox.id);
+            if (storedValue === null) {
+                localStorage.setItem(checkbox.id, checkbox.checked);
+            } else {
+                checkbox.checked = storedValue === 'true';
+            }
             const event = new Event('change');
             checkbox.dispatchEvent(event);
         } catch (error) {
@@ -123,7 +125,6 @@ function restoreCheckboxStates() {
 
 function saveCheckboxState(event) {
     const checkbox = event.target;
-    console.log("saveCheckboxState checkbox.id:" + checkbox.id + " checked:" + checkbox.checked);
     localStorage.setItem(checkbox.id, checkbox.checked);
 }
 
@@ -298,6 +299,7 @@ function saveOrder() {
     // orderListを /save_order に送信
     let formData = new URLSearchParams();
     formData.append('order_json', JSON.stringify(orderList));
+    formData.append('title', document.getElementById('titleInput').value);
 
     fetch(`/api/save_order/${encodeURIComponent(pdfName)}`, {
         method: 'POST',

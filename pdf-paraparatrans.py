@@ -312,6 +312,7 @@ def pdf_view_page(pdf_name, page_number):
 @app.route("/api/save_order/<pdf_name>", methods=["POST"])
 def save_order_api(pdf_name):
     order_json = request.form.get("order_json")
+    title = request.form.get("title")
     if not pdf_name or not order_json:
         return jsonify({"status": "error", "message": "pdf_name と order_json は必須です"}), 400
     pdf_path, json_path = get_paths(pdf_name)
@@ -327,6 +328,8 @@ def save_order_api(pdf_name):
             if str(p.get("id")) == p_id:
                 p["order"] = new_order_val
                 break
+    if title is not None:
+        book_data["title"] = title
     with open(json_path, "w", encoding="utf-8") as f:
         json.dump(book_data, f, ensure_ascii=False, indent=2)
     return jsonify({"status": "ok"}), 200
