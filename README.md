@@ -46,7 +46,7 @@
     pip install -r requirements.txt
     ```
 4. 直下にdataフォルダを作成し、変換したいPDFを入れる。
-5. app.pyを起動。
+5. pdf-paraparatrans.pyを起動。
     ```
     python pdf-paraparatrans.py
     ```
