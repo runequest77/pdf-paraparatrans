@@ -1,3 +1,4 @@
 Flask>=2.0.0
+numpy
 PyMuPDF
 google-cloud-translate
