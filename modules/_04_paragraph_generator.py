@@ -129,6 +129,16 @@ def generate_paragraphs(json_data):
             # 文末がスペースの場合は結合
             elif current_paragraph["text"].endswith(" ") and (current_paragraph["currentSpanStyle"] == get_span_style(line["spans"][0])):
                 current_paragraph = join_line_text(line, current_paragraph)
+            # 文末がハイフンの場合は結合
+            elif current_paragraph["text"].endswith("-") and (current_paragraph["currentSpanStyle"] == get_span_style(line["spans"][0])):
+                current_paragraph = join_line_text(line, current_paragraph)
+            # # 現在の文末が英語か数字で、lineのtextが英語小文字か数字で始まり、スタイルが同一なら結合
+            # あまり適切に動作しないのでコメントアウト
+            # elif current_paragraph["text"] and \
+            #         current_paragraph["text"][-1].isalnum() and \
+            #         line["spans"][0]["text"][0].isalnum() and \
+            #         (current_paragraph["currentSpanStyle"] == get_span_style(line["spans"][0])):
+            #     current_paragraph = join_line_text(line, current_paragraph)
             else:
                 # それ以外の場合はパラグラフをクローズして新しい段落を開始
                 current_paragraph = close_paragraph()

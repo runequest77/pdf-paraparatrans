@@ -131,7 +131,9 @@ function renderParagraphs() {
         if (p.page !== currentPage) continue;
 
         let divSrc = document.createElement("div");
-        divSrc.className = `paragraph-box status-${p.trans_status}`;
+        // block_tagが header または footer なら "block-tag-gray" クラスを付与
+        let extraClass = (p.block_tag === 'header' || p.block_tag === 'footer') ? 'block-tag-ignore' : '';
+        divSrc.className = `paragraph-box status-${p.trans_status} ${extraClass}`;
         divSrc.innerHTML = `
             <div class="drag-handle">
                 <span class='paragraph-id'>${p.id}</span>
@@ -156,6 +158,8 @@ function renderParagraphs() {
                         <option value="li">li</option>
                         <option value="ul">ul</option>
                         <option value="dd">dd</option>
+                        <option value="header">header</option>
+                        <option value="footer">footer</option>
                     </select>
                 </label>
                 <button class='trans-button'>自動翻訳</button>

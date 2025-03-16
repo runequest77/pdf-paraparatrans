@@ -14,6 +14,10 @@ def json2html(json_file_path: str):
     current_page = -1
 
     for paragraph in data['paragraphs']:
+        block_tag = paragraph.get("block_tag", "div").lower()
+        if block_tag in ("header", "footer"):
+            continue
+
         if paragraph.get('page', -1) != current_page:
             current_page = paragraph.get('page', -1)
             # 目次エントリの追加

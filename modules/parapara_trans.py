@@ -98,7 +98,9 @@ def paraparatrans_json_file(filepath, start_page, end_page):
     # 指定されたページ範囲と未翻訳パラグラフで抽出し、page と order でソート
     filtered_paragraphs = [
         p for p in paragraphs 
-        if start_page <= p.get("page", 0) <= end_page and p.get("trans_status") == "none"
+        if start_page <= p.get("page", 0) <= end_page 
+        and p.get("trans_status") == "none" 
+        and p.get("block_tag") not in ("header", "footer")
     ]
 
     filtered_paragraphs.sort(key=lambda p: (p.get("page", 0), p.get("order", 0)))

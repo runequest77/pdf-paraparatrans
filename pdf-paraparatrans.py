@@ -13,6 +13,9 @@ from modules.api_translate import translate_text
 from modules.parapara_trans import paraparatrans_json_file
 from modules.parapara_dict_replacer import file_replace_with_dict
 from modules.parapara_json2html import json2html
+from modules.parapara_auto_tagging import auto_tagging
+from modules.parapara_dict_create import dict_create
+from modules.parapara_dict_trans import dict_trans
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
 
@@ -24,9 +27,10 @@ BASE_FOLDER = "./data"  # Windows例。Linux等の場合はパスを変更して
 DICT_CSV_PATH = os.path.join(BASE_FOLDER, "dict.csv")
 
 # dict.csvのひな形
-DICT_CSV_TEMPLATE = """Rune Quest,ルーンクエスト
-Runequest,ルーンクエスト
-Glorantha,グローランサ
+DICT_CSV_TEMPLATE = """Rune Quest,ルーンクエスト,0
+Runequest,ルーンクエスト,0
+Glorantha,グローランサ,0
+Detect Magic,《魔力検知》,1
 """
 
 # dict.csvが存在しない場合にひな形を出力
@@ -333,6 +337,39 @@ def save_order_api(pdf_name):
     with open(json_path, "w", encoding="utf-8") as f:
         json.dump(book_data, f, ensure_ascii=False, indent=2)
     return jsonify({"status": "ok"}), 200
+
+@app.route("/api/auto_tagging/<pdf_name>", methods=["POST"])
+def auto_tagging_api(pdf_name):
+    pdf_path, json_path = get_paths(pdf_name)
+    if not os.path.exists(json_path):
+        return jsonify({"status": "error", "message": "JSONファイルが存在しません"}), 404
+    try:
+        auto_tagging(json_path)
+    except Exception as e:
+        return jsonify({"status": "error", "message": f"自動タグ付けエラー: {str(e)}"}), 500
+    return jsonify({"status": "ok", "message": "自動タグ付け完了"}), 200
+
+@app.route("/api/dict_create/<pdf_name>", methods=["POST"])
+def dict_create_api(pdf_name):
+    pdf_path, json_path = get_paths(pdf_name)
+    if not os.path.exists(json_path):
+        return jsonify({"status": "error", "message": "JSONファイルが存在しません"}), 404
+    try:
+        dict_create(json_path, DICT_CSV_PATH)
+    except Exception as e:
+        return jsonify({"status": "error", "message": f"辞書生成エラー: {str(e)}"}), 500
+    return jsonify({"status": "ok", "message": "辞書生成完了"}), 200
+
+@app.route("/api/dict_trans/<pdf_name>", methods=["POST"])
+def dict_trans_api(pdf_name):
+    pdf_path, json_path = get_paths(pdf_name)
+    if not os.path.exists(json_path):
+        return jsonify({"status": "error", "message": "JSONファイルが存在しません"}), 404
+    try:
+        dict_trans(DICT_CSV_PATH)
+    except Exception as e:
+        return jsonify({"status": "error", "message": f"辞書翻訳エラー: {str(e)}"}), 500
+    return jsonify({"status": "ok", "message": "辞書翻訳完了"}), 200
 
 def recalc_trans_status_counts(book_data):
     counts = {"none": 0, "auto": 0, "draft": 0, "fixed": 0}

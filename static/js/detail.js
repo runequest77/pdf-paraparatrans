@@ -284,6 +284,72 @@ function dictReplaceAll() {
     });
 }
 
+function autoTagging() {
+    fetch(`/api/auto_tagging/${encodeURIComponent(pdfName)}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "ok") {
+            alert("自動タグ付けが成功しました");
+            // 必要に応じて、book_data の再取得などを実施
+            fetchBookData();
+        } else {
+            alert("自動タグ付けエラー: " + data.message);
+        }
+    })
+    .catch(error => {
+        console.error("autoTagging error:", error);
+        alert("自動タグ付け中にエラーが発生しました");
+    });
+}
+
+function dictCreate() {
+    fetch(`/api/dict_create/${encodeURIComponent(pdfName)}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "ok") {
+            alert("辞書生成が成功しました");
+        } else {
+            alert("辞書生成エラー: " + data.message);
+        }
+    })
+    .catch(error => {
+        console.error("autoTagging error:", error);
+        alert("辞書生成中にエラーが発生しました");
+    });
+}
+
+function dictTrans() {
+    fetch(`/api/dict_trans/${encodeURIComponent(pdfName)}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "ok") {
+            alert("辞書翻訳が成功しました");
+        } else {
+            alert("辞書翻訳エラー: " + data.message);
+        }
+    })
+    .catch(error => {
+        console.error("autoTagging error:", error);
+        alert("辞書翻訳中にエラーが発生しました");
+    });
+}
+
+
 // 順序再発行＆保存処理
 function saveOrder() {
     let container = document.getElementById('srcParagraphs');
