@@ -1,18 +1,28 @@
-from google.cloud import translate_v2 as translate
+import os
+import sys
+from dotenv import load_dotenv
 
-# クライアントの作成
-client = translate.Client()
+# modulesディレクトリをPythonのモジュール検索パスに追加
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-def translate_text(text, source="en", target="ja"):
+# .env ファイルの内容を読み込む
+load_dotenv()
+
+TRANSLATOR = os.getenv("TRANSLATOR", "google").lower()
+
+if TRANSLATOR == "deepl":
+    print("Using DeepL translator.")
+    from modules.api_translate_deepl import translate_text_deepl as translate_text_env
+else:
+    print("Using Google translator.")
+    from modules.api_translate_google import translate_text_google as translate_text_env
+
+def translate_text(text, source="EN", target="JA"):
     """
-    HTMLタグを保持しつつ英語を日本語に翻訳
+    環境変数の設定に応じた翻訳サービスでテキストを翻訳します。
     """
-    print("translate_text")
-
-    result = client.translate(text, source_language=source, target_language=target, format_="html")
-    return result["translatedText"]
+    return translate_text_env(text, source, target)
 
 if __name__ == "__main__":
-    html_text = "google.cloud:<p>Hello <strong>ParaParaTrans</strong>!</p>"
-    translated_text = translate_text(html_text)
-    print(translated_text)
+    sample_text = "<p>Hello <strong>ParaParaTrans</strong>!</p>"
+    print(translate_text(sample_text))
