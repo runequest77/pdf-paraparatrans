@@ -64,8 +64,9 @@
 
 ## 使い方
 ### 翻訳APIの準備
-[google](https://chatgpt.com/share/67d83e3c-8130-800b-b58f-f7fa7de57ed2) 5まででOKです。 
-[deepL](https://chatgpt.com/share/67d83f7a-1ca0-800b-b852-ed242ad40a23)
+ [GOOGLE_API_KEY の取得](https://chatgpt.com/share/67d83e3c-8130-800b-b58f-f7fa7de57ed2) 5まででOKです。 
+
+ [DEEPL_AUTH_KEY の取得](https://chatgpt.com/share/67d83f7a-1ca0-800b-b852-ed242ad40a23)
 
 正直ここが一番詰まると思います。
 わかりやすく書くのが🤚無理🤣なので、`Chat-GPT` とか `Gemini` とかを頼りに頑張ってください。
@@ -161,7 +162,7 @@ Detect Magic,《魔力検知》,1
 
 なるべく自分に必要な文書をテストを兼ねて実行するようにはしていますが、ロジックの改善は一定量以上の同じ文書を繰り返し送る必要があるので、すぐに5万字、10万字とカウントが上がってしまいます。
 
-よろしければ **runequest77@gmil.com** 宛てに **[amazonギフト券](https://www.amazon.co.jp/b?node=2351652051)** をお送りいただけますと、費用の不安が減って私の心が安らぎます。
+よろしければ **runequest77@gmail.com** 宛てに **[amazonギフト券](https://www.amazon.co.jp/b?node=2351652051)** をお送りいただけますと、費用の不安が減って私の心が安らぎます。
 
 ## 連絡先
 [X(twitter) @nayuta77](https://x.com/nayuta77)
