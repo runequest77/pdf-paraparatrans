@@ -1,21 +1,16 @@
 import os
-import sys
 from dotenv import load_dotenv
-
-# modulesディレクトリをPythonのモジュール検索パスに追加
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 # .env ファイルの内容を読み込む
 load_dotenv()
-
 TRANSLATOR = os.getenv("TRANSLATOR", "google").lower()
 
 if TRANSLATOR == "deepl":
+    from api_translate_deepl import translate_text as translate_text_env
     print("Using DeepL translator.")
-    from modules.api_translate_deepl import translate_text_deepl as translate_text_env
 else:
+    from api_translate_google import translate_text as translate_text_env
     print("Using Google translator.")
-    from modules.api_translate_google import translate_text_google as translate_text_env
 
 def translate_text(text, source="EN", target="JA"):
     """
@@ -24,5 +19,6 @@ def translate_text(text, source="EN", target="JA"):
     return translate_text_env(text, source, target)
 
 if __name__ == "__main__":
-    sample_text = "<p>Hello <strong>ParaParaTrans</strong>!</p>"
-    print(translate_text(sample_text))
+    html_text = "<p>Hello <strong>ParaParaTrans</strong>!</p>"
+    translated_text = translate_text(html_text)
+    print(translated_text)

@@ -4,9 +4,7 @@ import os
 import csv
 import re
 
-# modulesディレクトリをPythonのモジュール検索パスに追加
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from modules.api_translate import translate_text  # 翻訳関数は別ファイルで定義済み
+from api_translate import translate_text  # 翻訳関数は別ファイルで定義済み
 
 def is_katakana(text):
     """

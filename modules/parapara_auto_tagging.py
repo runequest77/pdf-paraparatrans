@@ -1,7 +1,6 @@
 import json
 import sys
 import re
-import numpy as np
 
 def extract_header_footer_candidates(paragraphs):
     headers = {}

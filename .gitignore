@@ -14,7 +14,6 @@ __pycache__/
 # ルートのビルド成果物
 /build/
 /dist/
-*.spec
 
 # 仮想環境 (venvやpipenv)
 venv/

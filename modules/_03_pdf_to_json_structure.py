@@ -8,14 +8,10 @@ ppt01__multi_column.py と ppt01__reading_order_sort.py をインポートして
 import sys
 import json
 import fitz
-import numpy as np
 import os
 
-# modulesディレクトリをPythonのモジュール検索パスに追加
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-
-from modules._01_multi_column import column_boxes  # 既存の column_boxes 関数をインポート
-from modules._02_reading_order_sort import sort_by_reading_order  # 既存の sort_by_reading_order 関数をインポート
+from _01_multi_column import column_boxes
+from _02_reading_order_sort import sort_by_reading_order
 
 def serialize_rect(rect):
     """fitz.IRect → dict"""

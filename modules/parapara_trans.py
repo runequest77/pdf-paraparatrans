@@ -8,13 +8,9 @@ parapara形式ファイルを指定ページ範囲内で翻訳する。
 
 import json
 import re
-import sys
-import os
 from datetime import datetime
 
-# modulesディレクトリをPythonのモジュール検索パスに追加
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from modules.api_translate import translate_text  # 翻訳関数は別ファイルで定義済み
+from api_translate import translate_text  # 翻訳関数は別ファイルで定義済み
 
 def save_json(data, filepath):
     """

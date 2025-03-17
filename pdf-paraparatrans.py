@@ -6,8 +6,28 @@ import io
 import logging
 import sys
 from PyPDF2 import PdfReader, PdfWriter
-import re
 
+# .envのひな形
+ENV_TEMPLATE = """
+# 使用する翻訳APIをコメントアウトしてください。
+# KEYはコメントアウトしなくても影響ありません。
+
+TRANSLATOR=google
+# TRANSLATOR=deepl
+
+GOOGLE_API_KEY=YOUR_GOOGLE_API_KEY
+DEEPL_AUTH_KEY=YOUR_DEEPL_AUTH_KEY
+"""
+
+# .envが存在しない場合にひな形を出力
+ENV_PATH = ".env"
+if not os.path.exists(ENV_PATH):
+    print(f".env が存在しません。ひな形を作成します: {ENV_PATH}")
+    with open(ENV_PATH, "w", encoding="utf-8") as f:
+        f.write(ENV_TEMPLATE)
+
+# modulesディレクトリをPythonのモジュール検索パスに追加
+sys.path.append(os.path.join(os.path.dirname(__file__), 'modules'))
 from modules.parapara_pdf2json import extract_paragraphs
 from modules.api_translate import translate_text
 from modules.parapara_trans import paraparatrans_json_file

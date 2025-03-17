@@ -13,11 +13,8 @@ import sys
 import os
 import json
 
-# modulesディレクトリをPythonのモジュール検索パスに追加
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-
-from modules._03_pdf_to_json_structure import extract_pdf_structure
-from modules._04_paragraph_generator import generate_paragraphs
+from _03_pdf_to_json_structure import extract_pdf_structure
+from _04_paragraph_generator import generate_paragraphs
 
 def extract_paragraphs(pdf_path, json_path=None):
     if not pdf_path.lower().endswith(".pdf"):
