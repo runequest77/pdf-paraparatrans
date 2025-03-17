@@ -1,6 +1,7 @@
 Flask>=2.0.0
 python-dotenv
 numpy
+PyPDF2
 PyMuPDF
 google-cloud-translate
 deepl
