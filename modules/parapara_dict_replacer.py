@@ -22,7 +22,7 @@ def load_dictionary(dict_file: str) -> Tuple[Dict[str, str], Dict[str, str]]:
     dict_cs = {}  # 3列目が1：大文字小文字区別
     dict_ci = {}  # 3列目が0：大文字小文字無視
     with open(dict_file, newline='', encoding='utf-8') as f:
-        reader = csv.reader(f)
+        reader = csv.reader(f, delimiter='\t')
         for row in reader:
             if len(row) < 2:
                 continue

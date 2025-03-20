@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('pageTransButton').addEventListener('click', transPage);
 });
 
-function transPage () {
+function transPage() {
     fetch(`/api/paraparatrans/${encodeURIComponent(pdfName)}`, {
         method: 'POST',
         headers: {
@@ -79,13 +79,20 @@ function transPage () {
         .then(response => response.json())
         .then(data => {
             if (data.status === "ok") {
-                // JSONファイル再読み込み（ページ全体をリロード）
-                fetchBookData();
+                console.log('翻訳が成功しました。');
             } else {
                 console.error('エラー:', data.message);
+                alert('翻訳エラー: ' + data.message);
             }
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => {
+            console.error('Error:', error);
+            alert('翻訳中にエラーが発生しました。詳細はコンソールを確認してください。');
+        })
+        .finally(() => {
+            // 成功・失敗に関わらず必ず実行
+            fetchBookData();
+        });
 }
 
 function transAllPages() {
@@ -103,17 +110,19 @@ function transAllPages() {
         .then(response => response.json())
         .then(data => {
             if (data.status === "ok") {
-                // JSONファイル再読み込み（ページ全体をリロード）
-                fetchBookData();
-                alert("全ページの翻訳が成功しました");
+                console.log('翻訳が成功しました。');
             } else {
                 console.error('エラー:', data.message);
-                alert("翻訳エラー: " + data.message);
+                alert('翻訳エラー: ' + data.message);
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert("翻訳中にエラーが発生しました: " + error);
+            alert('翻訳中にエラーが発生しました。詳細はコンソールを確認してください。');
+        })
+        .finally(() => {
+            // 成功・失敗に関わらず必ず実行
+            fetchBookData();
         });
 }
 
@@ -401,6 +410,7 @@ function saveOrder() {
     .then(data => {
         console.log('Order saved:', data);
         alert('順序が保存されました');
+        fetchBookData();
     })
     .catch(error => {
         console.error('Error saving order:', error);

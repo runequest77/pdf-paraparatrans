@@ -45,21 +45,22 @@ logging.basicConfig(level=logging.DEBUG)
 
 # PDFとJSONの配置ディレクトリ（必要に応じて変更してください）
 BASE_FOLDER = "./data"  # Windows例。Linux等の場合はパスを変更してください
-DICT_CSV_PATH = os.path.join(BASE_FOLDER, "dict.csv")
+DICT_PATH = os.path.join(BASE_FOLDER, "dict.txt")
 
-# dict.csvのひな形
-DICT_CSV_TEMPLATE = """Rune Quest,ルーンクエスト,0
-Runequest,ルーンクエスト,0
-Glorantha,グローランサ,0
-Detect Magic,《魔力検知》,1
+# dict.txtのひな形
+DICT_TEMPLATE = """#英語\t#日本語\t#状態\t#出現回数
+Rune Quest\tルーンクエスト\t0\t0
+Runequest\tルーンクエスト\t0\t0
+Glorantha\tグローランサ\t0\t0
+Detect Magic\t《魔力検知》\t1\t0
 """
 
-# dict.csvが存在しない場合にひな形を出力
-if not os.path.exists(DICT_CSV_PATH):
-    print(f"dict.csv が存在しません。ひな形を作成します: {DICT_CSV_PATH}")
+# dict.txtが存在しない場合にひな形を出力
+if not os.path.exists(DICT_PATH):
+    print(f"dict.txt が存在しません。ひな形を作成します: {DICT_PATH}")
     os.makedirs(BASE_FOLDER, exist_ok=True)
-    with open(DICT_CSV_PATH, "w", encoding="utf-8") as f:
-        f.write(DICT_CSV_TEMPLATE)
+    with open(DICT_PATH, "w", encoding="utf-8") as f:
+        f.write(DICT_TEMPLATE)
 
 # ログ設定
 logging.basicConfig(level=logging.DEBUG)
@@ -247,13 +248,13 @@ def update_paragraph_api(pdf_name):
     new_block_tag = data.get("block_tag", "p")
 
     print(json.dumps(data, indent=2, ensure_ascii=False))
-    print("update_paragraph_api:id:")
 
     pdf_path, json_path = get_paths(pdf_name)
     if not os.path.exists(json_path):
         return jsonify({"status": "error", "message": "JSONが存在しません"}), 400
     with open(json_path, "r", encoding="utf-8") as f:
         book_data = json.load(f)
+
     found = None
     for p in book_data["paragraphs"]:
         if str(p["id"]) == str(paragraph_id):
@@ -261,6 +262,7 @@ def update_paragraph_api(pdf_name):
             break
     if found is None:
         return jsonify({"status": "error", "message": "該当パラグラフが見つかりません"}), 404
+
     found["src_text"] = new_src_text
     found["trans_text"] = new_trans_text
     found["trans_status"] = new_status
@@ -274,14 +276,14 @@ def update_paragraph_api(pdf_name):
 # API:ファイルへの辞書全置換
 @app.route("/api/dict_replace_all/<pdf_name>", methods=["POST"])
 def dict_replace_all_api(pdf_name):
-    print("DICT_CSV_PATH" + DICT_CSV_PATH)
-    if not os.path.exists(DICT_CSV_PATH):
-        return jsonify({"status": "error", "message": "dict.csvが存在しません2"}), 404
+    print("DICT_PATH" + DICT_PATH)
+    if not os.path.exists(DICT_PATH):
+        return jsonify({"status": "error", "message": "dict.txtが存在しません2"}), 404
     pdf_path, json_path = get_paths(pdf_name)
     if not os.path.exists(json_path):
         return jsonify({"status": "error", "message": "対象のJSONファイルが存在しません"}), 404
     try:
-        file_replace_with_dict(json_path, DICT_CSV_PATH)
+        file_replace_with_dict(json_path, DICT_PATH)
     except Exception as e:
         return jsonify({"status": "error", "message": f"辞書適用中のエラー: {str(e)}"}), 500
     return jsonify({"status": "ok"}), 200
@@ -378,7 +380,7 @@ def dict_create_api(pdf_name):
     if not os.path.exists(json_path):
         return jsonify({"status": "error", "message": "JSONファイルが存在しません"}), 404
     try:
-        dict_create(json_path, DICT_CSV_PATH)
+        dict_create(json_path, DICT_PATH)
     except Exception as e:
         return jsonify({"status": "error", "message": f"辞書生成エラー: {str(e)}"}), 500
     return jsonify({"status": "ok", "message": "辞書生成完了"}), 200
@@ -389,7 +391,7 @@ def dict_trans_api(pdf_name):
     if not os.path.exists(json_path):
         return jsonify({"status": "error", "message": "JSONファイルが存在しません"}), 404
     try:
-        dict_trans(DICT_CSV_PATH)
+        dict_trans(DICT_PATH)
     except Exception as e:
         return jsonify({"status": "error", "message": f"辞書翻訳エラー: {str(e)}"}), 500
     return jsonify({"status": "ok", "message": "辞書翻訳完了"}), 200

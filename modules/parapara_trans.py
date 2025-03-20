@@ -6,6 +6,7 @@ parapara形式ファイルを指定ページ範囲内で翻訳する。
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import html
 import json
 import re
 from datetime import datetime
@@ -28,14 +29,17 @@ def process_group(paragraphs_group, data, filepath):
        - modified_at を現在時刻に更新
     4. 翻訳結果を反映した JSON データをファイルへ保存する
     """
-    # 各段落のテキストを生成
-    texts = [f"【{para['id']}】{para['src_replaced']}" for para in paragraphs_group]
+    # 各段落のテキストを生成（src_replacedをHTMLエスケープ）
+    texts = [f"【{para['id']}】{html.escape(para['src_replaced'])}" for para in paragraphs_group]
     concatenated_text = "".join(texts)
-    
-    print("process_group")
+    # concatenated_textの最初の50文字をコンソールに出力
+    print("FOR DEBUG(LEFT50/1TRANS):" + concatenated_text[:50])
 
-    # 翻訳実行
-    translated_text = translate_text(concatenated_text, source="en", target="ja")
+    try:
+        translated_text = translate_text(concatenated_text, source="en", target="ja")
+    except Exception as e:
+        print(f"Error: 翻訳APIの呼び出しに失敗しました: {e}")
+        return
     
     # 翻訳結果を【id】のパターンで分割
     parts = re.split(r'(?=【\d+】)', translated_text)
@@ -59,9 +63,6 @@ def process_group(paragraphs_group, data, filepath):
                 print(f"Warning: 翻訳結果のid {para_id} に対応する段落が見つかりません。")
         else:
             print("Warning: 翻訳結果の形式が不正です。")
-    
-    # 翻訳完了後は必ず保存（費用対効果の観点から重要）
-    save_json(data, filepath)
 
 def recalc_trans_status_counts(data):
     """
@@ -77,24 +78,37 @@ def recalc_trans_status_counts(data):
 def paraparatrans_json_file(filepath, start_page, end_page):
     """
     JSONファイルを読み込み、指定したページ範囲内の段落について翻訳処理を行い、結果をファイルへ保存する。
-    
     ・filepath: JSONファイルのパス
     ・start_page, end_page: ページ範囲（両端を含む）
-    
-    各グループは5000文字以内に収まるように連結して翻訳され、各グループ処理後に必ずファイルへ保存する。
+    各グループは5000文字以内に収まるように連結して翻訳される。
     """
-    print("paraparatrans_json_file")
+    print(f"翻訳処理を開始します: {filepath} ({start_page} 〜 {end_page} ページ)")
 
     # JSONファイル読み込み
     with open(filepath, 'r', encoding='utf-8') as f:
-        data = json.load(f)
+        book_data = json.load(f)
+
+    # start_pageからend_pageをループしてpagetransを実行
+    for page in range(start_page, end_page + 1):
+        pagetrans(filepath, book_data, page)
+
+    # 翻訳ステータスの集計を更新
+    recalc_trans_status_counts(book_data)
+    save_json(book_data, filepath)
     
-    paragraphs = data.get("paragraphs", [])
+    return book_data
+
+def pagetrans(filepath, book_data, page):
+    """
+    各グループは5000文字以内に収まるように連結して翻訳され、各グループ処理後に必ずファイルへ保存する。
+    """
+    print(f"ページ {page} の翻訳を開始します...")
+    paragraphs = book_data.get("paragraphs", [])
     
     # 指定されたページ範囲と未翻訳パラグラフで抽出し、page と order でソート
     filtered_paragraphs = [
         p for p in paragraphs 
-        if start_page <= p.get("page", 0) <= end_page 
+        if page == p.get("page", 0) 
         and p.get("trans_status") == "none" 
         and p.get("block_tag") not in ("header", "footer")
     ]
@@ -108,7 +122,7 @@ def paraparatrans_json_file(filepath, start_page, end_page):
         text_to_add = f"【{para['id']}】{para['src_replaced']}"
         if current_length + len(text_to_add) > 5000:
             if current_group:
-                process_group(current_group, data, filepath)
+                process_group(current_group, book_data, filepath)
                 current_group = []
                 current_length = 0
         current_group.append(para)
@@ -116,13 +130,10 @@ def paraparatrans_json_file(filepath, start_page, end_page):
     
     # 残ったグループがあれば処理
     if current_group:
-        process_group(current_group, data, filepath)
-    
-    # 翻訳ステータスの集計を更新
-    recalc_trans_status_counts(data)
-    save_json(data, filepath)
-    
-    return data
+        process_group(current_group, book_data, filepath)
+
+    save_json(book_data, filepath)    
+    print(f"ページ {page} の翻訳が完了しました。")
 
 if __name__ == '__main__':
     import argparse

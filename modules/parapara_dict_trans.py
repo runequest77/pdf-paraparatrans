@@ -31,7 +31,7 @@ def dict_trans(dict_filename):
 
     try:
         with open(dict_filename, "r", encoding="utf-8", newline="") as f:
-            reader = csv.reader(f)
+            reader = csv.reader(f, delimiter='\t')
             for row in reader:
                 if not row:
                     continue
@@ -64,7 +64,7 @@ def dict_trans(dict_filename):
 
     try:
         with open(dict_filename, "w", encoding="utf-8", newline="") as out_file:
-            writer = csv.writer(out_file)
+            writer = csv.writer(out_file, delimiter='\t')
             for key in sorted_keys:
                 value, state = updated_dict[key]
                 writer.writerow([key, value, state])

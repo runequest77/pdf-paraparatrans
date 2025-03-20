@@ -2,6 +2,8 @@
 import json
 import re
 import sys
+import csv
+import os
 
 def extract_phrases(text):
     """
@@ -15,11 +17,11 @@ def extract_phrases(text):
     )
     return pattern.findall(text)
 
-def dict_create(input_filename, output_filename="dict.csv"):
+def dict_create(input_filename, output_filename="dict.txt"):
     """
     JSONファイル(input_filename)から段落の src_text を読み取り、
     条件に沿った語句を抽出して重複を除去、既存のdictファイルをマージして
-    状態を示す3列目付きでソート後、output_filename に「キー,値,状態」形式でCSV出力する。
+    状態を示す3列目付きでソート後、output_filename に「#英語,#日本語,#状態,#出現回数」形式でCSV出力する。
     
     状態:
       0: 大文字小文字を区別せずに置換
@@ -29,24 +31,32 @@ def dict_create(input_filename, output_filename="dict.csv"):
       
     既存のdictファイルが2列の場合、状態は0とみなす。
     """
-    import os
-
     # 既存のdictファイルを読み込む（存在しなければ空の辞書）
     existing_dict = {}
     if os.path.exists(output_filename):
         try:
-            with open(output_filename, "r", encoding="utf-8") as f:
-                for line in f:
-                    line = line.strip()
-                    if not line:
-                        continue
-                    parts = line.split(",")
-                    if len(parts) == 2:
-                        key, value = parts
+            with open(output_filename, "r", encoding="utf-8", newline='') as f:
+                reader = csv.reader(f, delimiter='\t')
+                # ヘッダ行の有無をチェック
+                first_row = next(reader, None)
+                if first_row and first_row[0].startswith("#英語"):
+                    # ヘッダ行がある場合はスキップ
+                    pass
+                else:
+                    # ヘッダ行がない場合は最初の行を処理
+                    if first_row:
+                        reader = [first_row] + list(reader)
+                for row in reader:
+                    if len(row) == 2:
+                        key, value = row
                         state = "0"
+                        count = 0
+                    elif len(row) == 3:
+                        key, value, state = row
+                        count = 0
                     else:
-                        key, value, state = parts[0], parts[1], parts[2]
-                    existing_dict[key] = (value, state)
+                        key, value, state, count = row[0], row[1], row[2], int(row[3])
+                    existing_dict[key] = (value, state, count)
         except Exception as e:
             print(f"Error reading {output_filename}: {e}")
             sys.exit(1)
@@ -68,10 +78,15 @@ def dict_create(input_filename, output_filename="dict.csv"):
             cleaned = clean_key(phrase)
             if cleaned:
                 phrase_set.add(cleaned)
+                if cleaned in existing_dict:
+                    value, state, count = existing_dict[cleaned]
+                    existing_dict[cleaned] = (value, state, count + 1)
+                else:
+                    existing_dict[cleaned] = (cleaned, "9", 1)
 
     # 既存のエントリを優先するための存在チェック（状態により判定）
     def exists_in_existing(new_key):
-        for exist_key, (value, state) in existing_dict.items():
+        for exist_key, (value, state, count) in existing_dict.items():
             if state == "0":
                 if new_key.lower() == exist_key.lower():
                     return True
@@ -86,16 +101,18 @@ def dict_create(input_filename, output_filename="dict.csv"):
     # 新規抽出エントリ（状態9）のマージ
     for key in phrase_set:
         if not exists_in_existing(key):
-            existing_dict[key] = (key, "9")
+            existing_dict[key] = (key, "9", 1)
 
     # 文字数降順、同じ文字数の場合はアルファベット昇順でソート
     sorted_keys = sorted(existing_dict.keys(), key=lambda s: (-len(s), s))
 
-    with open(output_filename, "w", encoding="utf-8") as out_file:
+    with open(output_filename, "w", encoding="utf-8", newline='') as out_file:
+        writer = csv.writer(out_file, delimiter='\t')
+        # ヘッダ行を追加
+        writer.writerow(["#英語", "#日本語", "#状態", "#出現回数"])
         for key in sorted_keys:
-            value, state = existing_dict[key]
-            out_file.write(f"{key},{value},{state}\n")
-
+            value, state, count = existing_dict[key]
+            writer.writerow([key, value, state, count])
 
 def clean_key(key: str) -> str:
     """
@@ -149,7 +166,7 @@ def main():
         sys.exit(1)
 
     input_filename = sys.argv[1]
-    output_filename = sys.argv[2] if len(sys.argv) > 2 else "dict.csv"
+    output_filename = sys.argv[2] if len(sys.argv) > 2 else "dict.txt"
     dict_create(input_filename, output_filename)
 
 if __name__ == '__main__':

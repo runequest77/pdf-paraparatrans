@@ -70,7 +70,7 @@ function onSaveButtonClick(event, paragraph, divSrc, srcText, transText, blockTa
     srcText.contentEditable = false;
     transText.contentEditable = false;
     divSrc.querySelector('.edit-ui').style.display = 'none';
-    divSrc.querySelector('.edit-button').style.display = 'inline';
+    divSrc.querySelector('.edit-button').style.visibility = 'visible'; // visibilityを直接操作
     $("#srcParagraphs").sortable("enable");
     divSrc.style.cursor = 'move';
 
@@ -82,9 +82,14 @@ function onSaveButtonClick(event, paragraph, divSrc, srcText, transText, blockTa
     paragraph.trans_text = transText.innerHTML;
     paragraph.block_tag = blockTagSelect.value;
     blockTagSpan.innerText = paragraph.block_tag;
-    divSrc.className = `paragraph-box status-${paragraph.trans_status}`;
-    updateParagraphData(bookData.paragraphs, paragraph);
+
+    // パラグラフの背景をblock_tagに基づいて更新
+    let blockTagClass = `block-tag-${paragraph.block_tag}`;
+    divSrc.className = `paragraph-box ${blockTagClass} status-${paragraph.trans_status}`;
+    
+    // サーバー保存とクライアント更新を統合
     saveParagraphData(paragraph);
+    updateEditUiBackground(divSrc, paragraph.trans_status);
 }
 
 function onEditCancelClick(event, paragraph, divSrc, srcText, transText, blockTagSpan) {
@@ -195,12 +200,11 @@ function renderParagraphs() {
         let statusRadio = divSrc.querySelector(`input[name='status-${p.id}'][value='${p.trans_status}']`);
         if (statusRadio) { statusRadio.checked = true; }
 
-        editButton.addEventListener('click', onEditButtonClick);
+        editButton.addEventListener('click', (event) => onEditButtonClick(event));
         transButton.addEventListener('click', (e) => onTransButtonClick(e, p, divSrc));
         saveButton.addEventListener('click', (e) => onSaveButtonClick(e, p, divSrc, srcText, transText, blockTagSelect, blockTagSpan));
         editCancel.addEventListener('click', (e) => onEditCancelClick(e, p, divSrc, srcText, transText, blockTagSpan));
         document.addEventListener('keydown', (e) => onKeyDown(e, divSrc, p, srcText, transText, blockTagSpan));
-
         // ラジオボタンの変更イベントを登録
         addRadioChangeListener(divSrc, p);
     }
@@ -271,10 +275,20 @@ function saveParagraphData(paragraph) {
     .then(response => response.json())
     .then(data => {
         console.log('Success:', data);
-        updateTransStatusCounts();
+
+        if (data.status === "ok") {
+            console.log('Success:', data);
+            // サーバーへの保存が成功した場合のみクライアント側を更新
+            updateParagraphData(bookData.paragraphs, paragraph);
+            updateTransStatusCounts(bookData.trans_status_counts);
+        } else {
+            console.error('Error:', data.message);
+            alert('データ保存中にエラーが発生しました: ' + data.message);
+        }
     })
     .catch((error) => {
         console.error('Error:', error);
+        alert('データ保存中にエラーが発生しました。詳細はコンソールを確認してください。');
     });
 }
 
@@ -294,4 +308,3 @@ function addRadioChangeListener(divSrc, paragraph) {
         });
     });
 }
-
