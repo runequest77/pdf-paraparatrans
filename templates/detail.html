@@ -71,6 +71,77 @@
             background: rgba(255, 255, 255, 0); /* 透明 */
             display: none; /* 初期は非表示 */
         }
+
+        #tocContent {
+            height: 100%; /* 親要素の高さに合わせる */
+            overflow-y: auto; /* 縦スクロールを有効にする */
+            overflow-x: hidden; /* 横スクロールを無効にする */
+            padding: 2px; /* 内容に余白を追加 */
+            box-sizing: border-box; /* パディングを含めたサイズ計算 */
+        }
+
+        .toc-item-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 4px;
+            padding-left: calc(var(--level) * 4px); /* 階層に応じたインデント */
+        }
+        
+        .toggle-icon {
+            margin-right: 4px;
+            font-size: 12px;
+            user-select: none;
+        }
+        
+        /* レベルごとのスタイル */
+        .toc-item.level-1 {
+            font-size: 18px;
+            font-weight: bold;
+            background-color: #f0f8ff; /* 薄い青 */
+            border-radius: 4px;
+        }
+        
+        .toc-item.level-2 {
+            font-size: 16px;
+            font-weight: bold;
+            background-color: #e6f7ff; /* さらに薄い青 */
+            border-radius: 4px;
+        }
+        
+        .toc-item.level-3 {
+            font-size: 14px;
+            font-weight: bold;
+            background-color: #ffffff; /* 白 */
+            border-radius: 4px;
+        }
+        
+        .toc-item.level-4 {
+            font-size: 12px;
+            background-color: #f9f9f9; /* 薄い灰色 */
+            border-radius: 4px;
+        }
+        
+        .toc-item.level-5 {
+            font-size: 10px;
+            background-color: #f0f0f0; /* さらに薄い灰色 */
+            border-radius: 4px;
+        }
+        
+        .toc-item.level-6 {
+            font-size: 10px;
+            background-color: #eaeaea; /* 最も薄い灰色 */
+            border-radius: 4px;
+        }
+
+        .toc-children {
+            margin-left: 4%;
+            border-left: 1px dashed #ccc;
+        }
+
+        .paragraph-box.highlight {
+            border: 2px solid #0078d7; /* 青色の枠線 */
+            background-color: #e6f7ff; /* 薄い青色の背景 */
+        }
     </style>
 </head>
 <body data-pdf-name="{{ pdf_name }}">
