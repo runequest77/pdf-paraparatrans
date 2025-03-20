@@ -4,6 +4,7 @@ var showSrcHtml = true;
 var showTransAuto = true;
 var showSrcReplaced = true;
 
+
 function initSrcPanel() {
     document.getElementById('toggleSrcHtmlCheckbox').addEventListener('change', toggleSrcHtml);
     document.getElementById('toggleSrcCheckbox').addEventListener('change', toggleSrc);
@@ -36,7 +37,7 @@ function onEditButtonClick(event) {
     srcText.contentEditable = true;
     transText.contentEditable = true;
     editUI.style.display = 'block';
-    editButton.style.display = 'none';
+    editButton.style.visibility = 'hidden'; // visibilityを直接操作
     $("#srcParagraphs").sortable("disable");
     divSrc.style.cursor = 'text';
 }
@@ -91,13 +92,16 @@ function onEditCancelClick(event, paragraph, divSrc, srcText, transText, blockTa
     srcText.contentEditable = false;
     transText.contentEditable = false;
     divSrc.querySelector('.edit-ui').style.display = 'none';
-    divSrc.querySelector('.edit-button').style.display = 'inline';
+    divSrc.querySelector('.edit-button').style.visibility = 'visible'; // visibilityを直接操作
     $("#srcParagraphs").sortable("enable");
     divSrc.style.cursor = 'move';
 
     srcText.innerHTML = paragraph.src_text;
     transText.innerHTML = paragraph.trans_text;
     paragraph.block_tag = blockTagSpan.innerText;
+
+    // 元のtrans_statusに基づいて背景色を復元
+    updateEditUiBackground(divSrc, paragraph.trans_status);
 }
 
 function onKeyDown(event, divSrc, paragraph, srcText, transText, blockTagSpan) {
@@ -106,13 +110,16 @@ function onKeyDown(event, divSrc, paragraph, srcText, transText, blockTagSpan) {
         srcText.contentEditable = false;
         transText.contentEditable = false;
         divSrc.querySelector('.edit-ui').style.display = 'none';
-        divSrc.querySelector('.edit-button').style.display = 'inline';
+        divSrc.querySelector('.edit-button').style.visibility = 'visible'; // visibilityを直接操作
         $("#srcParagraphs").sortable("enable");
         divSrc.style.cursor = 'move';
 
         srcText.innerHTML = paragraph.src_text;
         transText.innerHTML = paragraph.trans_text;
         paragraph.block_tag = blockTagSpan.innerText;
+
+        // 元のtrans_statusに基づいて背景色を復元
+        updateEditUiBackground(divSrc, paragraph.trans_status);
     }
 }
 
@@ -122,8 +129,7 @@ function renderParagraphs() {
     let srcContainer = document.getElementById("srcParagraphs");
     srcContainer.style.display = 'none'; // チラつき防止にいったん非表示
     srcContainer.innerHTML = "";
-    
-    // ページ番号順, オーダー順にソート
+
     bookData.paragraphs.sort((a, b) => (a.page === b.page ? a.order - b.order : a.page - b.page));
 
     for (let i = 0; i < bookData.paragraphs.length; i++) {
@@ -131,49 +137,51 @@ function renderParagraphs() {
         if (p.page !== currentPage) continue;
 
         let divSrc = document.createElement("div");
-        // block_tagが header または footer なら "block-tag-gray" クラスを付与
-        let extraClass = (p.block_tag === 'header' || p.block_tag === 'footer') ? 'block-tag-ignore' : '';
-        divSrc.className = `paragraph-box status-${p.trans_status} ${extraClass}`;
+        let blockTagClass = `block-tag-${p.block_tag}`;
+        let statusClass = `status-${p.trans_status}`;
+        divSrc.className = `paragraph-box ${blockTagClass}`;
         divSrc.innerHTML = `
-            <div class="drag-handle">
-                <span class='paragraph-id'>${p.id}</span>
-                <span class="block-tag">${p.block_tag}</span>
-            </div>
             <div class='src-html'>${p.src_html}</div>
             <div class='src-text' data-original="${p.src_text}">${p.src_text}</div>
             <div class='src-replaced'>${p.src_replaced}</div>
             <div class='trans-auto'>${p.trans_auto}</div>
             <div class='trans-text' data-original="${p.trans_text}">${p.trans_text}</div>
-            <button class='edit-button'>...</button>
-            <div class='edit-ui'>
-                <label>種別:
-                    <select class="type-select">
-                        <option value="p">p</option>
-                        <option value="h1">h1</option>
-                        <option value="h2">h2</option>
-                        <option value="h3">h3</option>
-                        <option value="h4">h4</option>
-                        <option value="h5">h5</option>
-                        <option value="h6">h6</option>
-                        <option value="li">li</option>
-                        <option value="ul">ul</option>
-                        <option value="dd">dd</option>
-                        <option value="header">header</option>
-                        <option value="footer">footer</option>
-                    </select>
-                </label>
-                <button class='trans-button'>自動翻訳</button>
-                <label><input type='radio' name='status-${p.id}' value='none'> 未翻訳</label>
-                <label><input type='radio' name='status-${p.id}' value='auto'> 自動翻訳</label>
-                <label><input type='radio' name='status-${p.id}' value='draft'> 下訳</label>
-                <label><input type='radio' name='status-${p.id}' value='fixed'> 確定</label>
-                <button class='save-button'>保存</button>
-                <button class='edit-cancel'>...</button>
+            <div class='edit-box ${statusClass}'>
+                <button class='edit-button'>...</button>
+                <div class="drag-handle">
+                    <span class='paragraph-id'>${p.id}</span>
+                    <span class="block-tag">${p.block_tag}</span>
+                </div>
+                <div class='edit-ui ${statusClass}'>
+                    <label>種別:
+                        <select class="type-select">
+                            <option value="p">p</option>
+                            <option value="h1">h1</option>
+                            <option value="h2">h2</option>
+                            <option value="h3">h3</option>
+                            <option value="h4">h4</option>
+                            <option value="h5">h5</option>
+                            <option value="h6">h6</option>
+                            <option value="li">li</option>
+                            <option value="ul">ul</option>
+                            <option value="dd">dd</option>
+                            <option value="header">header</option>
+                            <option value="footer">footer</option>
+                        </select>
+                    </label>
+                    <button class='trans-button'>自動翻訳</button>
+                    <label><input type='radio' name='status-${p.id}' value='none'> 未翻訳</label>
+                    <label><input type='radio' name='status-${p.id}' value='auto'> 自動翻訳</label>
+                    <label><input type='radio' name='status-${p.id}' value='draft'> 下訳</label>
+                    <label><input type='radio' name='status-${p.id}' value='fixed'> 確定</label>
+                    <button class='save-button'>保存</button>
+                    <button class='edit-cancel'>...</button>
+                </div>
             </div>
         `;
         srcContainer.appendChild(divSrc);
 
-        // 各要素の取得
+        // イベントリスナーの登録
         let editButton = divSrc.querySelector('.edit-button');
         let transButton = divSrc.querySelector('.trans-button');
         let saveButton = divSrc.querySelector('.save-button');
@@ -182,18 +190,19 @@ function renderParagraphs() {
         let transText = divSrc.querySelector('.trans-text');
         let blockTagSelect = divSrc.querySelector('.type-select');
         let blockTagSpan = divSrc.querySelector('.block-tag');
-        
-        // 初期値設定
+
         blockTagSelect.value = p.block_tag;
         let statusRadio = divSrc.querySelector(`input[name='status-${p.id}'][value='${p.trans_status}']`);
         if (statusRadio) { statusRadio.checked = true; }
 
-        // イベントリスナーの登録（引数はアロー関数で渡す）
         editButton.addEventListener('click', onEditButtonClick);
         transButton.addEventListener('click', (e) => onTransButtonClick(e, p, divSrc));
         saveButton.addEventListener('click', (e) => onSaveButtonClick(e, p, divSrc, srcText, transText, blockTagSelect, blockTagSpan));
         editCancel.addEventListener('click', (e) => onEditCancelClick(e, p, divSrc, srcText, transText, blockTagSpan));
         document.addEventListener('keydown', (e) => onKeyDown(e, divSrc, p, srcText, transText, blockTagSpan));
+
+        // ラジオボタンの変更イベントを登録
+        addRadioChangeListener(divSrc, p);
     }
     restoreCheckboxStates();
     srcContainer.style.display = 'block'; // 再表示
@@ -266,6 +275,23 @@ function saveParagraphData(paragraph) {
     })
     .catch((error) => {
         console.error('Error:', error);
+    });
+}
+
+// ラジオボタンの切り替えでedit-uiの背景色を変更
+function updateEditUiBackground(divSrc, transStatus) {
+    const editUi = divSrc.querySelector('.edit-ui');
+    editUi.className = `edit-ui status-${transStatus}`;
+}
+
+// ラジオボタンの変更イベントを追加
+function addRadioChangeListener(divSrc, paragraph) {
+    const radios = divSrc.querySelectorAll(`input[name='status-${paragraph.id}']`);
+    radios.forEach(radio => {
+        radio.addEventListener('change', (event) => {
+            const selectedStatus = event.target.value;
+            updateEditUiBackground(divSrc, selectedStatus);
+        });
     });
 }
 

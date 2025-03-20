@@ -33,7 +33,8 @@ from modules.api_translate import translate_text
 from modules.parapara_trans import paraparatrans_json_file
 from modules.parapara_dict_replacer import file_replace_with_dict
 from modules.parapara_json2html import json2html
-from modules.parapara_auto_tagging import auto_tagging
+from modules.parapara_tagging_headerfooter import headerfooter_tagging
+from modules.parapara_tagging_by_structure import structure_tagging
 from modules.parapara_dict_create import dict_create
 from modules.parapara_dict_trans import dict_trans
 
@@ -364,7 +365,9 @@ def auto_tagging_api(pdf_name):
     if not os.path.exists(json_path):
         return jsonify({"status": "error", "message": "JSONファイルが存在しません"}), 404
     try:
-        auto_tagging(json_path)
+        headerfooter_tagging(json_path)
+        structure_tagging(json_path, BASE_FOLDER + "/symbolfonts.txt")
+
     except Exception as e:
         return jsonify({"status": "error", "message": f"自動タグ付けエラー: {str(e)}"}), 500
     return jsonify({"status": "ok", "message": "自動タグ付け完了"}), 200
@@ -400,5 +403,5 @@ def recalc_trans_status_counts(book_data):
     book_data["trans_status_counts"] = counts
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=False)
+    app.run(host="0.0.0.0", port=5077, debug=False)
 

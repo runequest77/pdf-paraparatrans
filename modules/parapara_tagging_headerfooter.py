@@ -50,7 +50,7 @@ def count_normalized_text_occurrences(paragraphs):
     
     return text_counts
 
-def auto_tagging(file_path):
+def headerfooter_tagging(file_path):
     with open(file_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
 
@@ -124,4 +124,4 @@ if __name__ == "__main__":
         sys.exit(1)
 
     json_path = sys.argv[1]
-    auto_tagging(json_path)
+    headerfooter_tagging(json_path)

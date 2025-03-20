@@ -12,11 +12,34 @@ async function fetchBookData() {
         document.getElementById("pageCount").innerText = bookData.page_count;
 
         updateTransStatusCounts(bookData.trans_status_counts);
-
+        updateHeadStyles();
         jumpToPage(currentPage);
     } catch (error) {
         console.error("Error fetching book data:", error);
     }
+}
+
+// boookDataからhead-stylesを読み込み
+function updateHeadStyles() {
+    if (!bookData.head_styles) {
+        console.warn("head_styles が存在しません");
+        return;
+    }
+
+    const styleElement = document.querySelector("style.book-data-head-styles");
+    if (!styleElement) {
+        console.error("スタイルタグが見つかりません: .book-data-head-styles");
+        return;
+    }
+
+    let newStyles = "";
+    for (let className in bookData.head_styles) {
+        if (bookData.head_styles.hasOwnProperty(className)) {
+            newStyles += `.${className} { ${bookData.head_styles[className]} }\n`;
+        }
+    }
+
+    styleElement.innerHTML = newStyles;
 }
 
 function updateTransStatusCounts(counts) {

@@ -44,7 +44,7 @@ def extract_paragraphs(pdf_path, json_path=None):
             "draft": 0,
             "fixed": 0
         },
-        "heads_tyles": style_and_paragraphs["head_styles"],
+        "head_styles": style_and_paragraphs["head_styles"],
         "paragraphs": style_and_paragraphs["paragraphs"]
     }
 
