@@ -26,16 +26,16 @@
 }
 /* 翻訳状態に基づく edit-box の背景色 */
 .edit-box.status-none {
-    background-color: #f9f9f9; /* 未翻訳 */
+    background-color: var(--dark-red); /* 未翻訳 */
 }
 .edit-box.status-auto {
-    background-color: #e0f7fa; /* 自動翻訳 */
+    background-color: var(--dark-blue); /* 自動翻訳 */
 }
 .edit-box.status-draft {
-    background-color: #fff9c4; /* 下訳 */
+    background-color: var(--dark-orange); /* 下訳 */
 }
 .edit-box.status-fixed {
-    background-color: #c8e6c9; /* 確定 */
+    background-color: var(--dark-green); /* 確定 */
 }
 
 .paragraph-box.highlight {
@@ -60,7 +60,6 @@
     width: 48px;
     flex-direction: column; /* 子要素を縦に並べる */
     align-items: top;
-    color: black;
 }
 .drag-handle .paragraph-id,
 .drag-handle .block-tag {
@@ -82,19 +81,17 @@
     right: 0; /* 必要に応じて調整 */
     top: 100%; /* 親要素の下に配置 */
     width: auto;
-    background: white;
     border: 4px solid #999;
     padding: 10px;
     z-index: 10;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* 影を追加 */
     white-space: nowrap; /* 内容が折り返されるように設定 */
     font-weight: normal;
-    color: black;
-    background-color: white;
+    color: #ccc;
+    background-color: #333 ;
 }
 .editing .src-text, .editing .trans-text {
     border: 1px solid #000;
-    background: #fff;
 }
 .src-text {
     border-left: 4px solid #e74c3c;
@@ -107,18 +104,6 @@
 }
 .trans-text {
     border-left: 4px solid #2ecc71;
-}
-.status-none {
-    background-color: #f9f9f9; /* 未翻訳 */
-}
-.status-auto {
-    background-color: #e0f7fa; /* 自動翻訳 */
-}
-.status-draft {
-    background-color: #fff9c4; /* 下訳 */
-}
-.status-fixed {
-    background-color: #c8e6c9; /* 確定 */
 }
 .block-tag-ignore {
     color: #ccc;
@@ -134,7 +119,6 @@
 }
 
 .block-tag-p {
-    background-color: #ffffff; /* 通常の段落用 */
 }
 
 .block-tag-h1 {

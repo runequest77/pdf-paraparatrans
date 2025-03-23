@@ -1,11 +1,6 @@
 
 function initPdfPanel() {
     console.log("Initializing PDF Panel");
-
-    document.getElementById("togglePdfPanelCheckbox")
-        .addEventListener("change", function(event) {
-            togglePanel(event, "pdfPanel");
-        });
 }
 
 function fitToWidth() {

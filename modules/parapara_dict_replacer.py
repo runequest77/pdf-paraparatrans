@@ -19,6 +19,15 @@ def load_dictionary(dict_file: str) -> Tuple[Dict[str, str], Dict[str, str]]:
     Returns:
         (辞書_ケースセンシティブ, 辞書_ケースインセンシティブ)
     """
+    def wrap_value(val: str) -> str:
+        # 置換対象がアルファベットのみなら q_ と _q でラップする
+        print(f"wrap_value: {val}")
+        if re.fullmatch(r'[A-Za-z]+', val):
+            print(f"wrap_value: {val}")
+            return f"q_{val}_q"
+        return val
+
+    print(f"辞書ファイルを読み込みます: {dict_file}")
     dict_cs = {}  # 3列目が1：大文字小文字区別
     dict_ci = {}  # 3列目が0：大文字小文字無視
     with open(dict_file, newline='', encoding='utf-8') as f:
@@ -28,6 +37,8 @@ def load_dictionary(dict_file: str) -> Tuple[Dict[str, str], Dict[str, str]]:
                 continue
             key = row[0].strip()
             value = row[1].strip()
+            # 辞書読み込み時点で値をチェックしてラップする
+            value = wrap_value(value)
             mode = row[2].strip() if len(row) >= 3 and row[2].strip() != "" else "0"
             if mode not in ("0", "1"):
                 continue
@@ -65,6 +76,7 @@ def count_alphabet_chars(text: str) -> int:
     return len(re.findall(r'[a-zA-Z]', text))
 
 def file_replace_with_dict(trans_file: str, dict_file: str):
+    print(f"処理を開始します")
     dict_cs, dict_ci = load_dictionary(dict_file)
     print(f"辞書の読み込みが完了しました: {dict_file}")
     

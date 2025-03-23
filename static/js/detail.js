@@ -14,6 +14,17 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('saveOrderButton').addEventListener('click', saveOrder);
     // ページ翻訳
     document.getElementById('pageTransButton').addEventListener('click', transPage);
+
+    document.getElementById("togglePdfPanelCheckbox")
+        .addEventListener("change", function(event) {
+        togglePanel(event, "pdfPanel");
+    });
+
+    document.getElementById("toggleTocPanelCheckbox")
+        .addEventListener("change", function(event) {
+        togglePanel(event, "tocPanel");
+    });
+
 });
 
 const app = Vue.createApp({
@@ -83,6 +94,25 @@ function togglePanel(event, panelId){
     } else {
         panel.classList.add("hidden");
     }
+
+    //resizer1のon/off
+    if(panelId === "tocPanel"){
+        let resizer1 = document.getElementById("resizer1");
+        if (cbox.checked){
+            resizer1.classList.remove("hidden");
+        } else {
+            resizer1.classList.add("hidden");
+        }
+    }
+    if(panelId === "pdfPanel"){
+        let resizer1 = document.getElementById("resizer2");
+        if (cbox.checked){
+            resizer1.classList.remove("hidden");
+        } else {
+            resizer1.classList.add("hidden");
+        }
+    }
+    
 }
 
 function restoreCheckboxStates() {

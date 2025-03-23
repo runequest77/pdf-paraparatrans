@@ -52,6 +52,12 @@ def process_group(paragraphs_group, data, filepath):
         m = re.match(r'【(\d+)】(.*)', part, re.DOTALL)
         if m:
             para_id, translated_content = m.group(1), m.group(2)
+            # q_ と _q が前後に区切り文字（英数字以外、または行頭・行末）の場合にのみ除去する
+            translated_content = re.sub(
+                r'(?:(?<=^)|(?<=[^A-Za-z0-9]))q_([A-Za-z]+)_q(?=$|[^A-Za-z0-9])',
+                r'\1',
+                translated_content
+            )
             if para_id in para_by_id:
                 para = para_by_id[para_id]
                 para['trans_auto'] = translated_content

@@ -1,11 +1,6 @@
 function initTocPanel() {
     console.log("Initializing TOC Panel");
 
-    document.getElementById("toggleTocPanelCheckbox")
-        .addEventListener("change", function(event) {
-            togglePanel(event, "tocPanel");
-        });
-
     document.getElementById("tocPanel").addEventListener("click", function(event) {
         if (event.target.classList.contains("toc-item")) {
             const childList = event.target.nextElementSibling;

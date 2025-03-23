@@ -276,7 +276,6 @@ def update_paragraph_api(pdf_name):
 # API:ファイルへの辞書全置換
 @app.route("/api/dict_replace_all/<pdf_name>", methods=["POST"])
 def dict_replace_all_api(pdf_name):
-    print("DICT_PATH" + DICT_PATH)
     if not os.path.exists(DICT_PATH):
         return jsonify({"status": "error", "message": "dict.txtが存在しません2"}), 404
     pdf_path, json_path = get_paths(pdf_name)
