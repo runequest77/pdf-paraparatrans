@@ -29,3 +29,67 @@
     background-color: #ccc;
     position: relative;
 }
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100vh; /* ビューポート全体を使用 */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* 全体のスクロールは防止 */
+}
+
+header {
+    /* 固定位置を解除し、自然な高さに */
+    position: static;
+    width: 100%;
+    z-index: 1000;
+    /* header 内の余白等は必要に応じて調整してください */
+}
+
+.container {
+    flex: 1;  /* 残りの高さを埋める */
+    display: flex;
+    width: 100%;
+    overflow: hidden;
+}
+
+/* 目次パネル・PDFパネルは固定サイズ・スクロールなし */
+#tocPanel {
+    width: 250px;         /* 初期幅 */
+    flex: 0 0 auto;
+    overflow: hidden;
+    height: 100%;
+}
+#pdfPanel {
+    width: 500px;         /* 初期幅 */
+    flex: 0 0 auto;
+    overflow: hidden;
+    position: relative;   /* オーバーレイ用 */
+    height: 100%;
+}
+
+/* ソースパネルのみスクロール可能 */
+#srcPanel {
+    flex: 1;
+    overflow-y: auto;
+    height: 100%;
+}
+
+.resizer {
+    width: 5px;
+    cursor: col-resize;
+    background-color: #ccc;
+    flex: 0 0 auto;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0); /* 透明 */
+    display: none; /* 初期は非表示 */
+}
+

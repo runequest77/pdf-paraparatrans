@@ -1,0 +1,200 @@
+.paragraph-id {
+    color: #888;
+    font-weight: bold;
+}
+
+.paragraph-struct {
+    color: #888;
+    font-size: 90%;
+}
+
+.paragraph-box {
+    display: flex;
+    align-items: stretch; /* 子要素の高さを親要素に合わせる */
+    position: relative;
+    border-bottom: 1px dotted #999;
+    position: relative; /* `edit-ui` を正しく配置するために必要 */
+}
+.edit-box {
+    display: flex;
+    position: relative;
+    width: 80px;
+    border-left: 3px solid #999;
+    font-size: initial;
+    font-size: 80%;
+    padding: 4px;
+}
+/* 翻訳状態に基づく edit-box の背景色 */
+.edit-box.status-none {
+    background-color: #f9f9f9; /* 未翻訳 */
+}
+.edit-box.status-auto {
+    background-color: #e0f7fa; /* 自動翻訳 */
+}
+.edit-box.status-draft {
+    background-color: #fff9c4; /* 下訳 */
+}
+.edit-box.status-fixed {
+    background-color: #c8e6c9; /* 確定 */
+}
+
+.paragraph-box.highlight {
+    position: relative; /* 配置の基準を作る */
+    outline: 6px solid #f39c12;
+    outline-offset: 0px;
+    z-index: 10; /* 他の要素より高い値を指定 */
+}
+
+.edit-button {
+    height: 24px; /* 固定高さ */
+    width: 24px; /* 固定幅 */
+    visibility: visible; /* 初期状態で表示 */
+}
+
+/* ドラッグ用ハンドル */
+.drag-handle {
+    cursor: move;
+    white-space: nowrap;
+    flex: 0 0 auto;
+    display: flex;
+    width: 48px;
+    flex-direction: column; /* 子要素を縦に並べる */
+    align-items: top;
+    color: black;
+}
+.drag-handle .paragraph-id,
+.drag-handle .block-tag {
+    display: block; /* ブロック要素として扱う */
+    text-align: right; /* 文字を右寄せ */
+    margin: 0px;
+    line-height: 1; /* 行間を詰める */
+    padding: 0; /* パディングをなくす */        
+}
+
+.src-html, .src-text, .src-replaced, .trans-auto, .trans-text {
+    flex: 1 1 50%;
+    word-wrap: break-word;
+    padding: 5px;
+}
+.edit-ui {
+    display: none;
+    position: absolute; /* 親要素に依存しない配置 */
+    right: 0; /* 必要に応じて調整 */
+    top: 100%; /* 親要素の下に配置 */
+    width: auto;
+    background: white;
+    border: 4px solid #999;
+    padding: 10px;
+    z-index: 10;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* 影を追加 */
+    white-space: nowrap; /* 内容が折り返されるように設定 */
+    font-weight: normal;
+    color: black;
+    background-color: white;
+}
+.editing .src-text, .editing .trans-text {
+    border: 1px solid #000;
+    background: #fff;
+}
+.src-text {
+    border-left: 4px solid #e74c3c;
+}
+.src-replaced {
+    border-left: 4px solid #3498db;
+}
+.trans-auto {
+    border-left: 4px solid #f39c12;
+}
+.trans-text {
+    border-left: 4px solid #2ecc71;
+}
+.status-none {
+    background-color: #f9f9f9; /* 未翻訳 */
+}
+.status-auto {
+    background-color: #e0f7fa; /* 自動翻訳 */
+}
+.status-draft {
+    background-color: #fff9c4; /* 下訳 */
+}
+.status-fixed {
+    background-color: #c8e6c9; /* 確定 */
+}
+.block-tag-ignore {
+    color: #ccc;
+    background-color: #333 !important;
+}
+.block-tag-header {
+    color: #ccc;
+    background-color: #333 !important;
+}
+.block-tag-footer {
+    color: #ccc;
+    background-color: #333 !important;
+}
+
+.block-tag-p {
+    background-color: #ffffff; /* 通常の段落用 */
+}
+
+.block-tag-h1 {
+    font-size: 2em; /* 最も大きい見出し */
+    font-weight: bold;
+    color: #2c3e50; /* 濃い青色 */
+    background-color: #2c3e50; /* 濃い青色 */
+    color: white;
+}
+
+.block-tag-h2 {
+    font-size: 1.75em;
+    font-weight: bold;
+    color: #34495e; /* 少し薄い青色 */
+    background-color: #34495e; /* 少し薄い青色 */
+    color: white;
+}
+
+.block-tag-h3 {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #4a69bd; /* 青紫色 */
+    text-decoration: underline; /*文字に下線を引く*/
+    background-color: #4a69bd; /* 青紫色 */
+    color: white;
+}
+
+.block-tag-h4 {
+    font-size: 1.25em;
+    font-weight: bold;
+    color: #6a89cc; /* 明るい青紫色 */
+    background-color: #6a89cc; /* 明るい青紫色 */
+    color: black;
+}
+
+.block-tag-h5 {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #2c3e50; /* 濃い青色 */
+    background-color: #82ccdd; /* 明るい青色 */
+    color: black;
+}
+
+.block-tag-h6 {
+    font-size: 1em; /* 最も小さい見出し */
+    font-weight: bold;
+    color: black;
+    background-color: #b8e994; /* 明るい緑色 */
+    color: black;
+}
+
+/* 編集状態の背景色と文字色を統一 */
+.editing .paragraph-box {
+    background-color: #ffffcc; /* 編集時の背景色 */
+    color: #333; /* 編集時の文字色 */
+}
+
+.editing .src-text, 
+.editing .trans-text {
+    border: 3px solid #000; /* 編集時の枠線 */
+    background: #ffffcc; /* 編集時の背景色 */
+    color: #333; /* 編集時の文字色 */
+}
