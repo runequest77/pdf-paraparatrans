@@ -391,6 +391,7 @@ def dict_trans_api(pdf_name):
     if not os.path.exists(json_path):
         return jsonify({"status": "error", "message": "JSONファイルが存在しません"}), 404
     try:
+        print("DICT_PATH" + DICT_PATH)
         dict_trans(DICT_PATH)
     except Exception as e:
         return jsonify({"status": "error", "message": f"辞書翻訳エラー: {str(e)}"}), 500

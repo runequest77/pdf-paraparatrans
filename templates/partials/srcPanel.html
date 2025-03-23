@@ -44,6 +44,13 @@
         background-color: #c8e6c9; /* 確定 */
     }
 
+    .paragraph-box.highlight {
+        position: relative; /* 配置の基準を作る */
+        outline: 6px solid #f39c12;
+        outline-offset: 0px;
+        z-index: 10; /* 他の要素より高い値を指定 */
+    }
+
     .edit-button {
         height: 24px; /* 固定高さ */
         width: 24px; /* 固定幅 */
@@ -140,7 +147,6 @@
         font-size: 2em; /* 最も大きい見出し */
         font-weight: bold;
         color: #2c3e50; /* 濃い青色 */
-        border: 6px solid #2c3e50; /* 太いボーダー */
         background-color: #2c3e50; /* 濃い青色 */
         color: white;
     }
@@ -149,7 +155,6 @@
         font-size: 1.75em;
         font-weight: bold;
         color: #34495e; /* 少し薄い青色 */
-        border: 5px solid #34495e; /* やや細いボーダー */
         background-color: #34495e; /* 少し薄い青色 */
         color: white;
     }
@@ -158,7 +163,6 @@
         font-size: 1.5em;
         font-weight: bold;
         color: #4a69bd; /* 青紫色 */
-        border-top: 4px solid #4a69bd; /* 中程度のボーダー */
         text-decoration: underline; /*文字に下線を引く*/
         background-color: #4a69bd; /* 青紫色 */
         color: white;
@@ -168,7 +172,6 @@
         font-size: 1.25em;
         font-weight: bold;
         color: #6a89cc; /* 明るい青紫色 */
-        border-top: 3px solid #6a89cc; /* 細いボーダー */
         background-color: #6a89cc; /* 明るい青紫色 */
         color: black;
     }
@@ -177,7 +180,6 @@
         font-size: 1.1em;
         font-weight: bold;
         color: #2c3e50; /* 濃い青色 */
-        border-left: 2px solid #82ccdd; /* 非常に細いボーダー */
         background-color: #82ccdd; /* 明るい青色 */
         color: black;
     }
@@ -186,7 +188,6 @@
         font-size: 1em; /* 最も小さい見出し */
         font-weight: bold;
         color: black;
-        border-left: 1px solid #b8e994; /* 最も細いボーダー */
         background-color: #b8e994; /* 明るい緑色 */
         color: black;
     }
