@@ -74,7 +74,11 @@ span.auto-toggle {
 }
 
 .auto-toggle-checkbox-container {
-  gap: 6px;
+  gap:6px;
+}
+
+.auto-toggle-checkbox-container .text {
+  padding-top: 4px;
 }
 
 /* ==== ダークモードスタイル ==== */

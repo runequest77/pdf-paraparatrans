@@ -17,9 +17,15 @@ function initTocPanel() {
 
 function showToc(isTrans) {
     const tocContainer = document.getElementById("tocContent");
-    tocContainer.innerHTML = "";
-    const tocTree = buildTocTree(bookData.paragraphs, isTrans);
-    tocContainer.appendChild(tocTree);
+    if (!bookData || !bookData.paragraphs ) {
+        console.warn("Book data is not available.");
+        return;
+    }
+    if (window.autoToggle.getState("toggleTocPanel") === true) {
+        tocContainer.innerHTML = "";
+        const tocTree = buildTocTree(bookData.paragraphs, isTrans);
+        tocContainer.appendChild(tocTree);
+    }
 }
 
 // function buildTocTree(paragraphs,mode, parentTag = "h1") {
@@ -66,7 +72,11 @@ function showToc(isTrans) {
 //     return container;
 // }
 
-function buildTocTree(paragraphs, mode, parentTag = "h1") {
+function buildTocTree(paragraphs, isTrans, parentTag = "h1") {
+    if (!paragraphs || paragraphs.length === 0) {
+        return;
+    }
+
     const container = document.createElement("div");
     let currentLevel = parseInt(parentTag.replace("h", "")) || 1;
     let currentList = container;
@@ -83,7 +93,7 @@ function buildTocTree(paragraphs, mode, parentTag = "h1") {
             return parseInt(next.block_tag.replace("h", "")) > level;
         });
 
-        const tocItem = createTocItem(p, level, hasChildren);
+        const tocItem = createTocItem(p, level, hasChildren, isTrans);
 
         if (level > currentLevel) {
             // 階層が深くなった場合、新しい子コンテナを作成

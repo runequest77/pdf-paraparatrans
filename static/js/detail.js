@@ -22,25 +22,40 @@ document.addEventListener('DOMContentLoaded', function() {
     // ページ翻訳
     document.getElementById('pageTransButton').addEventListener('click', transPage);
 
-    document.getElementById("togglePdfPanelCheckbox")
-        .addEventListener("change", function(event) {
-        togglePanel(event, "pdfPanel");
-    });
-
-    document.getElementById("toggleTocPanelCheckbox")
-        .addEventListener("change", function(event) {
-        togglePanel(event, "tocPanel");
-    });
-
     document.addEventListener('auto-toggle-change', autoToggleChanged);
+
+    window.autoToggle.dispatchAll();
 });
 
 // すべてのauto-toggleの状態変化を監視する（toggleごとでもよいが、リスナーを増やさないことを選択）
 function autoToggleChanged(event) {
-    const toggleId = event.detail.id;
+    const id = event.detail.id;
     const newState = event.detail.newState;
-    console.log(`トグルスイッチ ${toggleId} が ${newState ? 'ON' : 'OFF'} に変更されました。`);
-    if (toggleId === 'tocTrans') {
+    console.log(`トグルスイッチ ${id} が ${newState ? 'ON' : 'OFF'} に変更されました。`);
+
+    if (id === 'toggleTocPanel') {
+        let panel = document.getElementById("tocPanel");
+        let resizer = document.getElementById("resizer1");
+        if (newState){
+            panel.classList.remove("hidden");
+            resizer.classList.remove("hidden");
+            tocTrans = window.autoToggle.getState("tocTrans");
+            showToc(tocTrans);
+        } else {
+            panel.classList.add("hidden");
+            resizer.classList.add("hidden");
+        }
+    } else if (id==='togglePdfPanel') {
+        let panel = document.getElementById("pdfPanel");
+        let resizer = document.getElementById("resizer2");
+        if (newState){
+            panel.classList.remove("hidden");
+            resizer.classList.remove("hidden");
+        } else {
+            panel.classList.add("hidden");
+            resizer.classList.add("hidden");
+        }
+    } else if (id === 'tocTrans') {
         showToc(newState);
     }
 }
@@ -74,36 +89,6 @@ function updateTransStatusCounts(counts) {
     document.getElementById("countAuto").innerText = counts.auto;
     document.getElementById("countDraft").innerText = counts.draft;
     document.getElementById("countFixed").innerText = counts.fixed;
-}
-
-function togglePanel(event, panelId){
-    console.log("togglePanel panelId:" + panelId);
-    let cbox = event.target;
-    let panel = document.getElementById(panelId);
-    if(cbox.checked){
-        panel.classList.remove("hidden");
-    } else {
-        panel.classList.add("hidden");
-    }
-
-    //resizer1のon/off
-    if(panelId === "tocPanel"){
-        let resizer1 = document.getElementById("resizer1");
-        if (cbox.checked){
-            resizer1.classList.remove("hidden");
-        } else {
-            resizer1.classList.add("hidden");
-        }
-    }
-    if(panelId === "pdfPanel"){
-        let resizer1 = document.getElementById("resizer2");
-        if (cbox.checked){
-            resizer1.classList.remove("hidden");
-        } else {
-            resizer1.classList.add("hidden");
-        }
-    }
-    
 }
 
 function restoreCheckboxStates() {

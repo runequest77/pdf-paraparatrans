@@ -39,8 +39,11 @@
           </div>
           <div class="controls" style="flex-shrink:0;">
             <span style="display:inline-block; margin: 2px;">
-              <label><input type="checkbox" id="toggleTocPanelCheckbox" class="restoreCheckboxState"> 目次</label>
-              <label><input type="checkbox" id="togglePdfPanelCheckbox" class="restoreCheckboxState" checked> PDF</label>
+              <!-- <label><input type="checkbox" id="toggleTocPanelCheckbox" class="restoreCheckboxState"> 目次</label> -->
+              <span id="toggleTocPanel" class="auto-toggle" data-auto-toggle="appearance:checkbox;storage:local">目次</span>
+              <span id="togglePdfPanel" class="auto-toggle" data-auto-toggle="appearance:checkbox;storage:local">PDF</span>
+
+              <!-- <label><input type="checkbox" id="togglePdfPanelCheckbox" class="restoreCheckboxState" checked> PDF</label> -->
               <button onclick="prevPage()">◀</button>
               <input type="number" id="pageInput" value="1" min="1" max="1" 
                     style=" vertical-align:middle; font-size:120%; width: 60px; text-align: center; border: 2px solid; " onchange="jumpToPage(this.value)">
@@ -77,9 +80,7 @@
     <div class="container">
         <div id="tocPanel" class="panel">
           <span id="tocTrans" class="auto-toggle" data-auto-toggle="storage:local;shortcut:ctrl+q">原文/訳文</span>
-          <button onclick="showToc('src')">[原文見出し]</button>
-          <button onclick="showToc('trans')">[訳文見出し]</button>
-          <div id="tocContent">(※実装中)</div>
+          <div id="tocContent"></div>
         </div>
 
         <div id="resizer1" class="resizer"></div>

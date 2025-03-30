@@ -16,6 +16,22 @@ window.autoToggle = (function () {
         },
         getAllStates: function () {
             return { ...states }; // 状態のコピーを返す
+        },
+        dispatchAll: function () {
+            const autoToggles = document.querySelectorAll('.auto-toggle');
+            autoToggles.forEach(container => {
+                const containerId = container.id;
+                const newState = this.getState(containerId); // 現在の状態を取得
+                const event = new CustomEvent('auto-toggle-change', {
+                    bubbles: true,
+                    detail: {
+                        id: containerId,
+                        newState: newState
+                    }
+                });
+                container.dispatchEvent(event);
+                console.log(`Fired auto-toggle-change event for ${containerId} with state ${newState}`);
+            });
         }
     };
 })();
@@ -134,6 +150,7 @@ function initializeToggleSwitches(options = {}) {
             // チェックボックス表示の場合
             label.htmlFor = checkbox.id; // inputと関連付け
             label.textContent = labelText; // labelにテキストを設定
+            label.classList.add('auto-toggle-checkbox-container','text'); // クラスを追加
             container.classList.add('auto-toggle-checkbox-container');
             container.appendChild(checkbox);
             container.appendChild(label); // inputの後にlabelを配置
