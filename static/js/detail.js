@@ -3,7 +3,7 @@ pdfName = document.body.dataset.pdfName;
 bookData = {};
 currentPage = 1;
 let currentParagraphIndex = 0;
-let selectedParagraphRange = { start: null, end: null };
+// let selectedParagraphRange = { start: null, end: null };
 
 window.onload = function() {
     initResizers();

@@ -4,24 +4,14 @@ var showSrcHtml = true;
 var showTransAuto = true;
 var showSrcReplaced = true;
 
+let selectedParagraphs = new Set(); // 選択されたパラグラフのIDを格納
+let selectedParagraphRange = { start: null, end: null }; // 選択範囲の開始と終了インデックス
 
 function initSrcPanel() {
-    // document.getElementById('toggleSrcHtmlCheckbox').addEventListener('change', toggleSrcHtml);
-    // document.getElementById('toggleSrcCheckbox').addEventListener('change', toggleSrc);
-    // document.getElementById('toggleSrcReplacedCheckbox').addEventListener('change', toggleSrcReplaced);
-    // document.getElementById('toggleTransAutoCheckbox').addEventListener('change', toggleTransAuto);
-    // document.getElementById('toggleTransCheckbox').addEventListener('change', toggleTrans);
-
-    // 各チェックボックスのイベントリスナーにsaveCheckboxStateを追加
-    // document.querySelectorAll('.restoreCheckboxState').forEach(checkbox => {
-    //     checkbox.addEventListener('change', saveCheckboxState);
-    // });
-    
     // ドラッグ用ハンドルのみ有効にするために handle オプションを指定
     $("#srcParagraphs").sortable({
         handle: ".drag-handle"
     });
-
 }
 
 // ------------------------------
@@ -310,4 +300,143 @@ function addRadioChangeListener(divSrc, paragraph) {
             updateEditUiBackground(divSrc, selectedStatus);
         });
     });
+}
+
+function resetSelection() {
+    document.querySelectorAll('.paragraph-box.selected').forEach(el => el.classList.remove('selected'));
+}
+
+// // 指定されたパラグラフの選択状態をトグル
+// function toggleParagraphSelection(paragraphBox, selectedParagraphs) {
+//     const paragraphId = paragraphBox.id;
+
+//     // 選択状態をトグル
+//     if (selectedParagraphs.has(paragraphId)) {
+//         selectedParagraphs.delete(paragraphId);
+//         paragraphBox.classList.remove('selected');
+//     } else {
+//         selectedParagraphs.add(paragraphId);
+//         paragraphBox.classList.add('selected');
+//     }
+// }
+
+// 範囲を指定してパラグラフを選択リストに追加
+function selectParagraphRange(startIndex, endIndex) {
+    const all = Array.from(document.querySelectorAll('.paragraph-box'));
+    const [start, end] = [startIndex, endIndex].sort((a, b) => a - b);
+
+    for (let i = 0; i < all.length; i++) {
+        if (i >= start && i <= end) {
+            all[i].classList.add('selected');
+        } else {
+            all[i].classList.remove('selected');
+        }
+    }
+}
+
+let shiftRangeAnchorIndex = null;
+
+document.addEventListener('click', (event) => {
+    const paragraphBox = event.target.closest('.paragraph-box');
+    if (!paragraphBox) return;
+
+    const paragraphs = Array.from(document.querySelectorAll('.paragraph-box'));
+    const clickedIndex = paragraphs.indexOf(paragraphBox);
+
+    if (event.shiftKey) {
+        // Shift+クリックで範囲選択
+        if (shiftRangeAnchorIndex === null) {
+            shiftRangeAnchorIndex = clickedIndex;
+        }
+        selectParagraphRange(shiftRangeAnchorIndex, clickedIndex);
+    } else {
+        // 通常クリック → 単一選択に
+        resetSelection();
+        shiftRangeAnchorIndex = clickedIndex;
+    }
+});
+
+// 選択されたパラグラフを指定されたIDの後ろに移動
+function moveSelectedAfter(targetId) {
+    const container = document.getElementById('srcParagraphs');
+    const all = Array.from(container.querySelectorAll('.paragraph-box'));
+    const selected = getSelectedParagraphsInOrder();
+    const unselected = all.filter(p => !p.classList.contains('selected'));
+
+    const result = [];
+    let inserted = false;
+
+    for (const p of unselected) {
+        result.push(p);
+        if (p.id === targetId) {
+            result.push(...selected);
+            inserted = true;
+        }
+    }
+
+    if (!inserted) result.push(...selected); // 末尾に入れる
+
+    // 再配置（すでに要素なので remove/append でOK）
+    for (const p of result) {
+        container.appendChild(p);
+    }
+}
+
+function moveSelectedBefore(targetId) {
+    const container = document.getElementById('srcParagraphs');
+    const all = Array.from(container.querySelectorAll('.paragraph-box'));
+    const selected = getSelectedParagraphsInOrder();
+    const unselected = all.filter(p => !p.classList.contains('selected'));
+
+    const result = [];
+    let inserted = false;
+
+    for (const p of unselected) {
+        if (p.id === targetId) {
+            result.push(...selected); // ここで先に入れる（前に）
+            inserted = true;
+        }
+        result.push(p);
+    }
+
+    if (!inserted) result.push(...selected); // 最後に挿入
+
+    for (const p of result) {
+        container.appendChild(p);
+    }
+}
+
+function moveSelectedByOffset(offset) {
+    const container = document.getElementById('srcParagraphs');
+    const all = Array.from(container.querySelectorAll('.paragraph-box'));
+    const selected = getSelectedParagraphsInOrder();
+    if (selected.length === 0) return;
+
+    const firstIndex = all.indexOf(selected[0]);
+    const lastIndex = all.indexOf(selected[selected.length - 1]);
+
+    let targetIndex;
+    if (offset < 0) {
+        targetIndex = firstIndex - 1;
+    } else {
+        targetIndex = lastIndex + 1;
+    }
+
+    if (targetIndex < 0 || targetIndex >= all.length) return;
+
+    const target = all[targetIndex];
+    if (selected.includes(target)) return;
+
+    if (offset < 0) {
+        // 上へ → 前に挿入する
+        moveSelectedBefore(target.id);
+    } else {
+        // 下へ → 後ろに挿入する
+        moveSelectedAfter(target.id);
+    }
+}
+
+
+function getSelectedParagraphsInOrder() {
+    return Array.from(document.querySelectorAll('.paragraph-box.selected'));
 }

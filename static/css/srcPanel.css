@@ -14,6 +14,7 @@
     position: relative;
     border-bottom: 1px dotted #999;
     position: relative; /* `edit-ui` を正しく配置するために必要 */
+    transition: filter 0.1s ease-in-out, outline 0.1s ease-in-out;
 }
 .edit-box {
     display: flex;
@@ -36,6 +37,26 @@
 }
 .edit-box.status-fixed {
     background-color: var(--dark-green); /* 確定 */
+}
+
+.paragraph-box.selected {
+    outline: 4px solid var(--selection-outline, #3399ff);
+    outline-offset: -2px;
+    position: relative;
+    z-index: 1; /* 他のボックスより前面にくるように */
+    overflow: hidden; /* ::after で角がはみ出さないように */
+    user-select: none;
+}
+/* 選択されたパラグラフに薄黄のマスクを重ねる */
+.paragraph-box.selected::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: rgba(255, 255, 0, 0.2);
+    mix-blend-mode: lighten;
+    pointer-events: none;
+    z-index: 1;
+    border-radius: inherit; /* 親の角丸を引き継ぐ！ */
 }
 
 .paragraph-box.highlight {

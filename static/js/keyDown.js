@@ -2,20 +2,9 @@
 document.addEventListener('keydown', (event) => {
 
     // 高速編集モードがONの場合
-    if (window.autoToggle.getState("QuickEditMode")) {
+    if (window.autoToggle.getState("quickEditMode")) {
         // デフォルトの動作をキャンセル
         event.preventDefault();
-
-        // 上下矢印キーでパラグラフを移動
-        if (event.key === 'ArrowUp') {
-            if (currentParagraphIndex > 0) {
-                currentParagraphIndex--;
-            }
-        } else if (event.key === 'ArrowDown') {
-            if (currentParagraphIndex < paragraphs.length - 1) {
-                currentParagraphIndex++;
-            }
-        }
 
         // Ctrl+Alt+数字で block_tag を変更
         if (/^[1-6]$/.test(event.key)) {
@@ -64,43 +53,19 @@ document.addEventListener('keydown', (event) => {
                 // saveParagraphData(paragraphData);
             }
         }
+    }
 
-        // Shift + 上/下矢印で選択範囲を拡大
-        if (event.shiftKey && event.key === 'ArrowUp') {
-            if (selectedParagraphRange.start === null) {
-                selectedParagraphRange.start = currentParagraphIndex;
-                selectedParagraphRange.end = currentParagraphIndex;
-            } else {
-                selectedParagraphRange.start = Math.max(0, selectedParagraphRange.start - 1);
-            }
-            updateSelectionHighlight();
-        } else if (event.shiftKey && event.key === 'ArrowDown') {
-            if (selectedParagraphRange.start === null) {
-                selectedParagraphRange.start = currentParagraphIndex;
-                selectedParagraphRange.end = currentParagraphIndex;
-            } else {
-                selectedParagraphRange.end = Math.min(paragraphs.length - 1, selectedParagraphRange.end + 1);
-            }
-            updateSelectionHighlight();
-        }
-
-        // Ctrl + 上/下矢印で選択パラグラフを移動
-        if (event.ctrlKey && event.key === 'ArrowUp') {
-            moveSelectedParagraphsUp();
-        } else if (event.ctrlKey && event.key === 'ArrowDown') {
-            moveSelectedParagraphsDown();
-        }
-
-        // Ctrl + Shift + 上/下矢印で選択パラグラフを最上/最下へ移動
-        if (event.ctrlKey && event.shiftKey && event.key === 'ArrowUp') {
-            moveSelectedParagraphsToTop();
-        } else if (event.ctrlKey && event.shiftKey && event.key === 'ArrowDown') {
-            moveSelectedParagraphsToBottom();
-        }
+    // Ctrl + 上/下矢印で選択パラグラフを移動
+    if (event.ctrlKey && event.key === 'ArrowUp') {
+        event.preventDefault();
+        moveSelectedByOffset(-1);
+    } else if (event.ctrlKey && event.key === 'ArrowDown') {
+        event.preventDefault();
+        moveSelectedByOffset(1);
     }
 
     // Ctrl + ← / →でページ送り
-    if (event.ctrlKey && (event.key === 'ArrowLeft' || event.key === 'ArrowRight')) {
+    if (event.ctrlKey && !event.shiftKey && !event.altKey && (event.key === 'ArrowLeft' || event.key === 'ArrowRight')) {
         if (event.key === 'ArrowLeft') {
             prevPage();
         } else {
@@ -132,114 +97,114 @@ document.addEventListener('keydown', (event) => {
     }
 });
 
-function updateSelectionHighlight() {
-    const paragraphs = document.querySelectorAll('.paragraph-box');
-    paragraphs.forEach((p, index) => {
-        if (selectedParagraphRange.start !== null && index >= selectedParagraphRange.start && index <= selectedParagraphRange.end) {
-            p.classList.add('selected');
-        } else {
-            p.classList.remove('selected');
-        }
-    });
-}
+// function updateSelectionHighlight() {
+//     const paragraphs = document.querySelectorAll('.paragraph-box');
+//     paragraphs.forEach((p, index) => {
+//         if (selectedParagraphRange.start !== null && index >= selectedParagraphRange.start && index <= selectedParagraphRange.end) {
+//             p.classList.add('selected');
+//         } else {
+//             p.classList.remove('selected');
+//         }
+//     });
+// }
 
-function moveSelectedParagraphsUp() {
-    if (selectedParagraphRange.start === null) return;
+// function moveSelectedParagraphsUp() {
+//     if (selectedParagraphRange.start === null) return;
 
-    const paragraphs = document.querySelectorAll('.paragraph-box');
-    if (paragraphs.length === 0) return;
+//     const paragraphs = document.querySelectorAll('.paragraph-box');
+//     if (paragraphs.length === 0) return;
 
-    const start = selectedParagraphRange.start;
-    const end = selectedParagraphRange.end;
+//     const start = selectedParagraphRange.start;
+//     const end = selectedParagraphRange.end;
 
-    if (start > 0) {
-        // 選択されたパラグラフを上に移動する処理
-        const temp = bookData.paragraphs.slice(start, end + 1);
-        bookData.paragraphs.splice(start, end - start + 1);
-        bookData.paragraphs.splice(start - 1, 0, ...temp);
+//     if (start > 0) {
+//         // 選択されたパラグラフを上に移動する処理
+//         const temp = bookData.paragraphs.slice(start, end + 1);
+//         bookData.paragraphs.splice(start, end - start + 1);
+//         bookData.paragraphs.splice(start - 1, 0, ...temp);
 
-        selectedParagraphRange.start--;
-        selectedParagraphRange.end--;
-        currentParagraphIndex = selectedParagraphRange.start;
+//         selectedParagraphRange.start--;
+//         selectedParagraphRange.end--;
+//         currentParagraphIndex = selectedParagraphRange.start;
 
-        renderParagraphs();
-        updateSelectionHighlight();
-    }
-}
+//         renderParagraphs();
+//         updateSelectionHighlight();
+//     }
+// }
 
-function moveSelectedParagraphsDown() {
-    if (selectedParagraphRange.start === null) return;
+// function moveSelectedParagraphsDown() {
+//     if (selectedParagraphRange.start === null) return;
 
-    const paragraphs = document.querySelectorAll('.paragraph-box');
-    if (paragraphs.length === 0) return;
+//     const paragraphs = document.querySelectorAll('.paragraph-box');
+//     if (paragraphs.length === 0) return;
 
-    const start = selectedParagraphRange.start;
-    const end = selectedParagraphRange.end;
+//     const start = selectedParagraphRange.start;
+//     const end = selectedParagraphRange.end;
 
-    if (end < paragraphs.length - 1) {
-        // 選択されたパラグラフを下に移動する処理
-        const temp = bookData.paragraphs.slice(start, end + 1);
-        bookData.paragraphs.splice(start, end - start + 1);
-        bookData.paragraphs.splice(end + 1, 0, ...temp);
+//     if (end < paragraphs.length - 1) {
+//         // 選択されたパラグラフを下に移動する処理
+//         const temp = bookData.paragraphs.slice(start, end + 1);
+//         bookData.paragraphs.splice(start, end - start + 1);
+//         bookData.paragraphs.splice(end + 1, 0, ...temp);
 
-        selectedParagraphRange.start++;
-        selectedParagraphRange.end++;
-        currentParagraphIndex = selectedParagraphRange.start;
+//         selectedParagraphRange.start++;
+//         selectedParagraphRange.end++;
+//         currentParagraphIndex = selectedParagraphRange.start;
 
-        renderParagraphs();
-        updateSelectionHighlight();
-    }
-}
+//         renderParagraphs();
+//         updateSelectionHighlight();
+//     }
+// }
 
-function moveSelectedParagraphsToTop() {
-    if (selectedParagraphRange.start === null) return;
+// function moveSelectedParagraphsToTop() {
+//     if (selectedParagraphRange.start === null) return;
 
-    const paragraphs = document.querySelectorAll('.paragraph-box');
-    if (paragraphs.length === 0) return;
+//     const paragraphs = document.querySelectorAll('.paragraph-box');
+//     if (paragraphs.length === 0) return;
 
-    const start = selectedParagraphRange.start;
-    const end = selectedParagraphRange.end;
+//     const start = selectedParagraphRange.start;
+//     const end = selectedParagraphRange.end;
 
-    // 選択されたパラグラフを最上へ移動する処理
-    const temp = bookData.paragraphs.slice(start, end + 1);
-    bookData.paragraphs.splice(start, end - start + 1);
-    bookData.paragraphs.unshift(...temp);
+//     // 選択されたパラグラフを最上へ移動する処理
+//     const temp = bookData.paragraphs.slice(start, end + 1);
+//     bookData.paragraphs.splice(start, end - start + 1);
+//     bookData.paragraphs.unshift(...temp);
 
-    selectedParagraphRange.start = 0;
-    selectedParagraphRange.end = end - start;
-    currentParagraphIndex = selectedParagraphRange.start;
+//     selectedParagraphRange.start = 0;
+//     selectedParagraphRange.end = end - start;
+//     currentParagraphIndex = selectedParagraphRange.start;
 
-    renderParagraphs();
-    updateSelectionHighlight();
-}
+//     renderParagraphs();
+//     updateSelectionHighlight();
+// }
 
-function moveSelectedParagraphsToBottom() {
-    if (selectedParagraphRange.start === null) return;
+// function moveSelectedParagraphsToBottom() {
+//     if (selectedParagraphRange.start === null) return;
 
-    const paragraphs = document.querySelectorAll('.paragraph-box');
-    if (paragraphs.length === 0) return;
+//     const paragraphs = document.querySelectorAll('.paragraph-box');
+//     if (paragraphs.length === 0) return;
 
-    const start = selectedParagraphRange.start;
-    const end = selectedParagraphRange.end;
+//     const start = selectedParagraphRange.start;
+//     const end = selectedParagraphRange.end;
 
-    // 選択されたパラグラフを最下へ移動する処理
-    const temp = bookData.paragraphs.slice(start, end + 1);
-    bookData.paragraphs.splice(start, end - start + 1);
-    bookData.paragraphs.push(...temp);
+//     // 選択されたパラグラフを最下へ移動する処理
+//     const temp = bookData.paragraphs.slice(start, end + 1);
+//     bookData.paragraphs.splice(start, end - start + 1);
+//     bookData.paragraphs.push(...temp);
 
-    selectedParagraphRange.start = paragraphs.length - (end - start + 1);
-    selectedParagraphRange.end = paragraphs.length - 1;
-    currentParagraphIndex = selectedParagraphRange.start;
+//     selectedParagraphRange.start = paragraphs.length - (end - start + 1);
+//     selectedParagraphRange.end = paragraphs.length - 1;
+//     currentParagraphIndex = selectedParagraphRange.start;
 
-    renderParagraphs();
-    updateSelectionHighlight();
-}
+//     renderParagraphs();
+//     updateSelectionHighlight();
+// }
 
-function clearSelection() {
-    selectedParagraphRange.start = null;
-    selectedParagraphRange.end = null;
-    updateSelectionHighlight();
-}
+// function clearSelection() {
+//     selectedParagraphRange.start = null;
+//     selectedParagraphRange.end = null;
+//     updateSelectionHighlight();
+// }
 
 function saveChanges() {
     // 編集状態を保存する処理
