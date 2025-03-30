@@ -57,7 +57,28 @@ function autoToggleChanged(event) {
         }
     } else if (id === 'tocTrans') {
         showToc(newState);
+    } else if (id === 'toggleSrcHtml') {
+        document.querySelectorAll('.src-html').forEach(el => {
+            el.style.display = newState ? 'block' : 'none';
+        });
+    } else if (id === 'toggleSrcText') {
+        document.querySelectorAll('.src-text').forEach(el => {
+            el.style.display = newState ? 'block' : 'none';
+        });
+    } else if (id === 'toggleSrcReplaced') {
+        document.querySelectorAll('.src-replaced').forEach(el => {
+            el.style.display = newState ? 'block' : 'none';
+        });
+    } else if (id === 'toggleTransAuto') {
+        document.querySelectorAll('.trans-auto').forEach(el => {
+            el.style.display = newState ? 'block' : 'none';
+        });
+    } else if (id === 'toggleTransText') {
+        document.querySelectorAll('.trans-text').forEach(el => {
+            el.style.display = newState ? 'block' : 'none';
+        });
     }
+    
 }
 
 

@@ -6,16 +6,16 @@ var showSrcReplaced = true;
 
 
 function initSrcPanel() {
-    document.getElementById('toggleSrcHtmlCheckbox').addEventListener('change', toggleSrcHtml);
-    document.getElementById('toggleSrcCheckbox').addEventListener('change', toggleSrc);
-    document.getElementById('toggleSrcReplacedCheckbox').addEventListener('change', toggleSrcReplaced);
-    document.getElementById('toggleTransAutoCheckbox').addEventListener('change', toggleTransAuto);
-    document.getElementById('toggleTransCheckbox').addEventListener('change', toggleTrans);
+    // document.getElementById('toggleSrcHtmlCheckbox').addEventListener('change', toggleSrcHtml);
+    // document.getElementById('toggleSrcCheckbox').addEventListener('change', toggleSrc);
+    // document.getElementById('toggleSrcReplacedCheckbox').addEventListener('change', toggleSrcReplaced);
+    // document.getElementById('toggleTransAutoCheckbox').addEventListener('change', toggleTransAuto);
+    // document.getElementById('toggleTransCheckbox').addEventListener('change', toggleTrans);
 
     // 各チェックボックスのイベントリスナーにsaveCheckboxStateを追加
-    document.querySelectorAll('.restoreCheckboxState').forEach(checkbox => {
-        checkbox.addEventListener('change', saveCheckboxState);
-    });
+    // document.querySelectorAll('.restoreCheckboxState').forEach(checkbox => {
+    //     checkbox.addEventListener('change', saveCheckboxState);
+    // });
     
     // ドラッグ用ハンドルのみ有効にするために handle オプションを指定
     $("#srcParagraphs").sortable({
@@ -209,7 +209,9 @@ function renderParagraphs() {
         // ラジオボタンの変更イベントを登録
         addRadioChangeListener(divSrc, p);
     }
-    restoreCheckboxStates();
+    window.autoToggle.dispatchAll();
+
+    // restoreCheckboxStates();
     srcContainer.style.display = 'block'; // 再表示
 }
 
