@@ -1,6 +1,8 @@
 function initTocPanel() {
     console.log("Initializing TOC Panel");
 
+
+
     document.getElementById("tocPanel").addEventListener("click", function(event) {
         if (event.target.classList.contains("toc-item")) {
             const childList = event.target.nextElementSibling;
@@ -13,10 +15,10 @@ function initTocPanel() {
     });
 }
 
-function showToc(mode) {
+function showToc(isTrans) {
     const tocContainer = document.getElementById("tocContent");
-    tocContainer.innerHTML = ""; // Clear existing content
-    const tocTree = buildTocTree(bookData.paragraphs,mode);
+    tocContainer.innerHTML = "";
+    const tocTree = buildTocTree(bookData.paragraphs, isTrans);
     tocContainer.appendChild(tocTree);
 }
 
@@ -113,7 +115,7 @@ function buildTocTree(paragraphs, mode, parentTag = "h1") {
     return container;
 }
 
-function createTocItem(p, level, hasChildren, mode) {
+function createTocItem(p, level, hasChildren, isTrans) {
     const itemContainer = document.createElement("div");
     itemContainer.className = "toc-item-container";
     itemContainer.style.setProperty("--level", level); // 階層レベルを設定
@@ -139,7 +141,7 @@ function createTocItem(p, level, hasChildren, mode) {
     item.style.cursor = "pointer";
     item.dataset.page = p.page;
     // mode src/transによって表示内容を切り替え
-    item.textContent = mode === "src" ? p.src_text : p.trans_text; // 原文または訳文のテキスト
+    item.textContent = isTrans ? p.trans_text : p.src_text; // 原文または訳文のテキスト
 
     // 見出しクリックで該当パラグラフにスクロールまたはページ遷移
     item.addEventListener("click", function () {

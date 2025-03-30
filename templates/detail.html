@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/tocPanel.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/srcPanel.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auto-toggle.css') }}">
+    <script src="{{ url_for('static', filename='js/auto-toggle.js') }}"></script>    
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
@@ -14,7 +16,6 @@
 </head>
 
 <body data-pdf-name="{{ pdf_name }}">
-
     <div class="header-container" style="display:flex; align-items:stretch; box-sizing:border-box; border-bottom:1px solid #ccc; padding: 2px;">
         <div class="left" style="display:flex; flex-direction:column; justify-content:space-between; overflow:hidden; white-space: normal;">
           <div class="basic-info" style="flex-shrink:0;">
@@ -67,17 +68,18 @@
                 <td style="padding:0 5px;" id="countFixed">0</td>
               </tr>
             </table>
-            <toggle-switch label="高速編集" storage-key="QuickEditMode"></toggle-switch>      
+            <span id="quickEditMode" class="auto-toggle" data-auto-toggle="storage:session;shortcut:ctrl+q">高速編集</span>
             <button id="saveOrderButton">順序保存</button>
           </div>
         </div>
       </div>
-      
+
     <div class="container">
         <div id="tocPanel" class="panel">
-            <button onclick="showToc('src')">[原文見出し]</button>
-            <button onclick="showToc('trans')">[訳文見出し]</button>
-            <div id="tocContent">(※実装中)</div>
+          <span id="tocTrans" class="auto-toggle" data-auto-toggle="storage:local;shortcut:ctrl+q">原文/訳文</span>
+          <button onclick="showToc('src')">[原文見出し]</button>
+          <button onclick="showToc('trans')">[訳文見出し]</button>
+          <div id="tocContent">(※実装中)</div>
         </div>
 
         <div id="resizer1" class="resizer"></div>
@@ -92,14 +94,13 @@
         <div class="panel flex-panel" id="srcPanel">
             <div id="srcParagraphs"></div>
         </div>
-        
     </div>
-    <script src="{{ url_for('static', filename='js/tocPanel.js') }}"></script>    
-    <script src="{{ url_for('static', filename='js/pdfPanel.js') }}"></script>    
-    <script src="{{ url_for('static', filename='js/srcPanel.js') }}"></script>    
-    <script src="{{ url_for('static', filename='js/detail.js') }}"></script>    
-    <script src="{{ url_for('static', filename='js/fetch.js') }}"></script>    
-    <script src="{{ url_for('static', filename='js/vue-app.js') }}"></script>    
+  <script src="{{ url_for('static', filename='js/tocPanel.js') }}"></script>    
+  <script src="{{ url_for('static', filename='js/pdfPanel.js') }}"></script>    
+  <script src="{{ url_for('static', filename='js/srcPanel.js') }}"></script>    
+  <script src="{{ url_for('static', filename='js/detail.js') }}"></script>    
+  <script src="{{ url_for('static', filename='js/keyDown.js') }}"></script>    
+  <script src="{{ url_for('static', filename='js/fetch.js') }}"></script>    
 </body>
 
 </html>

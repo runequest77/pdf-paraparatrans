@@ -1,0 +1,102 @@
+/* ==== auto-toggle.css（モダン + ダークモード対応） ==== */
+
+/* 共通スタイル */
+
+div.auto-toggle {
+  display: flex;
+  align-items: center;
+  margin: 8px 0;
+}
+
+span.auto-toggle {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 12px;
+}
+
+.auto-toggle.switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  white-space: nowrap;
+
+  --toggle-width: 48px;
+  --toggle-height: 28px;
+}
+
+.auto-toggle.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.auto-toggle.switch .slider {
+  position: relative;
+  display: inline-block;
+  width: var(--toggle-width);
+  height: var(--toggle-height);
+  background-color: #cbd5e1; /* OFF: slate-300 */
+  border-radius: 9999px;
+  transition: background-color 0.3s ease;
+}
+
+.auto-toggle.switch .slider:before {
+  content: "";
+  position: absolute;
+  width: calc(var(--toggle-height) - 6px);
+  height: calc(var(--toggle-height) - 6px);
+  left: 3px;
+  top: 3px;
+  background-color: white;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.auto-toggle.switch input:checked + .slider {
+  background-color: #4ade80; /* ON: green-400 */
+}
+
+.auto-toggle.switch input:checked + .slider:before {
+  transform: translateX(calc(var(--toggle-width) - var(--toggle-height)));
+}
+
+.auto-toggle.switch .text {
+  font-size: 0.95em;
+  user-select: none;
+  color: #334155; /* slate-700 */
+}
+
+.auto-toggle.switch input:focus-visible + .slider {
+  outline: 2px solid #60a5fa; /* blue-400 */
+  outline-offset: 2px;
+}
+
+.auto-toggle-checkbox-container {
+  gap: 6px;
+}
+
+/* ==== ダークモードスタイル ==== */
+@media (prefers-color-scheme: dark) {
+  .auto-toggle.switch .slider {
+    background-color: #475569; /* slate-600 */
+  }
+
+  .auto-toggle.switch input:checked + .slider {
+    background-color: #22c55e; /* green-500 */
+  }
+
+  .auto-toggle.switch .slider:before {
+    background-color: #f1f5f9; /* slate-100 */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+  }
+
+  .auto-toggle.switch .text {
+    color: #e2e8f0; /* slate-200 */
+  }
+
+  .auto-toggle.switch input:focus-visible + .slider {
+    outline: 2px solid #38bdf8; /* sky-400 */
+  }
+}

@@ -1,8 +1,3 @@
-// detail.htmlのグローバル変数は3つ
-pdfName = document.body.dataset.pdfName;
-bookData = {};
-currentPage = 1;
-    
 async function fetchBookData() {
     try {
         let response = await fetch(`/api/book_data/${encodeURIComponent(pdfName)}`);

@@ -1,3 +1,10 @@
+// detail.htmlのグローバル変数は3つ
+pdfName = document.body.dataset.pdfName;
+bookData = {};
+currentPage = 1;
+let currentParagraphIndex = 0;
+let selectedParagraphRange = { start: null, end: null };
+
 window.onload = function() {
     initResizers();
     initTocPanel();
@@ -25,35 +32,19 @@ document.addEventListener('DOMContentLoaded', function() {
         togglePanel(event, "tocPanel");
     });
 
+    document.addEventListener('auto-toggle-change', autoToggleChanged);
 });
 
-const app = Vue.createApp({
-    components: {
-        'toggle-switch': {
-            props: ["label", "storageKey"],
-            data() {
-                return {
-                    isOn: JSON.parse(localStorage.getItem(this.storageKey)) ?? false
-                };
-            },
-            watch: {
-                isOn(newValue) {
-                    localStorage.setItem(this.storageKey, JSON.stringify(newValue));
-                }
-            },
-            template: `
-                <div class="toggle-container">
-                    <label :for="storageKey">{{ label }}</label>
-                    <label class="switch">
-                        <input type="checkbox" :id="storageKey" v-model="isOn">
-                        <span class="slider"></span>
-                    </label>
-                    <span>{{ isOn ? "ON" : "OFF" }}</span>
-                </div>
-            `
-        }
+// すべてのauto-toggleの状態変化を監視する（toggleごとでもよいが、リスナーを増やさないことを選択）
+function autoToggleChanged(event) {
+    const toggleId = event.detail.id;
+    const newState = event.detail.newState;
+    console.log(`トグルスイッチ ${toggleId} が ${newState ? 'ON' : 'OFF'} に変更されました。`);
+    if (toggleId === 'tocTrans') {
+        showToc(newState);
     }
-});
+}
+
 
 // boookDataからhead-stylesを読み込み
 function updateHeadStyles() {
@@ -253,5 +244,4 @@ function initResizers() {
         setTimeout(fitToWidth, 100);
     }
 }
-
 
