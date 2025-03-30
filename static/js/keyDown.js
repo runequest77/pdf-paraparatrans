@@ -5,58 +5,21 @@ document.addEventListener('keydown', (event) => {
     if (window.autoToggle.getState("quickEditMode")) {
         // デフォルトの動作をキャンセル
         event.preventDefault();
-
-        // Ctrl+Alt+数字で block_tag を変更
-        if (/^[1-6]$/.test(event.key)) {
-            const blockTag = `h${event.key}`; // 例: Ctrl+Alt+1 で h1, Ctrl+Alt+2 で h2
-            const blockTagSelect = currentParagraph.querySelector('.type-select');
-            const blockTagSpan = currentParagraph.querySelector('.block-tag');
-
-            if (blockTagSelect && blockTagSpan) {
-                blockTagSelect.value = blockTag;
-                blockTagSpan.innerText = blockTag;
-
-                // クラス名を更新
-                currentParagraph.className = currentParagraph.className.replace(/block-tag-\w+/g, `block-tag-${blockTag}`);
-
-                // bookData を更新
-                const paragraphId = parseInt(currentParagraph.id.replace('paragraph-', ''), 10);
-                const paragraphData = bookData.paragraphs.find(p => p.id === paragraphId);
-                if (paragraphData) {
-                    paragraphData.block_tag = blockTag;
-                }
-                // サーバーに保存（必要に応じて）
-                // saveParagraphData(paragraphData);
-            }
-        }
-
-        // Ctrl+Alt+P で block_tag を 'p' に変更
-        if (event.key === 'p') {
-            const blockTag = 'p';
-            const blockTagSelect = currentParagraph.querySelector('.type-select');
-            const blockTagSpan = currentParagraph.querySelector('.block-tag');
-
-            if (blockTagSelect && blockTagSpan) {
-                blockTagSelect.value = blockTag;
-                blockTagSpan.innerText = blockTag;
-
-                // クラス名を更新
-                currentParagraph.className = currentParagraph.className.replace(/block-tag-\w+/g, `block-tag-${blockTag}`);
-
-                // bookData を更新
-                const paragraphId = parseInt(currentParagraph.id.replace('paragraph-', ''), 10);
-                const paragraphData = bookData.paragraphs.find(p => p.id === paragraphId);
-                if (paragraphData) {
-                    paragraphData.block_tag = blockTag;
-                }
-                // サーバーに保存（必要に応じて）
-                // saveParagraphData(paragraphData);
-            }
+        if (event.ctrlKey && !event.shiftKey && !event.altKey) {
+            handleBlockTagShortcut(event.key);
         }
     }
 
     // Ctrl + 上/下矢印で選択パラグラフを移動
     if (event.ctrlKey && event.key === 'ArrowUp') {
+        event.preventDefault();
+        moveCurrentParagraphBy(-1, event.shiftKey);
+    } else if (event.ctrlKey && event.key === 'ArrowDown') {
+        event.preventDefault();
+        moveCurrentParagraphBy(1, event.shiftKey);
+    }
+    // Ctrl + 上/下矢印で選択パラグラフを移動
+    if (event.altKey && event.key === 'ArrowUp') {
         event.preventDefault();
         moveSelectedByOffset(-1);
     } else if (event.ctrlKey && event.key === 'ArrowDown') {
@@ -84,7 +47,6 @@ document.addEventListener('keydown', (event) => {
     paragraphs.forEach(p => p.classList.remove('highlight'));
     currentParagraph = paragraphs[currentParagraphIndex];
     currentParagraph.classList.add('highlight');
-
 
     // Escで選択解除
     if (event.key === 'Escape') {

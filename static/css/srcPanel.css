@@ -59,13 +59,6 @@
     border-radius: inherit; /* 親の角丸を引き継ぐ！ */
 }
 
-.paragraph-box.highlight {
-    position: relative; /* 配置の基準を作る */
-    outline: 6px solid #f39c12;
-    outline-offset: 0px;
-    z-index: 10; /* 他の要素より高い値を指定 */
-}
-
 .edit-button {
     height: 24px; /* 固定高さ */
     width: 24px; /* 固定幅 */
@@ -203,3 +196,16 @@
     background: #ffffcc; /* 編集時の背景色 */
     color: #333; /* 編集時の文字色 */
 }
+
+.paragraph-box.current {
+    outline: 6px solid #f39c12;
+    z-index: 10; /* 他の要素より高い値を指定 */
+}
+
+.paragraph-box.highlight {
+    position: relative; /* 配置の基準を作る */
+    outline: 4px solid #f39c12;
+    outline-offset: -4px;
+    z-index: 10; /* 他の要素より高い値を指定 */
+}
+

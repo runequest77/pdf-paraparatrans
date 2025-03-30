@@ -196,6 +196,8 @@ function renderParagraphs() {
         saveButton.addEventListener('click', (e) => onSaveButtonClick(e, p, divSrc, srcText, transText, blockTagSelect, blockTagSpan));
         editCancel.addEventListener('click', (e) => onEditCancelClick(e, p, divSrc, srcText, transText, blockTagSpan));
         document.addEventListener('keydown', (e) => onKeyDown(e, divSrc, p, srcText, transText, blockTagSpan));
+
+        setCurrentParagraph(0);
         // ラジオボタンの変更イベントを登録
         addRadioChangeListener(divSrc, p);
     }
@@ -334,7 +336,7 @@ function selectParagraphRange(startIndex, endIndex) {
     }
 }
 
-let shiftRangeAnchorIndex = null;
+let rangeAnchorIndex = null;
 
 document.addEventListener('click', (event) => {
     const paragraphBox = event.target.closest('.paragraph-box');
@@ -343,16 +345,16 @@ document.addEventListener('click', (event) => {
     const paragraphs = Array.from(document.querySelectorAll('.paragraph-box'));
     const clickedIndex = paragraphs.indexOf(paragraphBox);
 
-    if (event.shiftKey) {
-        // Shift+クリックで範囲選択
-        if (shiftRangeAnchorIndex === null) {
-            shiftRangeAnchorIndex = clickedIndex;
+    if (event.ctrlKey) {
+        // Ctrl+クリックで範囲選択
+        if (rangeAnchorIndex === null) {
+            rangeAnchorIndex = clickedIndex;
         }
-        selectParagraphRange(shiftRangeAnchorIndex, clickedIndex);
+        selectParagraphRange(rangeAnchorIndex, clickedIndex);
     } else {
         // 通常クリック → 単一選択に
         resetSelection();
-        shiftRangeAnchorIndex = clickedIndex;
+        rangeAnchorIndex = clickedIndex;
     }
 });
 
@@ -439,4 +441,117 @@ function moveSelectedByOffset(offset) {
 
 function getSelectedParagraphsInOrder() {
     return Array.from(document.querySelectorAll('.paragraph-box.selected'));
+}
+
+// function updateBlockTagForSelected(blockTag) {
+//     const selected = getSelectedParagraphsInOrder();
+//     const allData = bookData.paragraphs;
+
+//     selected.forEach(div => {
+//         const id = parseInt(div.id.replace('paragraph-', ''));
+//         const p = allData.find(p => p.id === id);
+//         if (!p) return;
+
+//         // block_tag 更新
+//         p.block_tag = blockTag;
+
+//         // 表示部分の更新
+//         const blockTagSpan = div.querySelector('.block-tag');
+//         const typeSelect = div.querySelector('.type-select');
+//         blockTagSpan.innerText = blockTag;
+//         if (typeSelect) typeSelect.value = blockTag;
+
+//         // クラス再構成
+//         const currentStatus = p.trans_status;
+//         div.className = `paragraph-box block-tag-${blockTag} status-${currentStatus}`;
+//     });
+// }
+
+function updateBlockTagForSelected(blockTag) {
+    const selected = getSelectedParagraphsInOrder();
+    const allData = bookData.paragraphs;
+
+    selected.forEach(div => {
+        const id = parseInt(div.id.replace('paragraph-', ''));
+        const p = allData.find(p => p.id === id);
+        if (!p) return;
+
+        p.block_tag = blockTag;
+
+        const blockTagSpan = div.querySelector('.block-tag');
+        const typeSelect = div.querySelector('.type-select');
+        blockTagSpan.innerText = blockTag;
+        if (typeSelect) typeSelect.value = blockTag;
+
+        const currentStatus = p.trans_status;
+
+        // クラス更新：既存の block-tag-* と status-* だけを更新
+        div.classList.remove(
+            ...Array.from(div.classList).filter(cls => cls.startsWith('block-tag-') || cls.startsWith('status-'))
+        );
+        div.classList.add(`block-tag-${blockTag}`, `status-${currentStatus}`);
+    });
+}
+
+
+function handleBlockTagShortcut(key) {
+    const keyToTagMap = {
+        '0': 'p',
+        '1': 'h1',
+        '2': 'h2',
+        '3': 'h3',
+        '4': 'h4',
+        '5': 'h5',
+        '6': 'h6',
+        'p': 'p',
+        'l': 'li',
+        'u': 'ul',
+        'd': 'dd',
+        'h': 'header',
+        'f': 'footer'
+    };
+
+    const tag = keyToTagMap[key.toLowerCase()];
+    // 対象キー以外は無視される
+    if (tag) {
+        updateBlockTagForSelected(tag);
+    }
+}
+
+
+let currentParagraphIndex = 0;
+
+function getAllParagraphs() {
+    return Array.from(document.querySelectorAll('.paragraph-box'));
+}
+
+function setCurrentParagraph(index) {
+    const paragraphs = getAllParagraphs();
+    paragraphs.forEach(p => p.classList.remove('current'));
+
+    index = Math.max(0, Math.min(index, paragraphs.length - 1));
+    currentParagraphIndex = index;
+
+    const current = paragraphs[currentParagraphIndex];
+    current.classList.add('current');
+    current.scrollIntoView({ block: 'center', behavior: 'smooth' });
+}
+
+function toggleCurrentParagraphSelection() {
+    const paragraphs = getAllParagraphs();
+    const current = paragraphs[currentParagraphIndex];
+    current.classList.toggle('selected');
+}
+
+function moveCurrentParagraphBy(offset, expandSelection = false) {
+    const paragraphs = getAllParagraphs();
+    const nextIndex = currentParagraphIndex + offset;
+
+    if (nextIndex < 0 || nextIndex >= paragraphs.length) return;
+
+    if (expandSelection) {
+        paragraphs[nextIndex].classList.add('selected');
+    }
+
+    setCurrentParagraph(nextIndex);
 }
