@@ -335,30 +335,108 @@ def pdf_view_page(pdf_name, page_number):
         return send_file(output, download_name=f"{pdf_name}_page_{page_number}.pdf", as_attachment=False)
 
 # API:並べ替えを保存
+# @app.route("/api/save_order/<pdf_name>", methods=["POST"])
+# def save_order_api(pdf_name):
+#     order_json = request.form.get("order_json")
+#     title = request.form.get("title")
+#     if not pdf_name or not order_json:
+#         return jsonify({"status": "error", "message": "pdf_name と order_json は必須です"}), 400
+
+#     pdf_path, json_path = get_paths(pdf_name)
+#     if not os.path.exists(json_path):
+#         return jsonify({"status": "error", "message": "JSONが存在しません"}), 404
+
+#     with open(json_path, "r", encoding="utf-8") as f:
+#         book_data = json.load(f)
+
+#     new_order = json.loads(order_json)
+#     paragraphs = book_data.get("paragraphs", [])
+
+#     changed_count = 0
+
+#     for item in new_order:
+#         p_id = str(item.get("id"))
+#         new_order_val = item.get("order")
+#         new_block_tag = item.get("block_tag")
+
+#         for p in paragraphs:
+#             if str(p.get("id")) == p_id:
+#                 updated = False
+#                 if p.get("order") != new_order_val:
+#                     p["order"] = new_order_val
+#                     updated = True
+#                 if new_block_tag is not None and p.get("block_tag") != new_block_tag:
+#                     p["block_tag"] = new_block_tag
+#                     updated = True
+#                 if updated:
+#                     changed_count += 1
+#                 break
+
+#     if title is not None and book_data.get("title") != title:
+#         book_data["title"] = title
+#         changed_count += 1
+
+#     if changed_count > 0:
+#         with open(json_path, "w", encoding="utf-8") as f:
+#             json.dump(book_data, f, ensure_ascii=False, indent=2)
+
+#     return jsonify({"status": "ok", "changed": changed_count}), 200
+
 @app.route("/api/save_order/<pdf_name>", methods=["POST"])
 def save_order_api(pdf_name):
     order_json = request.form.get("order_json")
     title = request.form.get("title")
+    
+    print("order_json:" + order_json)
+
     if not pdf_name or not order_json:
         return jsonify({"status": "error", "message": "pdf_name と order_json は必須です"}), 400
+
     pdf_path, json_path = get_paths(pdf_name)
     if not os.path.exists(json_path):
         return jsonify({"status": "error", "message": "JSONが存在しません"}), 404
+
     with open(json_path, "r", encoding="utf-8") as f:
         book_data = json.load(f)
+
     new_order = json.loads(order_json)
+    paragraphs = book_data.get("paragraphs", [])
+
+    changed_count = 0
+
     for item in new_order:
         p_id = str(item.get("id"))
         new_order_val = item.get("order")
-        for p in book_data.get("paragraphs", []):
+        new_block_tag = item.get("block_tag")
+        new_group_id = item.get("group_id")
+        print(f"p_id: {p_id}, new_order_val: {new_order_val}, new_block_tag: {new_block_tag}, new_group_id: {new_group_id}")
+
+        for p in paragraphs:
             if str(p.get("id")) == p_id:
-                p["order"] = new_order_val
+                updated = False
+                if p.get("order") != new_order_val:
+                    p["order"] = new_order_val
+                    updated = True
+                if new_block_tag is not None and p.get("block_tag") != new_block_tag:
+                    p["block_tag"] = new_block_tag
+                    updated = True
+                if new_group_id is not None and p.get("group_id") != new_group_id:
+                    p["group_id"] = new_group_id
+                    updated = True
+                if updated:
+                    changed_count += 1
                 break
-    if title is not None:
+
+    if title is not None and book_data.get("title") != title:
         book_data["title"] = title
-    with open(json_path, "w", encoding="utf-8") as f:
-        json.dump(book_data, f, ensure_ascii=False, indent=2)
-    return jsonify({"status": "ok"}), 200
+        changed_count += 1
+
+    if changed_count > 0:
+        with open(json_path, "w", encoding="utf-8") as f:
+            json.dump(book_data, f, ensure_ascii=False, indent=2)
+
+    return jsonify({"status": "ok", "changed": changed_count}), 200
+
 
 @app.route("/api/auto_tagging/<pdf_name>", methods=["POST"])
 def auto_tagging_api(pdf_name):

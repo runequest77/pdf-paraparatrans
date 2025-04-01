@@ -178,6 +178,15 @@ function jumpToPage(pageNum) {
     console.log("pageInput.value" + document.getElementById("pageInput").value);
 
     currentPage = parseInt(pageNum,10);
+
+    //同じページを指定した場合は何もしない
+    // if (currentPage === pageNum) {
+    //     return;
+    // }
+
+    if (window.autoToggle.getState("quickEditMode")) {
+        saveOrder();
+    }
     document.getElementById("pageInput").value = currentPage;
 
     // 「PDFファイルのURL」を作成

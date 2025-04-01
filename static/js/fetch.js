@@ -182,18 +182,29 @@ function dictTrans() {
 
 // 順序再発行＆保存処理
 function saveOrder() {
-    let container = document.getElementById('srcParagraphs');
-    let children = container.children;
-    let orderList = [];
+    const container = document.getElementById('srcParagraphs');
+    const children = container.children;
+    const orderList = [];
+
     for (let i = 0; i < children.length; i++) {
-        let idElem = children[i].querySelector('.paragraph-id');
-        if (idElem) {
-            let pId = idElem.innerText.trim();
-            orderList.push({ id: pId, order: i + 1 });
-        }
+        const paragraphDiv = children[i];
+        const idElem = paragraphDiv.querySelector('.paragraph-id');
+        if (!idElem) continue;
+
+        const pId = idElem.innerText.trim();
+        const blockTag = paragraphDiv.querySelector('.block-tag')?.innerText.trim() || "";
+        const groupClass = Array.from(paragraphDiv.classList).find(cls => cls.startsWith('group-id-'));
+        const groupId = groupClass ? parseInt(groupClass.replace('group-id-', '')) : null;
+
+        orderList.push({
+            id: pId,
+            order: i+1,
+            block_tag: blockTag,
+            group_id: groupId
+        });
     }
-    // orderListを /save_order に送信
-    let formData = new URLSearchParams();
+
+    const formData = new URLSearchParams();
     formData.append('order_json', JSON.stringify(orderList));
     formData.append('title', document.getElementById('titleInput').value);
 
@@ -207,14 +218,56 @@ function saveOrder() {
     .then(response => response.json())
     .then(data => {
         console.log('Order saved:', data);
-        alert('順序が保存されました');
-        fetchBookData();
+        // fetchBookData();
     })
     .catch(error => {
         console.error('Error saving order:', error);
-        alert('順序保存中にエラーが発生しました');
+        alert('ページ構造保存中にエラーが発生しました');
     });
 }
+
+// function saveOrder() {
+//     const container = document.getElementById("srcParagraphs");
+//     const boxes = Array.from(container.querySelectorAll('.paragraph-box'));
+//     const newOrder = [];
+
+
+    
+//     for (let i = 0; i < boxes.length; i++) {
+//         const div = boxes[i];
+//         const id = parseInt(div.id.replace('paragraph-', ''));
+//         const groupClass = Array.from(div.classList).find(cls => cls.startsWith('group-id-'));
+//         const groupId = groupClass ? parseInt(groupClass.replace('group-id-', '')) : null;
+
+//         newOrder.push({
+//             id: id,
+//             order: i,
+//             group_id: groupId
+//         });
+//     }
+
+//     fetch(`/api/update_order/${encodeURIComponent(pdfName)}`, {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json'
+//         },
+//         body: JSON.stringify({ order: newOrder })
+//     })
+//     .then(response => response.json())
+//     .then(data => {
+//         if (data.status === "ok") {
+//             console.log("順序とグループ情報を保存しました");
+//         } else {
+//             alert("保存に失敗しました: " + data.message);
+//         }
+//     })
+//     .catch(err => {
+//         console.error("保存中にエラー:", err);
+//         alert("保存中にエラーが発生しました");
+//     });
+// }
+
+
 
 function exportHtml() {
     fetch(`/api/export_html/${encodeURIComponent(pdfName)}`, {

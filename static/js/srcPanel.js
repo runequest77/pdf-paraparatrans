@@ -118,8 +118,7 @@ function onKeyDown(event, divSrc, paragraph, srcText, transText, blockTagSpan) {
     }
 }
 
-// ------------------------------
-// renderParagraphsの変更部分
+
 function renderParagraphs() {
     let srcContainer = document.getElementById("srcParagraphs");
     srcContainer.style.display = 'none'; // チラつき防止にいったん非表示
@@ -135,6 +134,28 @@ function renderParagraphs() {
         let blockTagClass = `block-tag-${p.block_tag}`;
         let statusClass = `status-${p.trans_status}`;
         divSrc.className = `paragraph-box ${blockTagClass}`;
+
+        // グループ情報に基づいてクラスを付与
+        if (p.group_id) {
+            const prev = bookData.paragraphs[i - 1];
+            const next = bookData.paragraphs[i + 1];
+            const sameGroupPrev = prev?.group_id === p.group_id && prev?.page === currentPage;
+            const sameGroupNext = next?.group_id === p.group_id && next?.page === currentPage;
+
+            if (!sameGroupPrev && sameGroupNext) {
+                divSrc.classList.add('group-start');
+            } else if (sameGroupPrev && sameGroupNext) {
+                divSrc.classList.add('group-middle');
+            } else if (sameGroupPrev && !sameGroupNext) {
+                divSrc.classList.add('group-end');
+            } else {
+                // 単体グループ（前後なし） → start + end
+                divSrc.classList.add('group-start', 'group-end');
+            }
+
+            divSrc.classList.add(`group-id-${p.group_id}`);
+        }
+
         divSrc.id = `paragraph-${p.id}`; // パラグラフIDをIDとして設定
         divSrc.innerHTML = `
             <div class='src-html'>${p.src_html}</div>
@@ -525,15 +546,28 @@ function getAllParagraphs() {
     return Array.from(document.querySelectorAll('.paragraph-box'));
 }
 
-function setCurrentParagraph(index) {
+function setCurrentParagraph(index, isShiftHeld = false) {
     const paragraphs = getAllParagraphs();
-    paragraphs.forEach(p => p.classList.remove('current'));
+
+    // current・selectedの制御
+    paragraphs.forEach(p => {
+        p.classList.remove('current');
+        if (!isShiftHeld) {
+            p.classList.remove('selected');
+        }
+    });
 
     index = Math.max(0, Math.min(index, paragraphs.length - 1));
     currentParagraphIndex = index;
 
     const current = paragraphs[currentParagraphIndex];
     current.classList.add('current');
+
+    // quickEditMode中は自動で選択も付ける
+    if (window.autoToggle.getState("quickEditMode")) {
+        current.classList.add('selected');
+    }
+
     current.scrollIntoView({ block: 'center', behavior: 'smooth' });
 }
 
@@ -553,5 +587,34 @@ function moveCurrentParagraphBy(offset, expandSelection = false) {
         paragraphs[nextIndex].classList.add('selected');
     }
 
-    setCurrentParagraph(nextIndex);
+    setCurrentParagraph(nextIndex, expandSelection);
+}
+
+function toggleGroupSelectedParagraphs() {
+    const selected = getSelectedParagraphsInOrder();
+    if (selected.length < 2) return;
+
+    // 先頭のグループクラスとパラグラフidを取得
+    const firstGroupId = selected[0].id.replace('paragraph-', '');
+    const firstGroupClass = selected[0].classList.contains(`group-id-${firstGroupId}`) ? `group-id-${firstGroupId}` : null;
+
+    // ✅ グループ解除：srcParagraphs 全体からfirstGroupIdに属するグループ を削除
+    const all = getAllParagraphs();
+    all.forEach(div => {
+        if (div.classList.contains(firstGroupClass)) {
+            div.classList.remove(firstGroupClass, 'in-group', 'group-start', 'group-middle', 'group-end');
+        }
+    });
+    
+    //グループが設定されていなかった場合は、選択範囲をグループ化
+    if (!firstGroupClass) {
+        // ✅ グループ化：選択範囲に新しい group-id を付ける
+        const newGroupClass = `group-id-${firstGroupId}`;
+        selected.forEach((div, index) => {
+            div.classList.add(newGroupClass, 'in-group');
+            if (index === 0) div.classList.add('group-start');
+            else if (index === selected.length - 1) div.classList.add('group-end');
+            else div.classList.add('group-middle');
+        });
+    }
 }
