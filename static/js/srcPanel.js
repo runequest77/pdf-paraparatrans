@@ -1,11 +1,11 @@
-var showSrc = true;
-var showTrans = true;
-var showSrcHtml = true;
-var showTransAuto = true;
-var showSrcReplaced = true;
+// var showSrc = true;
+// var showTrans = true;
+// var showSrcHtml = true;
+// var showTransAuto = true;
+// var showSrcReplaced = true;
 
 let selectedParagraphs = new Set(); // 選択されたパラグラフのIDを格納
-let selectedParagraphRange = { start: null, end: null }; // 選択範囲の開始と終了インデックス
+// let selectedParagraphRange = { start: null, end: null }; // 選択範囲の開始と終了インデックス
 
 function initSrcPanel() {
     // ドラッグ用ハンドルのみ有効にするために handle オプションを指定
@@ -97,25 +97,6 @@ function onEditCancelClick(event, paragraph, divSrc, srcText, transText, blockTa
 
     // 元のtrans_statusに基づいて背景色を復元
     updateEditUiBackground(divSrc, paragraph.trans_status);
-}
-
-function onKeyDown(event, divSrc, paragraph, srcText, transText, blockTagSpan) {
-    if (event.key === 'Escape' && divSrc.classList.contains('editing')) {
-        divSrc.classList.remove('editing');
-        srcText.contentEditable = false;
-        transText.contentEditable = false;
-        divSrc.querySelector('.edit-ui').style.display = 'none';
-        divSrc.querySelector('.edit-button').style.visibility = 'visible'; // visibilityを直接操作
-        $("#srcParagraphs").sortable("enable");
-        divSrc.style.cursor = 'move';
-
-        srcText.innerHTML = paragraph.src_text;
-        transText.innerHTML = paragraph.trans_text;
-        paragraph.block_tag = blockTagSpan.innerText;
-
-        // 元のtrans_statusに基づいて背景色を復元
-        updateEditUiBackground(divSrc, paragraph.trans_status);
-    }
 }
 
 
@@ -329,20 +310,6 @@ function resetSelection() {
     document.querySelectorAll('.paragraph-box.selected').forEach(el => el.classList.remove('selected'));
 }
 
-// // 指定されたパラグラフの選択状態をトグル
-// function toggleParagraphSelection(paragraphBox, selectedParagraphs) {
-//     const paragraphId = paragraphBox.id;
-
-//     // 選択状態をトグル
-//     if (selectedParagraphs.has(paragraphId)) {
-//         selectedParagraphs.delete(paragraphId);
-//         paragraphBox.classList.remove('selected');
-//     } else {
-//         selectedParagraphs.add(paragraphId);
-//         paragraphBox.classList.add('selected');
-//     }
-// }
-
 // 範囲を指定してパラグラフを選択リストに追加
 function selectParagraphRange(startIndex, endIndex) {
     const all = Array.from(document.querySelectorAll('.paragraph-box'));
@@ -370,11 +337,13 @@ document.addEventListener('click', (event) => {
         // Ctrl+クリックで範囲選択
         if (rangeAnchorIndex === null) {
             rangeAnchorIndex = clickedIndex;
+            setCurrentParagraph(clickedIndex, event.shiftKey);
         }
         selectParagraphRange(rangeAnchorIndex, clickedIndex);
     } else {
         // 通常クリック → 単一選択に
         resetSelection();
+        setCurrentParagraph(clickedIndex, event.shiftKey);
         rangeAnchorIndex = clickedIndex;
     }
 });
