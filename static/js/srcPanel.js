@@ -324,7 +324,7 @@ function selectParagraphRange(startIndex, endIndex) {
     }
 }
 
-let rangeAnchorIndex = null;
+// let rangeAnchorIndex = null;
 
 document.addEventListener('click', (event) => {
     const paragraphBox = event.target.closest('.paragraph-box');
@@ -335,16 +335,16 @@ document.addEventListener('click', (event) => {
 
     if (event.ctrlKey) {
         // Ctrl+クリックで範囲選択
-        if (rangeAnchorIndex === null) {
-            rangeAnchorIndex = clickedIndex;
-            setCurrentParagraph(clickedIndex, event.shiftKey);
-        }
-        selectParagraphRange(rangeAnchorIndex, clickedIndex);
+        // if (rangeAnchorIndex === null) {
+        //     rangeAnchorIndex = clickedIndex;
+        // }
+        setCurrentParagraph(clickedIndex, event.shiftKey);
+        // selectParagraphRange(rangeAnchorIndex, clickedIndex);
     } else {
         // 通常クリック → 単一選択に
         resetSelection();
         setCurrentParagraph(clickedIndex, event.shiftKey);
-        rangeAnchorIndex = clickedIndex;
+        // rangeAnchorIndex = clickedIndex;
     }
 });
 
