@@ -16,6 +16,27 @@ html, body {
     --dark-green: #3D7A50;
 }
 
+
+:root {
+    --h1-bg: #2c3e50;
+    --h1-fg: white;
+  
+    --h2-bg: #34495e;
+    --h2-fg: white;
+  
+    --h3-bg: #4a69bd;
+    --h3-fg: white;
+  
+    --h4-bg: #6a89cc;
+    --h4-fg: black;
+  
+    --h5-bg: #82ccdd;
+    --h5-fg: black;
+  
+    --h6-bg: #b8e994;
+    --h6-fg: black;
+}
+
 /* 背景色を適用 */
 .red-bg { background-color: var(--dark-red); }
 .blue-bg { background-color: var(--dark-blue); }

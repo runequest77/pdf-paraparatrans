@@ -81,10 +81,18 @@
 
     <div class="container">
         <div id="tocPanel" class="panel">
-          <span id="tocTrans" class="auto-toggle" data-auto-toggle="storage:local;shortcut:ctrl+q">原文/訳文</span>
-          <div id="tocContent"></div>
+          <div id="tocPanelHeader" class="panel-header" style="padding-left:10px; border-bottom: 1px solid">
+            <span id="tocShowPage" class="auto-toggle" data-auto-toggle="appearance:checkbox;storage:local">Page</span>
+            <span id="tocShowSrc" class="auto-toggle" data-auto-toggle="appearance:checkbox;storage:local">原文</span>
+            <span id="tocShowTrans" class="auto-toggle" data-auto-toggle="appearance:checkbox;storage:local">訳文</span>
+          </div>
+          <div class="toc-scroll-wrapper">
+            <table class="tocTable">
+              <tbody>
+              </tbody>
+            </table>
+          </div>
         </div>
-
         <div id="resizer1" class="resizer"></div>
 
         <div id="pdfPanel" class="panel flex-panel" style="min-width: 20;">

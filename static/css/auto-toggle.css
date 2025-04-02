@@ -11,7 +11,7 @@ div.auto-toggle {
 span.auto-toggle {
   display: inline-flex;
   align-items: center;
-  margin-right: 12px;
+  margin-right: 4px;
 }
 
 .auto-toggle.switch {

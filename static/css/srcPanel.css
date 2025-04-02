@@ -138,7 +138,6 @@
 .block-tag-h1 {
     font-size: 2em; /* 最も大きい見出し */
     font-weight: bold;
-    color: #2c3e50; /* 濃い青色 */
     background-color: #2c3e50; /* 濃い青色 */
     color: white;
 }
@@ -146,7 +145,6 @@
 .block-tag-h2 {
     font-size: 1.75em;
     font-weight: bold;
-    color: #34495e; /* 少し薄い青色 */
     background-color: #34495e; /* 少し薄い青色 */
     color: white;
 }
@@ -154,7 +152,6 @@
 .block-tag-h3 {
     font-size: 1.5em;
     font-weight: bold;
-    color: #4a69bd; /* 青紫色 */
     text-decoration: underline; /*文字に下線を引く*/
     background-color: #4a69bd; /* 青紫色 */
     color: white;
@@ -163,7 +160,6 @@
 .block-tag-h4 {
     font-size: 1.25em;
     font-weight: bold;
-    color: #6a89cc; /* 明るい青紫色 */
     background-color: #6a89cc; /* 明るい青紫色 */
     color: black;
 }
@@ -171,7 +167,6 @@
 .block-tag-h5 {
     font-size: 1.1em;
     font-weight: bold;
-    color: #2c3e50; /* 濃い青色 */
     background-color: #82ccdd; /* 明るい青色 */
     color: black;
 }
@@ -179,7 +174,6 @@
 .block-tag-h6 {
     font-size: 1em; /* 最も小さい見出し */
     font-weight: bold;
-    color: black;
     background-color: #b8e994; /* 明るい緑色 */
     color: black;
 }

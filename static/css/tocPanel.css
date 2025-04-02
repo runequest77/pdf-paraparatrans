@@ -61,3 +61,94 @@
     margin-left: 4%;
     border-left: 1px dashed #ccc;
 }
+
+
+  .tocTable td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* … で省略表示 */
+    border: 1px solid rgb(255, 255, 0, 0.2)
+  }
+  
+  .tocTable {
+    border-collapse: collapse; /* ボーダーの二重線防止 */
+  }
+
+  .tocTable td.toc-page {
+    font-family: monospace;
+    font-weight: bold;
+    width: 24px;
+    min-width: 24px;
+    max-width: 24px;
+    padding-left: 4px;
+    padding-right: 4px;
+    color: rgba(160, 160, 160, 0.8);
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  /* 見出しレベルごとのデザイン（srcとtransの両方に適用） */
+td.toc-h1 {
+    padding-left: 0px;
+    font-size: 1.1em;
+    font-weight: bold;
+    font-family: "Segoe UI", sans-serif;
+    color: var(--h1-fg);
+    background-color: var(--h1-bg);
+  }
+  
+  td.toc-h2 {
+    padding-left: 8px;
+    font-size: 1em;
+    font-weight: bold;
+    font-family: "Segoe UI", sans-serif;
+    color: var(--h2-fg);
+    background-color: var(--h2-bg);
+  }
+  
+  td.toc-h3 {
+    padding-left: 16px;
+    font-size: 0.95em;
+    font-family: "Verdana", sans-serif;
+    color: var(--h3-fg);
+    background-color: var(--h3-bg);
+  }
+  
+  td.toc-h4 {
+    padding-left: 24px;
+    font-size: 0.9em;
+    font-family: "Verdana", sans-serif;
+    color: var(--h4-fg);
+    background-color: var(--h4-bg);
+  }
+  
+  td.toc-h5 {
+    padding-left: 32px;
+    font-size: 0.85em;
+    font-family: "Verdana", sans-serif;
+    color: var(--h5-fg);
+    background-color: var(--h5-bg);
+  }
+  
+  td.toc-h6 {
+    padding-left: 40px;
+    font-size: 0.8em;
+    font-family: "Courier New", monospace;
+    color: var(--h6-fg);
+    background-color: var(--h6-bg);
+  }
+  
+  .toc-scroll-wrapper {
+    max-height: 100%;        /* 必要に応じて固定高さにしてもOK */
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .tocTable td a {
+    color: inherit;           /* 親要素の色を継承 */
+    text-decoration: none;    /* 下線も消す（必要なら） */
+  }
+  
+  .tocTable td a:hover {
+    text-decoration: underline;  /* ホバー時に下線だけ出す等もOK */
+  }

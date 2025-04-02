@@ -21,7 +21,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pyinstaller PyMuPDF numpy
+          pip install pyinstaller PyMuPDF numpy PyPDF2
           pip install -r requirements.txt
 
       - name: Build executable with PyInstaller

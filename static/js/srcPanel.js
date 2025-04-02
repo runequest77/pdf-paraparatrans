@@ -571,16 +571,18 @@ function toggleGroupSelectedParagraphs() {
     const all = getAllParagraphs();
     all.forEach(div => {
         if (div.classList.contains(firstGroupClass)) {
-            div.classList.remove(firstGroupClass, 'in-group', 'group-start', 'group-middle', 'group-end');
+            div.classList.remove(firstGroupClass, 'group-start', 'group-middle', 'group-end');
         }
     });
     
     //グループが設定されていなかった場合は、選択範囲をグループ化
     if (!firstGroupClass) {
-        // ✅ グループ化：選択範囲に新しい group-id を付ける
         const newGroupClass = `group-id-${firstGroupId}`;
         selected.forEach((div, index) => {
-            div.classList.add(newGroupClass, 'in-group');
+            // 既存のgroup-idを削除
+            div.classList.remove(...Array.from(div.classList).filter(cls => cls.startsWith('group-id-')));
+            // 新しいグループIDを追加
+            div.classList.add(newGroupClass);
             if (index === 0) div.classList.add('group-start');
             else if (index === selected.length - 1) div.classList.add('group-end');
             else div.classList.add('group-middle');
