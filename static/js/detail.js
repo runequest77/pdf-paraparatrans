@@ -76,6 +76,19 @@ function autoToggleChanged(event) {
         document.querySelectorAll('.trans-text').forEach(el => {
             el.style.display = newState ? 'block' : 'none';
         });
+    } else if (id === 'toggleTocPage') {
+        document.querySelectorAll('.toc-page').forEach(el => {
+            el.style.display = newState ? 'table-cell' : 'none';
+        });
+
+    } else if (id === 'toggleTocSrc') {
+        document.querySelectorAll('.toc-src').forEach(el => {
+            el.style.display = newState ? 'table-cell' : 'none';
+        });
+    } else if (id === 'toggleTocTrans') {
+        document.querySelectorAll('.toc-trans').forEach(el => {
+            el.style.display = newState ? 'table-cell' : 'none';
+        });
     }
     
 }
