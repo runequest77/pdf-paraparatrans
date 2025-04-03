@@ -152,3 +152,24 @@ td.toc-h1 {
   .tocTable td a:hover {
     text-decoration: underline;  /* ホバー時に下線だけ出す等もOK */
   }
+
+  .toc-toggle {
+    display: inline-block;
+    width: 1em;
+    cursor: pointer;
+    user-select: none;
+    margin-right: 0.3em;
+  }
+  
+  .toc-toggle::before {
+    content: "▼";
+    display: inline-block;
+  }
+  
+  .toc-toggle.collapsed::before {
+    content: "▶";
+  }
+
+  tr.collapsed {
+    display: none;
+  }

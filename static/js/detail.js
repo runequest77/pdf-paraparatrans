@@ -14,16 +14,14 @@ window.onload = function() {
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log("DOMContentLoaded");
-    // 描画ボタン
+    // 再描画ボタン（現在は非表示）
     document.getElementById('renderButton').addEventListener('click', renderParagraphs);
-    // 順序保存
+    // 構成保存
     document.getElementById('saveOrderButton').addEventListener('click', saveOrder);
     // ページ翻訳
     document.getElementById('pageTransButton').addEventListener('click', transPage);
-
+    // トグル/チェックボックスのカスタムイベント
     document.addEventListener('auto-toggle-change', autoToggleChanged);
-
-    window.autoToggle.dispatchAll();
 });
 
 // すべてのauto-toggleの状態変化を監視する（toggleごとでもよいが、リスナーを増やさないことを選択）
@@ -33,18 +31,19 @@ function autoToggleChanged(event) {
     console.log(`トグルスイッチ ${id} が ${newState ? 'ON' : 'OFF'} に変更されました。`);
 
     if (id === 'toggleTocPanel') {
+        // 目次パネルのON/OFF
         let panel = document.getElementById("tocPanel");
         let resizer = document.getElementById("resizer1");
         if (newState){
             panel.classList.remove("hidden");
             resizer.classList.remove("hidden");
-            tocTrans = window.autoToggle.getState("tocTrans");
-            showToc(tocTrans);
+            showToc();
         } else {
             panel.classList.add("hidden");
             resizer.classList.add("hidden");
         }
     } else if (id==='togglePdfPanel') {
+        // PDFパネルのON/OFF
         let panel = document.getElementById("pdfPanel");
         let resizer = document.getElementById("resizer2");
         if (newState){
@@ -54,38 +53,43 @@ function autoToggleChanged(event) {
             panel.classList.add("hidden");
             resizer.classList.add("hidden");
         }
-    } else if (id === 'tocTrans') {
-        showToc(newState);
     } else if (id === 'toggleSrcHtml') {
+        // 「HTML」列のON/OFF
         document.querySelectorAll('.src-html').forEach(el => {
             el.style.display = newState ? 'block' : 'none';
         });
     } else if (id === 'toggleSrcText') {
+        // 「原文」列のON/OFF
         document.querySelectorAll('.src-text').forEach(el => {
             el.style.display = newState ? 'block' : 'none';
         });
     } else if (id === 'toggleSrcReplaced') {
+        // 「置換文」列のON/OFF
         document.querySelectorAll('.src-replaced').forEach(el => {
             el.style.display = newState ? 'block' : 'none';
         });
     } else if (id === 'toggleTransAuto') {
+        // 「自動」列のON/OFF
         document.querySelectorAll('.trans-auto').forEach(el => {
             el.style.display = newState ? 'block' : 'none';
         });
     } else if (id === 'toggleTransText') {
+        // 「訳文」列のON/OFF
         document.querySelectorAll('.trans-text').forEach(el => {
             el.style.display = newState ? 'block' : 'none';
         });
     } else if (id === 'toggleTocPage') {
+        // 見出し「Page」のON/OFF
         document.querySelectorAll('.toc-page').forEach(el => {
             el.style.display = newState ? 'table-cell' : 'none';
         });
-
     } else if (id === 'toggleTocSrc') {
+        // 「原文」見出しのON/OFF
         document.querySelectorAll('.toc-src').forEach(el => {
             el.style.display = newState ? 'table-cell' : 'none';
         });
     } else if (id === 'toggleTocTrans') {
+        // 「訳文」見出しのON/OFF
         document.querySelectorAll('.toc-trans').forEach(el => {
             el.style.display = newState ? 'table-cell' : 'none';
         });
@@ -94,7 +98,7 @@ function autoToggleChanged(event) {
 }
 
 
-// boookDataからhead-stylesを読み込み
+// boookDataから「見出しスタイル一覧」を読み込み
 function updateHeadStyles() {
     if (!bookData.head_styles) {
         console.warn("head_styles が存在しません");
@@ -117,6 +121,7 @@ function updateHeadStyles() {
     styleElement.innerHTML = newStyles;
 }
 
+// 翻訳進捗状況を更新
 function updateTransStatusCounts(counts) {
     document.getElementById("countNone").innerText = counts.none;
     document.getElementById("countAuto").innerText = counts.auto;
@@ -124,31 +129,31 @@ function updateTransStatusCounts(counts) {
     document.getElementById("countFixed").innerText = counts.fixed;
 }
 
-function restoreCheckboxStates() {
-    const checkboxes = document.querySelectorAll('.restoreCheckboxState');
-    checkboxes.forEach(checkbox => {
-        try {
-            const storedValue = localStorage.getItem(checkbox.id);
-            if (storedValue === null) {
-                localStorage.setItem(checkbox.id, checkbox.checked);
-            } else {
-                checkbox.checked = storedValue === 'true';
-            }
-            const event = new Event('change');
-            checkbox.dispatchEvent(event);
-        } catch (error) {
-            console.error("Error processing checkbox:", checkbox, error);
-        }
-    });
-}
+// function restoreCheckboxStates() {
+//     const checkboxes = document.querySelectorAll('.restoreCheckboxState');
+//     checkboxes.forEach(checkbox => {
+//         try {
+//             const storedValue = localStorage.getItem(checkbox.id);
+//             if (storedValue === null) {
+//                 localStorage.setItem(checkbox.id, checkbox.checked);
+//             } else {
+//                 checkbox.checked = storedValue === 'true';
+//             }
+//             const event = new Event('change');
+//             checkbox.dispatchEvent(event);
+//         } catch (error) {
+//             console.error("Error processing checkbox:", checkbox, error);
+//         }
+//     });
+// }
 
-function saveCheckboxState(event) {
-    const checkbox = event.target;
-    localStorage.setItem(checkbox.id, checkbox.checked);
-}
+// function saveCheckboxState(event) {
+//     const checkbox = event.target;
+//     localStorage.setItem(checkbox.id, checkbox.checked);
+// }
 
 /* ---------------------------------------
-   「ウインドウ幅に合わせる」を外部から適用
+   PDFパネルに「ウインドウ幅に合わせる」を外部から適用
    - iframe.contentWindow.PDFViewerApplication を介して制御
 --------------------------------------- */
 function fitToWidth() {
@@ -192,12 +197,8 @@ function jumpToPage(pageNum) {
 
     currentPage = parseInt(pageNum,10);
 
-    //同じページを指定した場合は何もしない
-    // if (currentPage === pageNum) {
-    //     return;
-    // }
-
     if (window.autoToggle.getState("quickEditMode")) {
+        // ページ移動で自動構成保存
         saveOrder();
     }
     document.getElementById("pageInput").value = currentPage;

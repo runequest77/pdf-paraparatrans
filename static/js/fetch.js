@@ -8,7 +8,7 @@ async function fetchBookData() {
 
         updateTransStatusCounts(bookData.trans_status_counts);
         updateHeadStyles();
-        showToc(window.autoToggle.getState("tocTrans"));
+        // showToc();
         jumpToPage(currentPage);
     } catch (error) {
         console.error("Error fetching book data:", error);
