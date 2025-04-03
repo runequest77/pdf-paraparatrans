@@ -63,113 +63,141 @@
 }
 
 
-  .tocTable td {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis; /* … で省略表示 */
-    border: 1px solid rgb(255, 255, 0, 0.2)
-  }
-  
-  .tocTable {
-    border-collapse: collapse; /* ボーダーの二重線防止 */
-  }
+.tocTable td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* … で省略表示 */
+  border: 1px solid rgb(255, 255, 0, 0.2)
+}
 
-  .tocTable td.toc-page {
-    font-family: monospace;
-    font-weight: bold;
-    width: 24px;
-    min-width: 24px;
-    max-width: 24px;
-    padding-left: 4px;
-    padding-right: 4px;
-    color: rgba(160, 160, 160, 0.8);
-    text-align: right;
-    white-space: nowrap;
-  }
+.tocTable {
+  border-collapse: collapse; /* ボーダーの二重線防止 */
+}
+
+.tocTable td.toc-page {
+  font-family: monospace;
+  font-weight: bold;
+  width: 24px;
+  min-width: 24px;
+  max-width: 24px;
+  padding-left: 4px;
+  padding-right: 4px;
+  color: rgba(160, 160, 160, 0.8);
+  text-align: right;
+  white-space: nowrap;
+}
 
   /* 見出しレベルごとのデザイン（srcとtransの両方に適用） */
 td.toc-h1 {
-    padding-left: 0px;
-    font-size: 1.1em;
-    font-weight: bold;
-    font-family: "Segoe UI", sans-serif;
-    color: var(--h1-fg);
-    background-color: var(--h1-bg);
-  }
-  
-  td.toc-h2 {
-    padding-left: 8px;
-    font-size: 1em;
-    font-weight: bold;
-    font-family: "Segoe UI", sans-serif;
-    color: var(--h2-fg);
-    background-color: var(--h2-bg);
-  }
-  
-  td.toc-h3 {
-    padding-left: 16px;
-    font-size: 0.95em;
-    font-family: "Verdana", sans-serif;
-    color: var(--h3-fg);
-    background-color: var(--h3-bg);
-  }
-  
-  td.toc-h4 {
-    padding-left: 24px;
-    font-size: 0.9em;
-    font-family: "Verdana", sans-serif;
-    color: var(--h4-fg);
-    background-color: var(--h4-bg);
-  }
-  
-  td.toc-h5 {
-    padding-left: 32px;
-    font-size: 0.85em;
-    font-family: "Verdana", sans-serif;
-    color: var(--h5-fg);
-    background-color: var(--h5-bg);
-  }
-  
-  td.toc-h6 {
-    padding-left: 40px;
-    font-size: 0.8em;
-    font-family: "Courier New", monospace;
-    color: var(--h6-fg);
-    background-color: var(--h6-bg);
-  }
-  
-  .toc-scroll-wrapper {
-    max-height: 100%;        /* 必要に応じて固定高さにしてもOK */
-    overflow-y: auto;
-    overflow-x: hidden;
-  }
+  padding-left: 20px;
+  font-size: 1.1em;
+  font-weight: bold;
+  font-family: "Segoe UI", sans-serif;
+  color: var(--h1-fg);
+  background-color: var(--h1-bg);
+}
 
-  .tocTable td a {
-    color: inherit;           /* 親要素の色を継承 */
-    text-decoration: none;    /* 下線も消す（必要なら） */
-  }
-  
-  .tocTable td a:hover {
-    text-decoration: underline;  /* ホバー時に下線だけ出す等もOK */
-  }
+td.toc-h2 {
+  padding-left: 32px;
+  font-size: 1em;
+  font-weight: bold;
+  font-family: "Segoe UI", sans-serif;
+  color: var(--h2-fg);
+  background-color: var(--h2-bg);
+}
 
-  .toc-toggle {
-    display: inline-block;
-    width: 1em;
-    cursor: pointer;
-    user-select: none;
-    margin-right: 0.3em;
-  }
-  
-  .toc-toggle::before {
-    content: "▼";
-    display: inline-block;
-  }
-  
-  .toc-toggle.collapsed::before {
-    content: "▶";
-  }
+td.toc-h3 {
+  padding-left: 44px;
+  font-size: 0.95em;
+  font-family: "Verdana", sans-serif;
+  color: var(--h3-fg);
+  background-color: var(--h3-bg);
+}
 
-  tr.collapsed {
-    display: none;
-  }
+td.toc-h4 {
+  padding-left: 56px;
+  font-size: 0.9em;
+  font-family: "Verdana", sans-serif;
+  color: var(--h4-fg);
+  background-color: var(--h4-bg);
+}
+
+td.toc-h5 {
+  padding-left: 68px;
+  font-size: 0.85em;
+  font-family: "Verdana", sans-serif;
+  color: var(--h5-fg);
+  background-color: var(--h5-bg);
+}
+
+td.toc-h6 {
+  padding-left: 80px;
+  font-size: 0.8em;
+  font-family: "Courier New", monospace;
+  color: var(--h6-fg);
+  background-color: var(--h6-bg);
+}
+
+.toc-scroll-wrapper {
+  max-height: 100%;        /* 必要に応じて固定高さにしてもOK */
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.tocTable td a {
+  color: inherit;           /* 親要素の色を継承 */
+  text-decoration: none;    /* 下線も消す（必要なら） */
+}
+
+.tocTable td a:hover {
+  text-decoration: underline;  /* ホバー時に下線だけ出す等もOK */
+}
+
+
+/* マーカーの共通スタイル */
+.toc-toggle,
+.toc-toggle-blank {
+  position: absolute;
+  top: 0;
+  left: 0; /* left は後述のクラスで調整 */
+  width: 20px;
+  height: 100%;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  pointer-events: auto;
+
+  display: flex;
+  align-items: center;     /* ← 縦中央にマーカーを配置 */
+  justify-content: center;
+}
+
+.toc-toggle::before {
+  content: "▼";
+  font-size: 12px;
+  width: 20px;
+  height: 20px;
+}
+
+tr[data-open="false"] .toc-toggle::before {
+  content: "▶";
+}
+
+/* 階層に応じたマーカー位置（左側オフセット） */
+.toc-toggle.nest-level-1,
+.toc-toggle-blank.nest-level-1 { left: 0px; }
+.toc-toggle.nest-level-2,
+.toc-toggle-blank.nest-level-2 { left: 6px; }
+.toc-toggle.nest-level-3,
+.toc-toggle-blank.nest-level-3 { left: 12px; }
+.toc-toggle.nest-level-4,
+.toc-toggle-blank.nest-level-4 { left: 18px; }
+.toc-toggle.nest-level-5,
+.toc-toggle-blank.nest-level-5 { left: 24px; }
+.toc-toggle.nest-level-6,
+.toc-toggle-blank.nest-level-6 { left: 30px; }
+
+/* 必要なラッパーに relative を付与 */
+.toc-src, .toc-trans {
+  position: relative;
+}
