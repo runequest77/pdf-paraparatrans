@@ -97,14 +97,12 @@
     right: 0;
     width: auto;
     border: 4px solid #999;
-    padding: 10px;
+    padding: 8px 16px 6px 20px;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* 影を追加 */
     white-space: nowrap;
-    font-size: 14px;
+    font-size: 16px;
     line-height: 1.4;
-    font-weight: normal;
-    color: #ccc;
-    background-color: #333 ;
+    font-weight: bold;
 }
 .editing .src-text, .editing .trans-text {
     border: 1px solid #000;
@@ -185,12 +183,29 @@
     background-color: #ffffcc; /* 編集時の背景色 */
     color: #333; /* 編集時の文字色 */
 }
-
-.editing .src-text, 
-.editing .trans-text {
-    border: 3px solid #000; /* 編集時の枠線 */
-    background: #ffffcc; /* 編集時の背景色 */
-    color: #333; /* 編集時の文字色 */
+@media (prefers-color-scheme: dark) {
+    .editing .src-text, 
+    .editing .trans-text {
+        border: 3px solid #000; /* 編集時の枠線 */
+        background: #fefbe9; /* 編集時の背景色 */
+        color: #000; /* 編集時の文字色 */
+    }
+    .edit-ui {
+        background: #111; /* 編集時の背景色 */
+        color: #fff; /* 編集時の文字色 */
+    }
+}
+@media (prefers-color-scheme: light) {
+    .editing .src-text, 
+    .editing .trans-text {
+        border: 3px solid #000; /* 編集時の枠線 */
+        background: #1e1e1e; /* 編集時の背景色 */
+        color: #e0e0e0; /* 編集時の文字色 */
+    }
+    .edit-ui {
+        background: #ccc; /* 編集時の背景色 */
+        color: #000; /* 編集時の文字色 */
+    }
 }
 
 .paragraph-box.current {

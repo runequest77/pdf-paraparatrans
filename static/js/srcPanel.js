@@ -330,9 +330,18 @@ function selectParagraphRange(startIndex, endIndex) {
     }
 }
 
-// let rangeAnchorIndex = null;
-
 document.addEventListener('click', (event) => {
+
+    document.querySelectorAll('.edit-ui').forEach(editUI => {
+        if (editUI.style.display === 'block') {
+            const paragraphBox = editUI.closest('.paragraph-box');
+            // ✨ そのパラグラフ外をクリックしたらキャンセル
+            if (!paragraphBox.contains(event.target)) {
+                cancelEditUI(paragraphBox);
+            }
+        }
+    });
+
     const paragraphBox = event.target.closest('.paragraph-box');
     if (!paragraphBox) return;
 
@@ -340,17 +349,10 @@ document.addEventListener('click', (event) => {
     const clickedIndex = paragraphs.indexOf(paragraphBox);
 
     if (event.ctrlKey) {
-        // Ctrl+クリックで範囲選択
-        // if (rangeAnchorIndex === null) {
-        //     rangeAnchorIndex = clickedIndex;
-        // }
         setCurrentParagraph(clickedIndex, event.shiftKey);
-        // selectParagraphRange(rangeAnchorIndex, clickedIndex);
     } else {
-        // 通常クリック → 単一選択に
         resetSelection();
         setCurrentParagraph(clickedIndex, event.shiftKey);
-        // rangeAnchorIndex = clickedIndex;
     }
 });
 
@@ -610,14 +612,13 @@ function toggleEditUI(divSrc) {
             if (box !== divSrc) cancelEditUI(box);
         });
 
+        divSrc.classList.add('editing');
         const srcText = divSrc.querySelector('.src-text');
         const transText = divSrc.querySelector('.trans-text');
-        const editButton = divSrc.querySelector('.edit-button');
 
         editUI.style.display = 'block';
         if (srcText) srcText.contentEditable = true;
         if (transText) transText.contentEditable = true;
-        // if (editButton) editButton.style.visibility = 'hidden';
         $("#srcParagraphs").sortable("disable");
         divSrc.style.cursor = 'text';
     }
@@ -628,6 +629,7 @@ function cancelEditUI(divSrc) {
     if (!editUI || editUI.style.display !== 'block') return;
     editUI.style.display = 'none';
 
+    divSrc.classList.remove('editing');
     const srcText = divSrc.querySelector('.src-text');
     const transText = divSrc.querySelector('.trans-text');
     const editButton = divSrc.querySelector('.edit-button');
