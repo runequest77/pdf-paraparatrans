@@ -33,10 +33,9 @@ function renderTocTableRows(tocNode) {
         <tr id="${rowId}" class="${rowClass}" data-id="${node.id}" data-parent="${parentId || ""}" data-nest-level="${node.nestLevel}" data-open="true">
           <td class="toc-page">${node.page}</td>
           <td class="toc-src toc-${node.block_tag}">
-            ${toggleMarker}<a href="#id${node.id}">${node.src_text}</a>
-          </td>
+            ${toggleMarker}<a href="#" data-id="${node.id}" data-page="${node.page}">${node.src_text}</a>
           <td class="toc-trans toc-${node.block_tag}">
-            ${toggleMarker}<a href="#id${node.id}">${node.trans_text}</a>
+            ${toggleMarker}<a href="#" data-id="${node.id}" data-page="${node.page}">${node.trans_text}</a>
           </td>
         </tr>
       `);
@@ -170,3 +169,24 @@ function expandUpToLimit(maxCount = 20) {
     row.setAttribute("data-open", show ? (open ? "true" : "false") : "false");
   }
 }
+
+document.addEventListener("click", function (event) {
+  const link = event.target.closest(".toc-src a, .toc-trans a");
+  if (!link) return;
+
+  event.preventDefault();
+  const id = parseInt(link.dataset.id);
+  const page = parseInt(link.dataset.page);
+
+  const scrollTo = () => {
+    const el = document.getElementById(`paragraph-${id}`);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+  };
+
+  if (page !== currentPage) {
+    jumpToPage(page);
+    setTimeout(scrollTo, 500); // ページ描画完了後にスクロール
+  } else {
+    scrollTo();
+  }
+});

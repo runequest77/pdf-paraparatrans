@@ -148,3 +148,31 @@ function createTocItem(p, level, hasChildren, isTrans) {
     return itemContainer;
 }
 
+document.addEventListener("click", function (event) {
+    const link = event.target.closest(".toc-src a, .toc-trans a");
+    if (!link) return;
+  
+    event.preventDefault();
+    const id = parseInt(link.dataset.id);
+    const page = parseInt(link.dataset.page);
+  
+    const scrollAndSet = () => {
+      const el = document.getElementById(`paragraph-${id}`);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+        const all = Array.from(document.querySelectorAll(".paragraph-box"));
+        const index = all.indexOf(el);
+        if (index !== -1) {
+          setCurrentParagraph(index);
+        }
+      }
+    };
+  
+    if (page !== currentPage) {
+      jumpToPage(page);
+      setTimeout(scrollAndSet, 500); // ページ描画完了待ち
+    } else {
+      scrollAndSet();
+    }
+  });
+  

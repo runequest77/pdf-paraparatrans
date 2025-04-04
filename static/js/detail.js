@@ -37,7 +37,7 @@ function autoToggleChanged(event) {
         if (newState){
             panel.classList.remove("hidden");
             resizer.classList.remove("hidden");
-            showToc();
+            // showToc();
         } else {
             panel.classList.add("hidden");
             resizer.classList.add("hidden");

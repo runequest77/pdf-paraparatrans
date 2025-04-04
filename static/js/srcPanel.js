@@ -1,11 +1,4 @@
-// var showSrc = true;
-// var showTrans = true;
-// var showSrcHtml = true;
-// var showTransAuto = true;
-// var showSrcReplaced = true;
-
 let selectedParagraphs = new Set(); // 選択されたパラグラフのIDを格納
-// let selectedParagraphRange = { start: null, end: null }; // 選択範囲の開始と終了インデックス
 
 function initSrcPanel() {
     // ドラッグ用ハンドルのみ有効にするために handle オプションを指定
@@ -14,9 +7,20 @@ function initSrcPanel() {
     });
 }
 
-// ------------------------------
-// 切り出したハンドラ群
+// 編集ボックス表示
 function onEditButtonClick(event) {
+    resetSelection(); // ★追加：選択表示を解除
+
+    // ② 他の編集ボックスを非表示に
+    document.querySelectorAll('.paragraph-box.editing').forEach(box => {
+        if (!box.contains(event.currentTarget)) {
+            const cancelButton = box.querySelector('.edit-cancel');
+            if (cancelButton) {
+                cancelButton.click(); // 通常のキャンセル動作で閉じる
+            }
+        }
+    });    
+
     const editButton = event.currentTarget;
     const divSrc = editButton.closest('.paragraph-box');
     const srcText = divSrc.querySelector('.src-text');
@@ -32,6 +36,7 @@ function onEditButtonClick(event) {
     divSrc.style.cursor = 'text';
 }
 
+// 編集ボックスの単文での翻訳
 function onTransButtonClick(event, paragraph, divSrc) {
     fetch('/api/translate', {
         method: 'POST',
@@ -55,6 +60,7 @@ function onTransButtonClick(event, paragraph, divSrc) {
     .catch(error => console.error('Error:', error));
 }
 
+// 編集ボックスの保存
 function onSaveButtonClick(event, paragraph, divSrc, srcText, transText, blockTagSelect, blockTagSpan) {
     divSrc.classList.remove('editing');
     srcText.contentEditable = false;

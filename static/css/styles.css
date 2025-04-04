@@ -108,8 +108,8 @@ header {
 /* ソースパネルのみスクロール可能 */
 #srcPanel {
     flex: 1;
-    overflow-y: auto;
     height: 100%;
+    overflow-x: auto;
 }
 
 .overlay {
