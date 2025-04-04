@@ -7,34 +7,35 @@ function initSrcPanel() {
     });
 }
 
+
 // 編集ボックス表示
-function onEditButtonClick(event) {
-    resetSelection(); // ★追加：選択表示を解除
+// function onEditButtonClick(event) {
+//     resetSelection(); // ★追加：選択表示を解除
 
-    // ② 他の編集ボックスを非表示に
-    document.querySelectorAll('.paragraph-box.editing').forEach(box => {
-        if (!box.contains(event.currentTarget)) {
-            const cancelButton = box.querySelector('.edit-cancel');
-            if (cancelButton) {
-                cancelButton.click(); // 通常のキャンセル動作で閉じる
-            }
-        }
-    });    
+//     // ② 他の編集ボックスを非表示に
+//     document.querySelectorAll('.paragraph-box.editing').forEach(box => {
+//         if (!box.contains(event.currentTarget)) {
+//             const cancelButton = box.querySelector('.edit-cancel');
+//             if (cancelButton) {
+//                 cancelButton.click(); // 通常のキャンセル動作で閉じる
+//             }
+//         }
+//     });    
 
-    const editButton = event.currentTarget;
-    const divSrc = editButton.closest('.paragraph-box');
-    const srcText = divSrc.querySelector('.src-text');
-    const transText = divSrc.querySelector('.trans-text');
-    const editUI = divSrc.querySelector('.edit-ui');
+//     const editButton = event.currentTarget;
+//     const divSrc = editButton.closest('.paragraph-box');
+//     const srcText = divSrc.querySelector('.src-text');
+//     const transText = divSrc.querySelector('.trans-text');
+//     const editUI = divSrc.querySelector('.edit-ui');
     
-    divSrc.classList.add('editing');
-    srcText.contentEditable = true;
-    transText.contentEditable = true;
-    editUI.style.display = 'block';
-    editButton.style.visibility = 'hidden'; // visibilityを直接操作
-    $("#srcParagraphs").sortable("disable");
-    divSrc.style.cursor = 'text';
-}
+//     divSrc.classList.add('editing');
+//     srcText.contentEditable = true;
+//     transText.contentEditable = true;
+//     editUI.style.display = 'block';
+//     editButton.style.visibility = 'hidden'; // visibilityを直接操作
+//     $("#srcParagraphs").sortable("disable");
+//     divSrc.style.cursor = 'text';
+// }
 
 // 編集ボックスの単文での翻訳
 function onTransButtonClick(event, paragraph, divSrc) {
@@ -179,7 +180,6 @@ function renderParagraphs() {
                     <label><input type='radio' name='status-${p.id}' value='draft'> 下訳</label>
                     <label><input type='radio' name='status-${p.id}' value='fixed'> 確定</label>
                     <button class='save-button'>保存</button>
-                    <button class='edit-cancel'>...</button>
                 </div>
             </div>
         `;
@@ -189,7 +189,6 @@ function renderParagraphs() {
         let editButton = divSrc.querySelector('.edit-button');
         let transButton = divSrc.querySelector('.trans-button');
         let saveButton = divSrc.querySelector('.save-button');
-        let editCancel = divSrc.querySelector('.edit-cancel');
         let srcText = divSrc.querySelector('.src-text');
         let transText = divSrc.querySelector('.trans-text');
         let blockTagSelect = divSrc.querySelector('.type-select');
@@ -199,10 +198,11 @@ function renderParagraphs() {
         let statusRadio = divSrc.querySelector(`input[name='status-${p.id}'][value='${p.trans_status}']`);
         if (statusRadio) { statusRadio.checked = true; }
 
-        editButton.addEventListener('click', (event) => onEditButtonClick(event));
+        editButton.addEventListener('click', () => toggleEditUI(divSrc));
+        // editButton.addEventListener('click', (event) => onEditButtonClick(event));
         transButton.addEventListener('click', (e) => onTransButtonClick(e, p, divSrc));
         saveButton.addEventListener('click', (e) => onSaveButtonClick(e, p, divSrc, srcText, transText, blockTagSelect, blockTagSpan));
-        editCancel.addEventListener('click', (e) => onEditCancelClick(e, p, divSrc, srcText, transText, blockTagSpan));
+        // editCancel.addEventListener('click', (e) => onEditCancelClick(e, p, divSrc, srcText, transText, blockTagSpan));
         document.addEventListener('keydown', (e) => onKeyDown(e, divSrc, p, srcText, transText, blockTagSpan));
 
         setCurrentParagraph(0);
@@ -594,4 +594,52 @@ function toggleGroupSelectedParagraphs() {
             else div.classList.add('group-middle');
         });
     }
+}
+
+function toggleEditUI(divSrc) {
+    const editUI = divSrc.querySelector('.edit-ui');
+    if (!editUI) return;
+    const isVisible = editUI && editUI.style.display === 'block';
+
+    if (isVisible) {
+        cancelEditUI(divSrc);
+    } else {
+        // 他を全部閉じる
+        document.querySelectorAll('.edit-ui').forEach(ui => {
+            const box = ui.closest('.paragraph-box');
+            if (box !== divSrc) cancelEditUI(box);
+        });
+
+        const srcText = divSrc.querySelector('.src-text');
+        const transText = divSrc.querySelector('.trans-text');
+        const editButton = divSrc.querySelector('.edit-button');
+
+        editUI.style.display = 'block';
+        if (srcText) srcText.contentEditable = true;
+        if (transText) transText.contentEditable = true;
+        // if (editButton) editButton.style.visibility = 'hidden';
+        $("#srcParagraphs").sortable("disable");
+        divSrc.style.cursor = 'text';
+    }
+}
+
+function cancelEditUI(divSrc) {
+    const editUI = divSrc.querySelector('.edit-ui');
+    if (!editUI || editUI.style.display !== 'block') return;
+    editUI.style.display = 'none';
+
+    const srcText = divSrc.querySelector('.src-text');
+    const transText = divSrc.querySelector('.trans-text');
+    const editButton = divSrc.querySelector('.edit-button');
+    if (srcText) {
+        srcText.contentEditable = false;
+        srcText.innerHTML = srcText.dataset.original;
+    }
+    if (transText) {
+        transText.contentEditable = false;
+        transText.innerHTML = transText.dataset.original;
+    }
+    // if (editButton) editButton.style.visibility = 'visible';
+    $("#srcParagraphs").sortable("enable");
+    divSrc.style.cursor = 'move';
 }
