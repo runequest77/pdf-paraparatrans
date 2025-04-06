@@ -38,8 +38,10 @@ def dict_trans(dict_filename):
                 if len(row) == 2:
                     key, value = row
                     state = "0"
-                elif len(row) >= 3:
+                elif len(row) == 3:
                     key, value, state = row[0], row[1], row[2]
+                elif len(row) >= 4:
+                    key, value, state = row[0], row[1], row[2], row[3]
                 else:
                     continue
 

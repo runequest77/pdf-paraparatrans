@@ -454,10 +454,11 @@ def auto_tagging_api(pdf_name):
 @app.route("/api/dict_create/<pdf_name>", methods=["POST"])
 def dict_create_api(pdf_name):
     pdf_path, json_path = get_paths(pdf_name)
+    COMMON_WORDS_PATH = "./modules/english_common_words.txt"
     if not os.path.exists(json_path):
         return jsonify({"status": "error", "message": "JSONファイルが存在しません"}), 404
     try:
-        dict_create(json_path, DICT_PATH)
+        dict_create(json_path, DICT_PATH, COMMON_WORDS_PATH)
     except Exception as e:
         return jsonify({"status": "error", "message": f"辞書生成エラー: {str(e)}"}), 500
     return jsonify({"status": "ok", "message": "辞書生成完了"}), 200

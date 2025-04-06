@@ -4,63 +4,38 @@ import re
 import sys
 import csv
 import os
+from collections import Counter
 
-def extract_phrases(text):
-    """
-    テキストから、大文字で始まる単語（単一でも連続でも）の部分を抽出する。
-    ・数字で始まる単語は除外。
-    ・行頭・行末、また直後にスペース、ピリオド、エクスクラメーション、クエスチョン、カッコなどがある場合に対応。
-    """
-    pattern = re.compile(
-        r'((?:(?!\d)[A-Z][a-zA-Z]*)(?:\s+(?!\d)[A-Z][a-zA-Z]*)*)(?=[\s\.\!\?\)\(]|$)',
-        re.MULTILINE
-    )
-    return pattern.findall(text)
+def read_dict(filename):
+    result = {}
+    if not os.path.exists(filename):
+        return result
+    try:
+        with open(filename, "r", encoding="utf-8", newline='') as f:
+            reader = csv.reader(f, delimiter='\t')
+            for row in reader:
+                if not row or row[0].startswith("#"):
+                    continue
+                if len(row) < 2:
+                    continue
+                key, value = row[0], row[1]
+                state = row[2] if len(row) > 2 else "0"
+                count = int(row[3]) if len(row) > 3 else 0
+                result[key] = (value, state, count)
+    except Exception as e:
+        print(f"Error reading {filename}: {e}")
+        sys.exit(1)
+    return result
 
-def dict_create(input_filename, output_filename="dict.txt"):
-    """
-    JSONファイル(input_filename)から段落の src_text を読み取り、
-    条件に沿った語句を抽出して重複を除去、既存のdictファイルをマージして
-    状態を示す3列目付きでソート後、output_filename に「#英語,#日本語,#状態,#出現回数」形式でCSV出力する。
-    
-    状態:
-      0: 大文字小文字を区別せずに置換
-      1: 大文字小文字が一致する場合のみ置換
-      8: 自動翻訳
-      9: 抽出
-      
-    既存のdictファイルが2列の場合、状態は0とみなす。
-    """
-    # 既存のdictファイルを読み込む（存在しなければ空の辞書）
-    existing_dict = {}
-    if os.path.exists(output_filename):
-        try:
-            with open(output_filename, "r", encoding="utf-8", newline='') as f:
-                reader = csv.reader(f, delimiter='\t')
-                # ヘッダ行の有無をチェック
-                first_row = next(reader, None)
-                if first_row and first_row[0].startswith("#英語"):
-                    # ヘッダ行がある場合はスキップ
-                    pass
-                else:
-                    # ヘッダ行がない場合は最初の行を処理
-                    if first_row:
-                        reader = [first_row] + list(reader)
-                for row in reader:
-                    if len(row) == 2:
-                        key, value = row
-                        state = "0"
-                        count = 0
-                    elif len(row) == 3:
-                        key, value, state = row
-                        count = 0
-                    else:
-                        key, value, state, count = row[0], row[1], row[2], int(row[3])
-                    existing_dict[key] = (value, state, count)
-        except Exception as e:
-            print(f"Error reading {output_filename}: {e}")
-            sys.exit(1)
+def dict_create(input_filename, output_filename="dict.txt", common_words_path="english_common_words.txt"):
+    # 標準単語リストを読み込み
+    global COMMON_WORDS
+    COMMON_WORDS = load_common_words(common_words_path)
 
+    dict = read_dict(output_filename)
+    seen_keys_lower = {k.lower() for k in dict.keys()}
+
+    # 翻訳対象のJSONファイルを読み込む
     try:
         with open(input_filename, 'r', encoding='utf-8') as f:
             data = json.load(f)
@@ -68,106 +43,70 @@ def dict_create(input_filename, output_filename="dict.txt"):
         print(f"Error reading {input_filename}: {e}")
         sys.exit(1)
 
-    phrase_set = set()
-    paragraphs = data.get("paragraphs", [])
-    for p in paragraphs:
+    # 大文字1文字で始まる単語を固有名詞候補として正規表現で定義
+    word_pattern = re.compile(r'\b[A-Z][a-z]+\b')
+    candidate_keys = Counter()
+
+    # 1. 全パラグラフから固有名詞候補抽出＋登場回数カウント
+    for p in data.get("paragraphs", []):
         src_text = p.get("src_text", "")
-        extracted = extract_phrases(src_text)
-        for phrase in extracted:
-            phrase = phrase.strip()
-            cleaned = clean_key(phrase)
-            if cleaned:
-                phrase_set.add(cleaned)
-                if cleaned in existing_dict:
-                    value, state, count = existing_dict[cleaned]
-                    existing_dict[cleaned] = (value, state, count + 1)
-                else:
-                    existing_dict[cleaned] = (cleaned, "9", 1)
+        for word in word_pattern.findall(src_text):
+            candidate_keys[word] += 1
 
-    # 既存のエントリを優先するための存在チェック（状態により判定）
-    def exists_in_existing(new_key):
-        for exist_key, (value, state, count) in existing_dict.items():
-            if state == "0":
-                if new_key.lower() == exist_key.lower():
-                    return True
-            elif state == "1":
-                if new_key == exist_key:
-                    return True
-            else:  # state 8, 9 等の場合は完全一致で判断
-                if new_key == exist_key:
-                    return True
-        return False
+    # 2. 一般英単語を除去
+    non_common_words = set()
+    for key in candidate_keys:
+        non_common_word = remove_common_words(key)
+        if non_common_word:
+            cleaned_lower = non_common_word.lower()
+            non_common_words.add((non_common_word, cleaned_lower))
 
-    # 新規抽出エントリ（状態9）のマージ
-    for key in phrase_set:
-        if not exists_in_existing(key):
-            existing_dict[key] = (key, "9", 1)
+    # 3. 小文字一致で既存辞書と照合し、未登録のKeyを追加
+    for key, key_lower in non_common_words:
+        if key_lower in seen_keys_lower:
+            continue
+        dict[key] = (key, "9", 0)
+        seen_keys_lower.add(key_lower)
 
-    # 文字数降順、同じ文字数の場合はアルファベット昇順でソート
-    sorted_keys = sorted(existing_dict.keys(), key=lambda s: (-len(s), s))
+    # existing_dict全体をループしてcandidate_keysが存在すれば出現回数をセット。存在しなければ出現回数はゼロ。
+    for key in dict.keys():
+        if key in candidate_keys:
+            dict[key] = (dict[key][0], dict[key][1], candidate_keys[key])
+        else:
+            dict[key] = (dict[key][0], dict[key][1], 0)
+
+    sorted_keys = sorted(dict.keys(), key=lambda s: (-len(s), s))
 
     with open(output_filename, "w", encoding="utf-8", newline='') as out_file:
         writer = csv.writer(out_file, delimiter='\t')
-        # ヘッダ行を追加
         writer.writerow(["#英語", "#日本語", "#状態", "#出現回数"])
         for key in sorted_keys:
-            value, state, count = existing_dict[key]
+            value, state, count = dict[key]
             writer.writerow([key, value, state, count])
 
-def clean_key(key: str) -> str:
-    """
-    対訳辞書のキーとして不適切なものを除去・正規化する関数。
-    
-    適用ルール:
-      1. 英字1文字のみのキーは除去
-      2. 一般的な2文字、3文字の単語（固定リストに含まれるもの）の場合は除去
-      3. キーが2単語の組み合わせで、2単語目が "I" の場合、"I" を除去して1単語にする
-      4. キーが2単語の組み合わせで、1単語目が "If", "On", "At", "With", "So" の場合、1単語目を除去
-      5. キーに数字や不要な記号（アルファベット、ハイフン、アポストロフィ以外）が含まれている場合は除去
-      6. 前後の余分なスペースを削除、複数空白は1つに正規化
-      7. （オプション）ストップワードのみの場合は除去
-    """
-    # 余分なスペースを削除し、複数の空白を1つに正規化
-    key = " ".join(key.strip().split())
+# 標準単語リストを読み込み
+def load_common_words(path="english_common_words.txt"):
+    with open(path, "r", encoding="utf-8") as f:
+        return set(line.strip().lower() for line in f if line.strip())
+
+def remove_common_words(key: str) -> str:
+    key = key.strip()
     if not key:
         return None
-
-    # ルール1: 英字1文字のみなら除去
-    if len(key) == 1 and key.isalpha():
+    if key.lower() in COMMON_WORDS:
         return None
-
-    # ルール2: 1単語で長さが2文字または3文字の場合、固定の一般単語リストに含まれていれば除去
-    if " " not in key and len(key) in [2, 3]:
-        common_two_letter_words = {"in", "on", "of", "at", "by", "to", "if", "so", "an", "as", "he", "it", "my", "no", "or"}
-        common_three_letter_words = {"she", "him", "her", "and", "but", "the", "add", "air", "all", "any", "arm", "art", "ask", "can", "for", "get", "god", "his", "hit", "how", "let", "man", "new", "not", "now", "old", "one", "per", "see", "sky", "son", "two", "use", "you"}
-        lower_key = key.lower()
-        if (len(key) == 2 and lower_key in common_two_letter_words) or \
-           (len(key) == 3 and lower_key in common_three_letter_words):
-            return None
-
-    # キーを単語リストに分割
-    parts = key.split()
-
-    # ルール3: 2単語で、2単語目が "I" の場合、2単語目を除去して1単語に
-    if len(parts) == 2 and parts[1] == "I":
-        key = parts[0]
-        parts = [key]
-
-    # ルール4: 2単語で、1単語目が "If", "On", "At", "With", "So" の場合、1単語目を除去
-    if len(parts) == 2 and parts[0] in {"If", "On", "At", "With", "So"}:
-        key = parts[1]
-        parts = [key]
-
     return key
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python generate_dict.py <input_json_file> [output_csv_file]")
+        print("Usage: python paraparatran_dict_create.py <book_data_file> [output_dict_file] [common_words_file]")
         sys.exit(1)
 
-    input_filename = sys.argv[1]
-    output_filename = sys.argv[2] if len(sys.argv) > 2 else "dict.txt"
-    dict_create(input_filename, output_filename)
+    book_data_path = sys.argv[1]
+    dict_path = sys.argv[2] if len(sys.argv) > 2 else "dict.txt"
+    common_words_path = sys.argv[3] if len(sys.argv) > 3 else "english_common_words.txt"
+
+    dict_create(book_data_path, dict_path, common_words_path)
 
 if __name__ == '__main__':
     main()
