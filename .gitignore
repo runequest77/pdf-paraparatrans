@@ -3,6 +3,7 @@
 
 # ログ
 /logs/
+*.log
 
 # Pythonのコンパイル済みファイル
 __pycache__/
