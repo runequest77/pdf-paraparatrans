@@ -1,0 +1,941 @@
+2025-04-06 15:19:58,815 [INFO] Using DeepL translator.
+2025-04-06 15:19:58,817 [INFO] Using DeepL translator.
+2025-04-06 15:19:58,841 [INFO] * Serving Flask app 'pdf-paraparatrans'
+2025-04-06 15:19:58,841 [INFO] * Debug mode: off
+2025-04-06 15:20:04,981 [INFO] 処理を開始します
+2025-04-06 15:20:04,981 [INFO] 辞書ファイルを読み込みます: ./data\dict.txt
+2025-04-06 15:20:04,993 [INFO] 大文字小文字を区別する辞書エントリ(1): 11 大文字小文字を区別しない辞書エントリ(0): 1111
+2025-04-06 15:20:04,993 [INFO] 辞書の読み込みが完了しました: ./data\dict.txt
+2025-04-06 15:41:59,841 [INFO] Using DeepL translator.
+2025-04-06 15:41:59,843 [INFO] Using DeepL translator.
+2025-04-06 15:41:59,866 [INFO] * Serving Flask app 'pdf-paraparatrans'
+2025-04-06 15:41:59,867 [INFO] * Debug mode: off
+2025-04-06 15:48:21,810 [INFO] Using DeepL translator.
+2025-04-06 15:48:21,811 [INFO] Using DeepL translator.
+2025-04-06 15:48:21,819 [INFO] * Serving Flask app 'pdf-paraparatrans'
+2025-04-06 15:48:21,820 [INFO] * Debug mode: off
+2025-04-06 15:50:07,833 [INFO] Using DeepL translator.
+2025-04-06 15:50:07,834 [INFO] Using DeepL translator.
+2025-04-06 15:50:07,842 [INFO] * Serving Flask app 'pdf-paraparatrans'
+2025-04-06 15:50:07,843 [INFO] * Debug mode: off
+2025-04-06 15:50:21,894 [INFO] 処理を開始します
+2025-04-06 15:50:21,895 [INFO] 辞書ファイルを読み込みます: ./data\dict.txt
+2025-04-06 15:50:21,906 [INFO] 大文字小文字を区別する辞書エントリ(1): 11 大文字小文字を区別しない辞書エントリ(0): 1111
+2025-04-06 15:50:21,906 [INFO] 辞書の読み込みが完了しました: ./data\dict.txt
+2025-04-06 15:50:21,962 [INFO] 対象パラグラフ数: 5838
+2025-04-06 15:55:58,274 [INFO] Using DeepL translator.
+2025-04-06 15:55:58,275 [INFO] Using DeepL translator.
+2025-04-06 15:55:58,284 [INFO] * Serving Flask app 'pdf-paraparatrans'
+2025-04-06 15:55:58,284 [INFO] * Debug mode: off
+2025-04-06 15:55:59,904 [INFO] SSE connection established
+2025-04-06 15:56:11,535 [INFO] 処理を開始します
+2025-04-06 15:56:11,536 [INFO] 辞書ファイルを読み込みます: ./data\dict.txt
+2025-04-06 15:56:11,550 [INFO] 大文字小文字を区別する辞書エントリ(1): 11 大文字小文字を区別しない辞書エントリ(0): 1111
+2025-04-06 15:56:11,550 [INFO] 辞書の読み込みが完了しました: ./data\dict.txt
+2025-04-06 15:56:11,600 [INFO] 対象パラグラフ数: 5838
+2025-04-06 15:59:50,796 [INFO] Using DeepL translator.
+2025-04-06 15:59:50,797 [INFO] Using DeepL translator.
+2025-04-06 15:59:50,807 [INFO] * Serving Flask app 'pdf-paraparatrans'
+2025-04-06 15:59:50,807 [INFO] * Debug mode: off
+2025-04-06 15:59:52,372 [INFO] SSE connection established
+2025-04-06 15:59:56,698 [INFO] SSE connection established
+2025-04-06 16:00:01,004 [INFO] 処理を開始します
+2025-04-06 16:00:01,005 [INFO] 辞書ファイルを読み込みます: ./data\dict.txt
+2025-04-06 16:00:01,022 [INFO] 大文字小文字を区別する辞書エントリ(1): 11 大文字小文字を区別しない辞書エントリ(0): 1111
+2025-04-06 16:00:01,022 [INFO] 辞書の読み込みが完了しました: ./data\dict.txt
+2025-04-06 16:00:01,072 [INFO] 対象パラグラフ数: 5838
+2025-04-06 16:00:23,125 [INFO] Using DeepL translator.
+2025-04-06 16:00:23,126 [INFO] Using DeepL translator.
+2025-04-06 16:00:23,135 [INFO] * Serving Flask app 'pdf-paraparatrans'
+2025-04-06 16:00:23,135 [INFO] * Debug mode: off
+2025-04-06 16:00:23,146 [INFO] SSE connection established
+2025-04-06 16:00:30,654 [INFO] SSE connection established
+2025-04-06 16:00:35,294 [INFO] 処理を開始します
+2025-04-06 16:00:35,294 [INFO] 辞書ファイルを読み込みます: ./data\dict.txt
+2025-04-06 16:00:35,307 [INFO] 大文字小文字を区別する辞書エントリ(1): 11 大文字小文字を区別しない辞書エントリ(0): 1111
+2025-04-06 16:00:35,308 [INFO] 辞書の読み込みが完了しました: ./data\dict.txt
+2025-04-06 16:00:35,359 [INFO] 対象パラグラフ数: 5838
+2025-04-06 16:03:54,682 [INFO] Using DeepL translator.
+2025-04-06 16:03:54,683 [INFO] Using DeepL translator.
+2025-04-06 16:03:54,692 [INFO] * Serving Flask app 'pdf-paraparatrans'
+2025-04-06 16:03:54,692 [INFO] * Debug mode: off
+2025-04-06 16:03:56,162 [INFO] SSE connection established
+2025-04-06 16:04:01,906 [INFO] Using DeepL translator.
+2025-04-06 16:04:01,907 [INFO] Using DeepL translator.
+2025-04-06 16:04:01,916 [INFO] * Serving Flask app 'pdf-paraparatrans'
+2025-04-06 16:04:01,916 [INFO] * Debug mode: off
+2025-04-06 16:04:02,022 [INFO] SSE connection established
+2025-04-06 16:04:08,946 [INFO] SSE connection established
+2025-04-06 16:04:18,813 [INFO] 処理を開始します
+2025-04-06 16:04:18,814 [INFO] 辞書ファイルを読み込みます: ./data\dict.txt
+2025-04-06 16:04:18,828 [INFO] 大文字小文字を区別する辞書エントリ(1): 11 大文字小文字を区別しない辞書エントリ(0): 1111
+2025-04-06 16:04:18,828 [INFO] 辞書の読み込みが完了しました: ./data\dict.txt
+2025-04-06 16:04:18,876 [INFO] 対象パラグラフ数: 5838
+2025-04-06 16:08:00,873 [INFO] SSE connection established
+2025-04-06 16:13:51,586 [INFO] Using DeepL translator.
+2025-04-06 16:13:51,587 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,587 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,587 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,587 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,587 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,587 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,587 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,587 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,587 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,587 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,587 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,587 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,588 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,588 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,588 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,588 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,588 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,588 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,588 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,588 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,588 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,588 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,588 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,588 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,588 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,588 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,588 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,588 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,588 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,588 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,588 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,588 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,588 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,589 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,589 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,589 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,589 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,589 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,589 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,589 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,589 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,589 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,589 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,589 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,589 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,589 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,590 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,590 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,590 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,590 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,590 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,590 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,590 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,590 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,590 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,590 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,590 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,590 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,591 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,591 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,591 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,591 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,591 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,591 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,591 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,591 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,591 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,591 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,591 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,591 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,591 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,591 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,592 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,592 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,592 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,592 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,592 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,592 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,592 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,592 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,592 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,592 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,592 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,592 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,592 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,592 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,592 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,592 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,592 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,593 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,593 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,593 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,593 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,593 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,593 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,593 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,593 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,593 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,593 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,593 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,593 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,593 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,594 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,594 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,594 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,594 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,594 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,594 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,594 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,594 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,594 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,594 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,594 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,594 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,594 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,594 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,594 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,595 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,595 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,595 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,595 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,595 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,595 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,595 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,595 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,595 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,595 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,595 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,595 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,595 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,595 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,595 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,595 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,595 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,595 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,596 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,596 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,596 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,596 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,606 [INFO] Traceback (most recent call last):
+2025-04-06 16:13:51,606 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,606 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,606 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,606 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,606 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,606 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,606 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,606 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,606 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,606 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,606 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,606 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,607 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,607 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,607 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,607 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,607 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,607 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,607 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,607 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,607 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,607 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,607 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,607 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,607 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,607 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,607 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,607 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,607 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,607 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,607 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,607 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,607 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,607 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,608 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,608 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,608 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,608 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,608 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,608 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,608 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,608 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,608 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,608 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,608 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,608 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,608 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,608 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,608 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,608 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,608 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,609 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,609 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,609 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,609 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,609 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,609 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,609 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,609 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,609 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,609 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,609 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,609 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,609 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,609 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,609 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,609 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,609 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,609 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,609 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,610 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,610 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,610 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,610 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,610 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,610 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,610 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,610 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,610 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,610 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,610 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,610 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,611 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,611 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,611 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,611 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,611 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,611 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,611 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,611 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,611 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,611 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,611 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,611 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,611 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,612 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,612 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,612 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,612 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,612 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,612 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,612 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,612 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,612 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,612 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,612 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,612 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,613 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,613 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,613 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,613 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,613 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,613 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,613 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,613 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,613 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,613 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,613 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,614 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,614 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,614 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,614 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,614 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,614 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,614 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,614 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,614 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,614 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,614 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,614 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,614 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,614 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,614 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,614 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,614 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,615 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,615 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,615 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,615 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,615 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,616 [INFO] Traceback (most recent call last):
+2025-04-06 16:13:51,616 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,616 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,616 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,616 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,616 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,616 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,616 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,616 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,616 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,616 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,616 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,616 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,617 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,617 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,617 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,617 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,617 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,617 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,617 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,617 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,617 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,617 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,617 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,617 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,617 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,617 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,617 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,617 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,617 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,618 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,618 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,618 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,618 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,618 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,618 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,618 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,618 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,618 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,619 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,619 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,619 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,619 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,619 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,619 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,619 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,619 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,619 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,619 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,619 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,619 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,619 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,620 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,620 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,620 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,620 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,620 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,620 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,620 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,620 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,620 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,620 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,620 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,620 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,620 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,620 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,620 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,620 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,620 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,621 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,621 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,621 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,621 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,621 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,621 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,621 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,621 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,621 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,621 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,621 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,621 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,621 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,621 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,621 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,621 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,621 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,621 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,621 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,621 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,622 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,622 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,622 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,622 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,622 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,622 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,622 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,622 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,622 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,622 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,622 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,623 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,623 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,623 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,623 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,623 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,623 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,623 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,623 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,623 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,623 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,623 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,624 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,624 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,624 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,624 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,624 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,624 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,624 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,624 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,624 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,624 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,624 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,624 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,624 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,624 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,624 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,624 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,624 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,624 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,624 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,625 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,625 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,625 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,625 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,625 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,625 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,625 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,625 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,625 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,625 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:13:51,625 [INFO] [SSELogQueueHandler] emit called with:
+2025-04-06 16:16:07,030 [INFO] Using DeepL translator.
+2025-04-06 16:16:07,031 [INFO] Using DeepL translator.
+2025-04-06 16:16:07,039 [INFO] * Serving Flask app 'pdf-paraparatrans'
+2025-04-06 16:16:07,039 [INFO] * Debug mode: off
+2025-04-06 16:16:09,677 [INFO] SSE connection established
+2025-04-06 16:16:39,368 [INFO] SSE connection established
+2025-04-06 16:16:47,325 [INFO] SSE connection established
+2025-04-06 16:17:16,102 [INFO] 処理を開始します
+2025-04-06 16:17:16,102 [INFO] 辞書ファイルを読み込みます: ./data\dict.txt
+2025-04-06 16:17:16,115 [INFO] 大文字小文字を区別する辞書エントリ(1): 11 大文字小文字を区別しない辞書エントリ(0): 1111
+2025-04-06 16:17:16,115 [INFO] 辞書の読み込みが完了しました: ./data\dict.txt
+2025-04-06 16:17:16,167 [INFO] 対象パラグラフ数: 5838
+2025-04-06 16:21:16,240 [INFO] Using DeepL translator.
+2025-04-06 16:21:16,241 [INFO] Using DeepL translator.
+2025-04-06 16:21:16,250 [INFO] * Serving Flask app 'pdf-paraparatrans'
+2025-04-06 16:21:16,250 [INFO] * Debug mode: off
+2025-04-06 16:21:16,372 [INFO] SSE connection established
+2025-04-06 16:21:35,179 [INFO] SSE connection established
+2025-04-06 16:22:01,231 [INFO] 処理を開始します
+2025-04-06 16:22:01,231 [INFO] 辞書ファイルを読み込みます: ./data\dict.txt
+2025-04-06 16:22:01,244 [INFO] 大文字小文字を区別する辞書エントリ(1): 11 大文字小文字を区別しない辞書エントリ(0): 1111
+2025-04-06 16:22:01,245 [INFO] 辞書の読み込みが完了しました: ./data\dict.txt
+2025-04-06 16:22:01,295 [INFO] 対象パラグラフ数: 5838
+2025-04-06 16:22:35,748 [INFO] 処理を開始します
+2025-04-06 16:22:35,749 [INFO] 辞書ファイルを読み込みます: ./data\dict.txt
+2025-04-06 16:22:35,759 [INFO] 大文字小文字を区別する辞書エントリ(1): 11 大文字小文字を区別しない辞書エントリ(0): 1111
+2025-04-06 16:22:35,759 [INFO] 辞書の読み込みが完了しました: ./data\dict.txt
+2025-04-06 16:22:35,814 [INFO] 対象パラグラフ数: 5838
+2025-04-06 16:24:10,737 [INFO] Using DeepL translator.
+2025-04-06 16:24:10,738 [INFO] Using DeepL translator.
+2025-04-06 16:24:10,746 [INFO] * Serving Flask app 'pdf-paraparatrans'
+2025-04-06 16:24:10,747 [INFO] * Debug mode: off
+2025-04-06 16:24:10,847 [INFO] SSE connection established
+2025-04-06 16:24:25,367 [INFO] SSE connection established
+2025-04-06 16:28:24,520 [INFO] Using DeepL translator.
+2025-04-06 16:28:24,522 [INFO] Using DeepL translator.
+2025-04-06 16:28:24,530 [INFO] * Serving Flask app 'pdf-paraparatrans'
+2025-04-06 16:28:24,530 [INFO] * Debug mode: off
+2025-04-06 16:28:30,844 [INFO] SSE connection established
+2025-04-06 16:28:54,115 [INFO] 処理を開始します
+2025-04-06 16:28:54,116 [INFO] 辞書ファイルを読み込みます: ./data\dict.txt
+2025-04-06 16:28:54,128 [INFO] 大文字小文字を区別する辞書エントリ(1): 11 大文字小文字を区別しない辞書エントリ(0): 1111
+2025-04-06 16:28:54,128 [INFO] 辞書の読み込みが完了しました: ./data\dict.txt
+2025-04-06 16:28:54,177 [INFO] 対象パラグラフ数: 5838
+2025-04-06 16:30:34,286 [INFO] SSE connection established
+2025-04-06 16:32:50,717 [INFO] Using DeepL translator.
+2025-04-06 16:32:50,719 [INFO] Using DeepL translator.
+2025-04-06 16:32:50,728 [INFO] * Serving Flask app 'pdf-paraparatrans'
+2025-04-06 16:32:50,728 [INFO] * Debug mode: off
+2025-04-06 16:32:52,395 [INFO] SSE connection established
+2025-04-06 16:33:00,760 [INFO] SSE connection established
+2025-04-06 16:33:10,216 [INFO] SSE connection established
+2025-04-06 16:33:14,181 [INFO] SSE connection established
+2025-04-06 16:33:37,038 [INFO] SSE connection established
+2025-04-06 16:33:47,088 [INFO] 処理を開始します
+2025-04-06 16:33:47,088 [INFO] 辞書ファイルを読み込みます: ./data\dict.txt
+2025-04-06 16:33:47,096 [INFO] 大文字小文字を区別する辞書エントリ(1): 11 大文字小文字を区別しない辞書エントリ(0): 1111
+2025-04-06 16:33:47,096 [INFO] 辞書の読み込みが完了しました: ./data\dict.txt
+2025-04-06 16:33:47,147 [INFO] 対象パラグラフ数: 5838
+2025-04-06 16:39:43,249 [INFO] Using DeepL translator.
+2025-04-06 16:39:43,252 [INFO] Using DeepL translator.
+2025-04-06 16:39:43,268 [INFO] (2216) wsgi starting up on http://0.0.0.0:5077
+2025-04-06 16:39:43,508 [INFO] (2216) accepted ('192.168.10.105', 54638)
+2025-04-06 16:39:43,512 [INFO] SSE connection established
+2025-04-06 16:39:43,757 [INFO] (2216) accepted ('192.168.10.105', 54636)
+2025-04-06 16:40:03,607 [INFO] 192.168.10.105 - - [06/Apr/2025 16:40:03] "GET /detail/69135-The_Company_of_the_Dragon_1.1 HTTP/1.1" 200 7313 0.063815
+2025-04-06 16:40:03,654 [INFO] 192.168.10.105 - - [06/Apr/2025 16:40:03] "GET /static/css/styles.css HTTP/1.1" 304 208 0.027180
+2025-04-06 16:40:03,654 [INFO] (2216) accepted ('192.168.10.105', 54652)
+2025-04-06 16:40:03,654 [INFO] (2216) accepted ('192.168.10.105', 54653)
+2025-04-06 16:40:03,655 [INFO] (2216) accepted ('192.168.10.105', 54654)
+2025-04-06 16:40:03,655 [INFO] (2216) accepted ('192.168.10.105', 54655)
+2025-04-06 16:40:03,655 [INFO] (2216) accepted ('192.168.10.105', 54656)
+2025-04-06 16:40:03,656 [INFO] 192.168.10.105 - - [06/Apr/2025 16:40:03] "GET /static/css/tocPanel.css HTTP/1.1" 304 211 0.000710
+2025-04-06 16:40:03,657 [INFO] 192.168.10.105 - - [06/Apr/2025 16:40:03] "GET /static/css/srcPanel.css HTTP/1.1" 304 210 0.000420
+2025-04-06 16:40:03,658 [INFO] 192.168.10.105 - - [06/Apr/2025 16:40:03] "GET /static/css/auto-toggle.css HTTP/1.1" 304 214 0.000367
+2025-04-06 16:40:03,659 [INFO] 192.168.10.105 - - [06/Apr/2025 16:40:03] "GET /static/js/auto-toggle.js HTTP/1.1" 304 213 0.000374
+2025-04-06 16:40:03,659 [INFO] 192.168.10.105 - - [06/Apr/2025 16:40:03] "GET /static/js/floating_log.js HTTP/1.1" 304 214 0.000416
+2025-04-06 16:40:03,661 [INFO] 192.168.10.105 - - [06/Apr/2025 16:40:03] "GET /static/js/tocPanel.js HTTP/1.1" 304 209 0.000626
+2025-04-06 16:40:03,661 [INFO] 192.168.10.105 - - [06/Apr/2025 16:40:03] "GET /static/js/pdfPanel.js HTTP/1.1" 304 208 0.000378
+2025-04-06 16:40:03,662 [INFO] 192.168.10.105 - - [06/Apr/2025 16:40:03] "GET /static/js/srcPanel.js HTTP/1.1" 304 210 0.000381
+2025-04-06 16:40:03,663 [INFO] 192.168.10.105 - - [06/Apr/2025 16:40:03] "GET /static/js/detail.js HTTP/1.1" 304 208 0.000668
+2025-04-06 16:40:03,664 [INFO] 192.168.10.105 - - [06/Apr/2025 16:40:03] "GET /static/js/keyDown.js HTTP/1.1" 304 208 0.000547
+2025-04-06 16:40:03,665 [INFO] 192.168.10.105 - - [06/Apr/2025 16:40:03] "GET /static/js/fetch.js HTTP/1.1" 304 207 0.000374
+2025-04-06 16:40:03,696 [INFO] SSE connection established
+2025-04-06 16:40:03,847 [INFO] 192.168.10.105 - - [06/Apr/2025 16:40:03] "GET /api/book_data/69135-The_Company_of_the_Dragon_1.1 HTTP/1.1" 200 7720291 0.095881
+2025-04-06 16:40:03,897 [INFO] 192.168.10.105 - - [06/Apr/2025 16:40:03] "GET /static/pdfjs/web/viewer.html?file=%2Fpdf_view%2F69135-The_Company_of_the_Dragon_1.1%2F1 HTTP/1.1" 304 210 0.000516
+2025-04-06 16:40:03,910 [INFO] 192.168.10.105 - - [06/Apr/2025 16:40:03] "GET /static/pdfjs/build/pdf.mjs HTTP/1.1" 304 208 0.000777
+2025-04-06 16:40:03,912 [INFO] 192.168.10.105 - - [06/Apr/2025 16:40:03] "GET /static/pdfjs/web/viewer.mjs HTTP/1.1" 304 211 0.000900
+2025-04-06 16:40:03,913 [INFO] 192.168.10.105 - - [06/Apr/2025 16:40:03] "GET /static/pdfjs/web/viewer.css HTTP/1.1" 304 210 0.000599
+2025-04-06 16:40:03,921 [INFO] 192.168.10.105 - - [06/Apr/2025 16:40:03] "GET /static/pdfjs/web/images/toolbarButton-viewThumbnail.svg HTTP/1.1" 304 230 0.000859
+2025-04-06 16:40:03,922 [INFO] 192.168.10.105 - - [06/Apr/2025 16:40:03] "GET /static/pdfjs/web/images/toolbarButton-sidebarToggle.svg HTTP/1.1" 304 230 0.000974
+2025-04-06 16:40:03,924 [INFO] 192.168.10.105 - - [06/Apr/2025 16:40:03] "GET /static/pdfjs/web/images/toolbarButton-viewLayers.svg HTTP/1.1" 304 226 0.000688
+2025-04-06 16:40:03,925 [INFO] 192.168.10.105 - - [06/Apr/2025 16:40:03] "GET /static/pdfjs/web/images/toolbarButton-viewAttachments.svg HTTP/1.1" 304 229 0.000477
+2025-04-06 16:40:03,926 [INFO] 192.168.10.105 - - [06/Apr/2025 16:40:03] "GET /static/pdfjs/web/images/toolbarButton-viewOutline.svg HTTP/1.1" 304 227 0.000532
+2025-04-06 16:40:03,927 [INFO] 192.168.10.105 - - [06/Apr/2025 16:40:03] "GET /static/pdfjs/web/images/toolbarButton-editorStamp.svg HTTP/1.1" 304 226 0.000392
+2025-04-06 16:40:03,928 [INFO] 192.168.10.105 - - [06/Apr/2025 16:40:03] "GET /static/pdfjs/web/images/toolbarButton-editorFreeText.svg HTTP/1.1" 304 227 0.000361
+2025-04-06 16:40:03,928 [INFO] 192.168.10.105 - - [06/Apr/2025 16:40:03] "GET /static/pdfjs/web/images/toolbarButton-secondaryToolbarToggle.svg HTTP/1.1" 304 238 0.000382
+2025-04-06 16:40:03,929 [INFO] 192.168.10.105 - - [06/Apr/2025 16:40:03] "GET /static/pdfjs/web/images/toolbarButton-editorHighlight.svg HTTP/1.1" 304 230 0.000403
+2025-04-06 16:40:03,930 [INFO] 192.168.10.105 - - [06/Apr/2025 16:40:03] "GET /static/pdfjs/web/images/toolbarButton-editorInk.svg HTTP/1.1" 304 226 0.000470
+2025-04-06 16:40:03,931 [INFO] 192.168.10.105 - - [06/Apr/2025 16:40:03] "GET /static/pdfjs/web/images/toolbarButton-zoomOut.svg HTTP/1.1" 304 222 0.000449
+2025-04-06 16:40:03,932 [INFO] 192.168.10.105 - - [06/Apr/2025 16:40:03] "GET /static/pdfjs/web/images/toolbarButton-zoomIn.svg HTTP/1.1" 304 221 0.000482
+2025-04-06 16:40:03,933 [INFO] 192.168.10.105 - - [06/Apr/2025 16:40:03] "GET /static/pdfjs/web/images/toolbarButton-search.svg HTTP/1.1" 304 223 0.000428
+2025-04-06 16:40:03,933 [INFO] 192.168.10.105 - - [06/Apr/2025 16:40:03] "GET /static/pdfjs/web/viewer.mjs.map HTTP/1.1" 304 215 0.000355
+2025-04-06 16:40:03,938 [INFO] 192.168.10.105 - - [06/Apr/2025 16:40:03] "GET /static/pdfjs/build/pdf.mjs.map HTTP/1.1" 304 212 0.000990
+2025-04-06 16:40:03,944 [INFO] 192.168.10.105 - - [06/Apr/2025 16:40:03] "GET /static/pdfjs/web/locale/locale.json HTTP/1.1" 304 209 0.000705
+2025-04-06 16:40:03,956 [INFO] 192.168.10.105 - - [06/Apr/2025 16:40:03] "GET /static/pdfjs/build/pdf.worker.mjs HTTP/1.1" 304 216 0.000733
+2025-04-06 16:40:04,003 [INFO] 192.168.10.105 - - [06/Apr/2025 16:40:04] "GET /static/pdfjs/web/locale/ja/viewer.ftl HTTP/1.1" 304 210 0.000659
+2025-04-06 16:40:04,007 [INFO] 192.168.10.105 - - [06/Apr/2025 16:40:04] "GET /static/pdfjs/web/locale/en-US/viewer.ftl HTTP/1.1" 304 206 0.000627
+2025-04-06 16:40:04,090 [INFO] 192.168.10.105 - - [06/Apr/2025 16:40:04] "GET /static/pdfjs/build/pdf.worker.mjs.map HTTP/1.1" 304 220 0.000508
+2025-04-06 16:40:04,155 [INFO] 192.168.10.105 - - [06/Apr/2025 16:40:04] "GET /pdf_view/69135-The_Company_of_the_Dragon_1.1/1 HTTP/1.1" 200 9059714 0.064146
+2025-04-06 16:40:04,181 [INFO] 192.168.10.105 - - [06/Apr/2025 16:40:04] "GET /static/pdfjs/web/images/loading.svg HTTP/1.1" 304 209 0.000609
+2025-04-06 16:40:04,183 [INFO] 192.168.10.105 - - [06/Apr/2025 16:40:04] "GET /static/pdfjs/web/images/loading-icon.gif HTTP/1.1" 304 213 0.000790
+2025-04-06 16:41:08,768 [INFO] (2216) accepted ('127.0.0.1', 54687)
+2025-04-06 16:41:08,770 [INFO] SSE connection established
+2025-04-06 16:45:22,359 [INFO] wsgi exiting
+2025-04-06 16:45:26,024 [INFO] Traceback (most recent call last):
+2025-04-06 16:45:26,025 [INFO] File "C:\Data\Source\pdf-paraparatrans\pdf-paraparatrans.py", line 498, in <module>
+    wsgi.server(eventlet.listen(('', 5077)), app)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-04-06 16:45:26,025 [INFO] File "C:\Users\runeq\AppData\Roaming\Python\Python313\site-packages\eventlet\wsgi.py", line 1085, in server
+    pool.waitall()
+    ~~~~~~~~~~~~^^
+2025-04-06 16:45:26,025 [INFO] File "C:\Users\runeq\AppData\Roaming\Python\Python313\site-packages\eventlet\greenpool.py", line 125, in waitall
+    self.no_coros_running.wait()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+2025-04-06 16:45:26,025 [INFO] File "C:\Users\runeq\AppData\Roaming\Python\Python313\site-packages\eventlet\event.py", line 124, in wait
+    result = hub.switch()
+2025-04-06 16:45:26,026 [INFO] File "C:\Users\runeq\AppData\Roaming\Python\Python313\site-packages\eventlet\hubs\hub.py", line 310, in switch
+    return self.greenlet.switch()
+           ~~~~~~~~~~~~~~~~~~~~^^
+2025-04-06 16:45:26,026 [INFO] File "C:\Users\runeq\AppData\Roaming\Python\Python313\site-packages\eventlet\hubs\hub.py", line 362, in run
+    self.wait(sleep_time)
+    ~~~~~~~~~^^^^^^^^^^^^
+2025-04-06 16:45:26,026 [INFO] File "C:\Users\runeq\AppData\Roaming\Python\Python313\site-packages\eventlet\hubs\selects.py", line 42, in wait
+    r, w, er = select.select(reader_fds, writer_fds, all_fds, seconds)
+               ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-04-06 16:45:26,026 [INFO] KeyboardInterrupt
+2025-04-06 16:45:33,197 [INFO] Using DeepL translator.
+2025-04-06 16:45:33,199 [INFO] Using DeepL translator.
+2025-04-06 16:45:33,214 [INFO] (21400) wsgi starting up on http://0.0.0.0:5077
+2025-04-06 16:45:33,218 [INFO] (21400) accepted ('192.168.10.105', 54841)
+2025-04-06 16:45:33,219 [INFO] SSE connection established
+2025-04-06 16:45:33,469 [INFO] (21400) accepted ('192.168.10.105', 54842)
+2025-04-06 16:45:52,411 [INFO] wsgi exiting
+2025-04-06 16:45:54,432 [INFO] Traceback (most recent call last):
+2025-04-06 16:45:54,432 [INFO] File "C:\Data\Source\pdf-paraparatrans\pdf-paraparatrans.py", line 498, in <module>
+    wsgi.server(eventlet.listen(('', 5077)), app)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-04-06 16:45:54,433 [INFO] File "C:\Users\runeq\AppData\Roaming\Python\Python313\site-packages\eventlet\wsgi.py", line 1085, in server
+    pool.waitall()
+    ~~~~~~~~~~~~^^
+2025-04-06 16:45:54,433 [INFO] File "C:\Users\runeq\AppData\Roaming\Python\Python313\site-packages\eventlet\greenpool.py", line 125, in waitall
+    self.no_coros_running.wait()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+2025-04-06 16:45:54,433 [INFO] File "C:\Users\runeq\AppData\Roaming\Python\Python313\site-packages\eventlet\event.py", line 124, in wait
+    result = hub.switch()
+2025-04-06 16:45:54,433 [INFO] File "C:\Users\runeq\AppData\Roaming\Python\Python313\site-packages\eventlet\hubs\hub.py", line 310, in switch
+    return self.greenlet.switch()
+           ~~~~~~~~~~~~~~~~~~~~^^
+2025-04-06 16:45:54,434 [INFO] File "C:\Users\runeq\AppData\Roaming\Python\Python313\site-packages\eventlet\hubs\hub.py", line 362, in run
+    self.wait(sleep_time)
+    ~~~~~~~~~^^^^^^^^^^^^
+2025-04-06 16:45:54,434 [INFO] File "C:\Users\runeq\AppData\Roaming\Python\Python313\site-packages\eventlet\hubs\selects.py", line 42, in wait
+    r, w, er = select.select(reader_fds, writer_fds, all_fds, seconds)
+               ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-04-06 16:45:54,434 [INFO] KeyboardInterrupt
+2025-04-06 16:45:56,650 [INFO] Using DeepL translator.
+2025-04-06 16:45:56,652 [INFO] Using DeepL translator.
+2025-04-06 16:45:56,666 [INFO] (8508) wsgi starting up on http://0.0.0.0:5077
+2025-04-06 16:45:57,498 [INFO] (8508) accepted ('192.168.10.105', 54862)
+2025-04-06 16:45:57,501 [INFO] SSE connection established
+2025-04-06 16:45:59,513 [INFO] wsgi exiting
+2025-04-06 16:46:02,076 [INFO] Traceback (most recent call last):
+2025-04-06 16:46:02,077 [INFO] File "C:\Data\Source\pdf-paraparatrans\pdf-paraparatrans.py", line 498, in <module>
+    wsgi.server(eventlet.listen(('', 5077)), app)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-04-06 16:46:02,077 [INFO] File "C:\Users\runeq\AppData\Roaming\Python\Python313\site-packages\eventlet\wsgi.py", line 1085, in server
+    pool.waitall()
+    ~~~~~~~~~~~~^^
+2025-04-06 16:46:02,077 [INFO] File "C:\Users\runeq\AppData\Roaming\Python\Python313\site-packages\eventlet\greenpool.py", line 125, in waitall
+    self.no_coros_running.wait()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+2025-04-06 16:46:02,078 [INFO] File "C:\Users\runeq\AppData\Roaming\Python\Python313\site-packages\eventlet\event.py", line 124, in wait
+    result = hub.switch()
+2025-04-06 16:46:02,078 [INFO] File "C:\Users\runeq\AppData\Roaming\Python\Python313\site-packages\eventlet\hubs\hub.py", line 310, in switch
+    return self.greenlet.switch()
+           ~~~~~~~~~~~~~~~~~~~~^^
+2025-04-06 16:46:02,078 [INFO] File "C:\Users\runeq\AppData\Roaming\Python\Python313\site-packages\eventlet\hubs\hub.py", line 362, in run
+    self.wait(sleep_time)
+    ~~~~~~~~~^^^^^^^^^^^^
+2025-04-06 16:46:02,078 [INFO] File "C:\Users\runeq\AppData\Roaming\Python\Python313\site-packages\eventlet\hubs\selects.py", line 36, in wait
+    time.sleep(seconds)
+    ~~~~~~~~~~^^^^^^^^^
+2025-04-06 16:46:02,078 [INFO] KeyboardInterrupt
+2025-04-06 16:46:08,180 [INFO] Using DeepL translator.
+2025-04-06 16:46:08,182 [INFO] Using DeepL translator.
+2025-04-06 16:46:08,198 [INFO] (8536) wsgi starting up on http://0.0.0.0:5077
+2025-04-06 16:46:10,215 [INFO] (8536) accepted ('192.168.10.105', 54873)
+2025-04-06 16:46:10,217 [INFO] SSE connection established
+2025-04-06 16:47:59,346 [INFO] wsgi exiting
+2025-04-06 16:48:06,322 [INFO] Traceback (most recent call last):
+2025-04-06 16:48:06,323 [INFO] File "C:\Data\Source\pdf-paraparatrans\pdf-paraparatrans.py", line 498, in <module>
+    from eventlet import wsgi
+2025-04-06 16:48:06,324 [INFO] File "C:\Users\runeq\AppData\Roaming\Python\Python313\site-packages\eventlet\wsgi.py", line 1085, in server
+    pool.waitall()
+    ~~~~~~~~~~~~^^
+2025-04-06 16:48:06,325 [INFO] File "C:\Users\runeq\AppData\Roaming\Python\Python313\site-packages\eventlet\greenpool.py", line 125, in waitall
+    self.no_coros_running.wait()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+2025-04-06 16:48:06,325 [INFO] File "C:\Users\runeq\AppData\Roaming\Python\Python313\site-packages\eventlet\event.py", line 124, in wait
+    result = hub.switch()
+2025-04-06 16:48:06,326 [INFO] File "C:\Users\runeq\AppData\Roaming\Python\Python313\site-packages\eventlet\hubs\hub.py", line 310, in switch
+    return self.greenlet.switch()
+           ~~~~~~~~~~~~~~~~~~~~^^
+2025-04-06 16:48:06,327 [INFO] File "C:\Users\runeq\AppData\Roaming\Python\Python313\site-packages\eventlet\hubs\hub.py", line 362, in run
+    self.wait(sleep_time)
+    ~~~~~~~~~^^^^^^^^^^^^
+2025-04-06 16:48:06,327 [INFO] File "C:\Users\runeq\AppData\Roaming\Python\Python313\site-packages\eventlet\hubs\selects.py", line 36, in wait
+    time.sleep(seconds)
+    ~~~~~~~~~~^^^^^^^^^
+2025-04-06 16:48:06,328 [INFO] KeyboardInterrupt
+2025-04-06 16:48:10,905 [INFO] Using DeepL translator.
+2025-04-06 16:48:10,907 [INFO] Using DeepL translator.
+2025-04-06 16:48:10,921 [INFO] (21784) wsgi starting up on http://0.0.0.0:5077
+2025-04-06 16:48:10,924 [INFO] (21784) accepted ('192.168.10.105', 54934)
+2025-04-06 16:48:10,924 [INFO] SSE connection established
+2025-04-06 16:48:11,189 [INFO] (21784) accepted ('192.168.10.105', 54935)
+2025-04-06 16:48:29,033 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:29] "GET /detail/69135-The_Company_of_the_Dragon_1.1 HTTP/1.1" 200 7313 0.063473
+2025-04-06 16:48:29,117 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:29] "GET /static/css/styles.css HTTP/1.1" 304 208 0.062065
+2025-04-06 16:48:29,119 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:29] "GET /static/js/tocPanel.js HTTP/1.1" 304 209 0.000880
+2025-04-06 16:48:29,120 [INFO] (21784) accepted ('192.168.10.105', 54947)
+2025-04-06 16:48:29,121 [INFO] (21784) accepted ('192.168.10.105', 54948)
+2025-04-06 16:48:29,122 [INFO] (21784) accepted ('192.168.10.105', 54949)
+2025-04-06 16:48:29,122 [INFO] (21784) accepted ('192.168.10.105', 54950)
+2025-04-06 16:48:29,123 [INFO] (21784) accepted ('192.168.10.105', 54951)
+2025-04-06 16:48:29,125 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:29] "GET /static/css/tocPanel.css HTTP/1.1" 304 211 0.000992
+2025-04-06 16:48:29,127 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:29] "GET /static/js/srcPanel.js HTTP/1.1" 304 210 0.001282
+2025-04-06 16:48:29,129 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:29] "GET /static/css/srcPanel.css HTTP/1.1" 304 210 0.000796
+2025-04-06 16:48:29,131 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:29] "GET /static/js/keyDown.js HTTP/1.1" 304 208 0.001251
+2025-04-06 16:48:29,133 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:29] "GET /static/css/auto-toggle.css HTTP/1.1" 304 214 0.000941
+2025-04-06 16:48:29,135 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:29] "GET /static/js/auto-toggle.js HTTP/1.1" 304 213 0.000550
+2025-04-06 16:48:29,137 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:29] "GET /static/js/floating_log.js HTTP/1.1" 304 214 0.000700
+2025-04-06 16:48:29,139 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:29] "GET /static/js/pdfPanel.js HTTP/1.1" 304 208 0.000897
+2025-04-06 16:48:29,141 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:29] "GET /static/js/detail.js HTTP/1.1" 304 208 0.001069
+2025-04-06 16:48:29,143 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:29] "GET /static/js/fetch.js HTTP/1.1" 304 207 0.000872
+2025-04-06 16:48:29,176 [INFO] SSE connection established
+2025-04-06 16:48:29,331 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:29] "GET /api/book_data/69135-The_Company_of_the_Dragon_1.1 HTTP/1.1" 200 7720291 0.097800
+2025-04-06 16:48:29,385 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:29] "GET /static/pdfjs/web/viewer.html?file=%2Fpdf_view%2F69135-The_Company_of_the_Dragon_1.1%2F1 HTTP/1.1" 304 210 0.000594
+2025-04-06 16:48:29,397 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:29] "GET /static/pdfjs/build/pdf.mjs HTTP/1.1" 304 208 0.000667
+2025-04-06 16:48:29,400 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:29] "GET /static/pdfjs/web/viewer.mjs HTTP/1.1" 304 211 0.000713
+2025-04-06 16:48:29,401 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:29] "GET /static/pdfjs/web/viewer.css HTTP/1.1" 304 210 0.000653
+2025-04-06 16:48:29,413 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:29] "GET /static/pdfjs/web/images/toolbarButton-viewThumbnail.svg HTTP/1.1" 304 230 0.000866
+2025-04-06 16:48:29,415 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:29] "GET /static/pdfjs/web/images/toolbarButton-sidebarToggle.svg HTTP/1.1" 304 230 0.000744
+2025-04-06 16:48:29,417 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:29] "GET /static/pdfjs/web/images/toolbarButton-viewLayers.svg HTTP/1.1" 304 226 0.001482
+2025-04-06 16:48:29,419 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:29] "GET /static/pdfjs/web/images/toolbarButton-viewAttachments.svg HTTP/1.1" 304 229 0.000554
+2025-04-06 16:48:29,420 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:29] "GET /static/pdfjs/web/images/toolbarButton-viewOutline.svg HTTP/1.1" 304 227 0.000645
+2025-04-06 16:48:29,421 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:29] "GET /static/pdfjs/web/images/toolbarButton-search.svg HTTP/1.1" 304 223 0.000367
+2025-04-06 16:48:29,422 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:29] "GET /static/pdfjs/web/images/toolbarButton-editorStamp.svg HTTP/1.1" 304 226 0.000475
+2025-04-06 16:48:29,424 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:29] "GET /static/pdfjs/web/images/toolbarButton-editorFreeText.svg HTTP/1.1" 304 227 0.001232
+2025-04-06 16:48:29,425 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:29] "GET /static/pdfjs/web/images/toolbarButton-secondaryToolbarToggle.svg HTTP/1.1" 304 238 0.000874
+2025-04-06 16:48:29,427 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:29] "GET /static/pdfjs/web/images/toolbarButton-editorHighlight.svg HTTP/1.1" 304 230 0.000506
+2025-04-06 16:48:29,428 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:29] "GET /static/pdfjs/web/images/toolbarButton-editorInk.svg HTTP/1.1" 304 226 0.000859
+2025-04-06 16:48:29,429 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:29] "GET /static/pdfjs/web/images/toolbarButton-zoomOut.svg HTTP/1.1" 304 222 0.000592
+2025-04-06 16:48:29,430 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:29] "GET /static/pdfjs/web/images/toolbarButton-zoomIn.svg HTTP/1.1" 304 221 0.000521
+2025-04-06 16:48:29,431 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:29] "GET /static/pdfjs/web/viewer.mjs.map HTTP/1.1" 304 215 0.000607
+2025-04-06 16:48:29,432 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:29] "GET /static/pdfjs/build/pdf.mjs.map HTTP/1.1" 304 212 0.000466
+2025-04-06 16:48:29,433 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:29] "GET /static/pdfjs/web/locale/locale.json HTTP/1.1" 304 209 0.000407
+2025-04-06 16:48:29,442 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:29] "GET /static/pdfjs/build/pdf.worker.mjs HTTP/1.1" 304 216 0.000787
+2025-04-06 16:48:29,504 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:29] "GET /static/pdfjs/web/locale/ja/viewer.ftl HTTP/1.1" 304 210 0.000805
+2025-04-06 16:48:29,509 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:29] "GET /static/pdfjs/web/locale/en-US/viewer.ftl HTTP/1.1" 304 206 0.001001
+2025-04-06 16:48:29,564 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:29] "GET /static/pdfjs/build/pdf.worker.mjs.map HTTP/1.1" 304 220 0.000900
+2025-04-06 16:48:29,623 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:29] "GET /pdf_view/69135-The_Company_of_the_Dragon_1.1/1 HTTP/1.1" 200 9059714 0.056992
+2025-04-06 16:48:29,651 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:29] "GET /static/pdfjs/web/images/loading.svg HTTP/1.1" 304 209 0.000834
+2025-04-06 16:48:29,653 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:29] "GET /static/pdfjs/web/images/loading-icon.gif HTTP/1.1" 304 213 0.000887
+2025-04-06 16:48:41,117 [INFO] (21784) accepted ('127.0.0.1', 54959)
+2025-04-06 16:48:41,120 [INFO] SSE connection established
+2025-04-06 16:48:47,303 [INFO] 処理を開始します
+2025-04-06 16:48:47,304 [INFO] 辞書ファイルを読み込みます: ./data\dict.txt
+2025-04-06 16:48:47,320 [INFO] 大文字小文字を区別する辞書エントリ(1): 11 大文字小文字を区別しない辞書エントリ(0): 1111
+2025-04-06 16:48:47,321 [INFO] 辞書の読み込みが完了しました: ./data\dict.txt
+2025-04-06 16:48:47,383 [INFO] 対象パラグラフ数: 5838
+2025-04-06 16:48:52,071 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:52] "POST /api/dict_replace_all/69135-The_Company_of_the_Dragon_1.1 HTTP/1.1" 200 148 4.768002
+2025-04-06 16:48:52,180 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:52] "GET /api/book_data/69135-The_Company_of_the_Dragon_1.1 HTTP/1.1" 200 7720291 0.104014
+2025-04-06 16:48:53,486 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:53] "GET /static/pdfjs/web/viewer.html?file=%2Fpdf_view%2F69135-The_Company_of_the_Dragon_1.1%2F1 HTTP/1.1" 304 210 0.001020
+2025-04-06 16:48:53,505 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:53] "GET /static/pdfjs/build/pdf.mjs HTTP/1.1" 304 208 0.001622
+2025-04-06 16:48:53,507 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:53] "GET /static/pdfjs/web/viewer.mjs HTTP/1.1" 304 211 0.001212
+2025-04-06 16:48:53,510 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:53] "GET /static/pdfjs/web/viewer.css HTTP/1.1" 304 210 0.001589
+2025-04-06 16:48:53,528 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:53] "GET /static/pdfjs/web/images/toolbarButton-viewThumbnail.svg HTTP/1.1" 304 230 0.001456
+2025-04-06 16:48:53,529 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:53] "GET /static/pdfjs/web/images/toolbarButton-editorStamp.svg HTTP/1.1" 304 226 0.000699
+2025-04-06 16:48:53,531 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:53] "GET /static/pdfjs/web/images/toolbarButton-sidebarToggle.svg HTTP/1.1" 304 230 0.000567
+2025-04-06 16:48:53,532 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:53] "GET /static/pdfjs/web/images/toolbarButton-secondaryToolbarToggle.svg HTTP/1.1" 304 238 0.000699
+2025-04-06 16:48:53,534 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:53] "GET /static/pdfjs/web/images/toolbarButton-viewLayers.svg HTTP/1.1" 304 226 0.000792
+2025-04-06 16:48:53,535 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:53] "GET /static/pdfjs/web/images/toolbarButton-viewAttachments.svg HTTP/1.1" 304 229 0.000627
+2025-04-06 16:48:53,537 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:53] "GET /static/pdfjs/web/images/toolbarButton-viewOutline.svg HTTP/1.1" 304 227 0.000708
+2025-04-06 16:48:53,539 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:53] "GET /static/pdfjs/web/images/toolbarButton-editorFreeText.svg HTTP/1.1" 304 227 0.001157
+2025-04-06 16:48:53,540 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:53] "GET /static/pdfjs/web/images/toolbarButton-editorHighlight.svg HTTP/1.1" 304 230 0.000441
+2025-04-06 16:48:53,542 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:53] "GET /static/pdfjs/web/images/toolbarButton-editorInk.svg HTTP/1.1" 304 226 0.000886
+2025-04-06 16:48:53,543 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:53] "GET /static/pdfjs/web/images/toolbarButton-zoomOut.svg HTTP/1.1" 304 222 0.000859
+2025-04-06 16:48:53,545 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:53] "GET /static/pdfjs/web/images/toolbarButton-zoomIn.svg HTTP/1.1" 304 221 0.000705
+2025-04-06 16:48:53,546 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:53] "GET /static/pdfjs/web/images/toolbarButton-search.svg HTTP/1.1" 304 223 0.000607
+2025-04-06 16:48:53,547 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:53] "GET /static/pdfjs/web/viewer.mjs.map HTTP/1.1" 304 215 0.000551
+2025-04-06 16:48:53,549 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:53] "GET /static/pdfjs/web/locale/locale.json HTTP/1.1" 304 209 0.000567
+2025-04-06 16:48:53,550 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:53] "GET /static/pdfjs/build/pdf.mjs.map HTTP/1.1" 304 212 0.000717
+2025-04-06 16:48:53,555 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:53] "GET /static/pdfjs/build/pdf.worker.mjs HTTP/1.1" 304 216 0.001357
+2025-04-06 16:48:53,622 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:53] "GET /static/pdfjs/web/locale/ja/viewer.ftl HTTP/1.1" 304 210 0.000977
+2025-04-06 16:48:53,625 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:53] "GET /static/pdfjs/web/locale/en-US/viewer.ftl HTTP/1.1" 304 206 0.000498
+2025-04-06 16:48:53,678 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:53] "GET /static/pdfjs/build/pdf.worker.mjs.map HTTP/1.1" 304 220 0.000501
+2025-04-06 16:48:54,365 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:54] "GET /pdf_view/69135-The_Company_of_the_Dragon_1.1/1 HTTP/1.1" 200 9059714 0.686163
+2025-04-06 16:48:54,391 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:54] "GET /static/pdfjs/web/images/loading.svg HTTP/1.1" 304 209 0.000741
+2025-04-06 16:48:54,393 [INFO] 192.168.10.105 - - [06/Apr/2025 16:48:54] "GET /static/pdfjs/web/images/loading-icon.gif HTTP/1.1" 304 213 0.000811
+2025-04-06 16:50:00,780 [INFO] wsgi exiting
+2025-04-06 16:50:53,302 [INFO] Traceback (most recent call last):
+2025-04-06 16:50:53,304 [INFO] File "C:\Data\Source\pdf-paraparatrans\pdf-paraparatrans.py", line 499, in <module>
+    wsgi.server(eventlet.listen(('', 5077)), app)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-04-06 16:50:53,305 [INFO] File "C:\Users\runeq\AppData\Roaming\Python\Python313\site-packages\eventlet\wsgi.py", line 1085, in server
+    pool.waitall()
+    ~~~~~~~~~~~~^^
+2025-04-06 16:50:53,305 [INFO] File "C:\Users\runeq\AppData\Roaming\Python\Python313\site-packages\eventlet\greenpool.py", line 125, in waitall
+    self.no_coros_running.wait()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+2025-04-06 16:50:53,306 [INFO] File "C:\Users\runeq\AppData\Roaming\Python\Python313\site-packages\eventlet\event.py", line 124, in wait
+    result = hub.switch()
+2025-04-06 16:50:53,307 [INFO] File "C:\Users\runeq\AppData\Roaming\Python\Python313\site-packages\eventlet\hubs\hub.py", line 310, in switch
+    return self.greenlet.switch()
+           ~~~~~~~~~~~~~~~~~~~~^^
+2025-04-06 16:50:53,308 [INFO] File "C:\Users\runeq\AppData\Roaming\Python\Python313\site-packages\eventlet\hubs\hub.py", line 362, in run
+    self.wait(sleep_time)
+    ~~~~~~~~~^^^^^^^^^^^^
+2025-04-06 16:50:53,309 [INFO] File "C:\Users\runeq\AppData\Roaming\Python\Python313\site-packages\eventlet\hubs\selects.py", line 42, in wait
+    r, w, er = select.select(reader_fds, writer_fds, all_fds, seconds)
+               ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-04-06 16:50:53,309 [INFO] KeyboardInterrupt
+2025-04-06 16:54:15,846 [INFO] Using DeepL translator.
+2025-04-06 16:54:15,848 [INFO] Using DeepL translator.
+2025-04-06 16:54:15,866 [INFO] (19196) wsgi starting up on http://0.0.0.0:5077
+2025-04-06 16:54:15,932 [INFO] (19196) accepted ('192.168.10.105', 55222)
+2025-04-06 16:54:15,934 [INFO] SSE connection established
+2025-04-06 16:54:36,500 [INFO] (19196) accepted ('192.168.10.105', 55237)
+2025-04-06 16:54:36,562 [INFO] 192.168.10.105 - - [06/Apr/2025 16:54:36] "GET /detail/69135-The_Company_of_the_Dragon_1.1 HTTP/1.1" 200 7313 0.061341
+2025-04-06 16:54:36,618 [INFO] 192.168.10.105 - - [06/Apr/2025 16:54:36] "GET /static/css/styles.css HTTP/1.1" 304 208 0.029000
+2025-04-06 16:54:36,619 [INFO] (19196) accepted ('192.168.10.105', 55238)
+2025-04-06 16:54:36,620 [INFO] (19196) accepted ('192.168.10.105', 55239)
+2025-04-06 16:54:36,620 [INFO] (19196) accepted ('192.168.10.105', 55240)
+2025-04-06 16:54:36,620 [INFO] (19196) accepted ('192.168.10.105', 55241)
+2025-04-06 16:54:36,620 [INFO] (19196) accepted ('192.168.10.105', 55242)
+2025-04-06 16:54:36,622 [INFO] 192.168.10.105 - - [06/Apr/2025 16:54:36] "GET /static/css/tocPanel.css HTTP/1.1" 304 211 0.001421
+2025-04-06 16:54:36,624 [INFO] 192.168.10.105 - - [06/Apr/2025 16:54:36] "GET /static/css/srcPanel.css HTTP/1.1" 304 210 0.000798
+2025-04-06 16:54:36,625 [INFO] 192.168.10.105 - - [06/Apr/2025 16:54:36] "GET /static/css/auto-toggle.css HTTP/1.1" 304 214 0.000549
+2025-04-06 16:54:36,626 [INFO] 192.168.10.105 - - [06/Apr/2025 16:54:36] "GET /static/js/auto-toggle.js HTTP/1.1" 304 213 0.000424
+2025-04-06 16:54:36,627 [INFO] 192.168.10.105 - - [06/Apr/2025 16:54:36] "GET /static/js/floating_log.js HTTP/1.1" 304 214 0.000479
+2025-04-06 16:54:36,628 [INFO] 192.168.10.105 - - [06/Apr/2025 16:54:36] "GET /static/js/tocPanel.js HTTP/1.1" 304 209 0.000528
+2025-04-06 16:54:36,629 [INFO] 192.168.10.105 - - [06/Apr/2025 16:54:36] "GET /static/js/pdfPanel.js HTTP/1.1" 304 208 0.000441
+2025-04-06 16:54:36,630 [INFO] 192.168.10.105 - - [06/Apr/2025 16:54:36] "GET /static/js/srcPanel.js HTTP/1.1" 304 210 0.000445
+2025-04-06 16:54:36,630 [INFO] 192.168.10.105 - - [06/Apr/2025 16:54:36] "GET /static/js/detail.js HTTP/1.1" 304 208 0.000443
+2025-04-06 16:54:36,632 [INFO] 192.168.10.105 - - [06/Apr/2025 16:54:36] "GET /static/js/keyDown.js HTTP/1.1" 304 208 0.000754
+2025-04-06 16:54:36,633 [INFO] 192.168.10.105 - - [06/Apr/2025 16:54:36] "GET /static/js/fetch.js HTTP/1.1" 304 207 0.000566
+2025-04-06 16:54:36,671 [INFO] SSE connection established
+2025-04-06 16:54:36,824 [INFO] 192.168.10.105 - - [06/Apr/2025 16:54:36] "GET /api/book_data/69135-The_Company_of_the_Dragon_1.1 HTTP/1.1" 200 7720291 0.090040
+2025-04-06 16:54:36,876 [INFO] 192.168.10.105 - - [06/Apr/2025 16:54:36] "GET /static/pdfjs/web/viewer.html?file=%2Fpdf_view%2F69135-The_Company_of_the_Dragon_1.1%2F1 HTTP/1.1" 304 210 0.000624
+2025-04-06 16:54:36,890 [INFO] 192.168.10.105 - - [06/Apr/2025 16:54:36] "GET /static/pdfjs/build/pdf.mjs HTTP/1.1" 304 208 0.000750
+2025-04-06 16:54:36,897 [INFO] 192.168.10.105 - - [06/Apr/2025 16:54:36] "GET /static/pdfjs/web/viewer.mjs HTTP/1.1" 304 211 0.001231
+2025-04-06 16:54:36,899 [INFO] 192.168.10.105 - - [06/Apr/2025 16:54:36] "GET /static/pdfjs/web/viewer.css HTTP/1.1" 304 210 0.000739
+2025-04-06 16:54:36,906 [INFO] 192.168.10.105 - - [06/Apr/2025 16:54:36] "GET /static/pdfjs/web/images/toolbarButton-viewThumbnail.svg HTTP/1.1" 304 230 0.000768
+2025-04-06 16:54:36,908 [INFO] 192.168.10.105 - - [06/Apr/2025 16:54:36] "GET /static/pdfjs/web/images/toolbarButton-sidebarToggle.svg HTTP/1.1" 304 230 0.000935
+2025-04-06 16:54:36,909 [INFO] 192.168.10.105 - - [06/Apr/2025 16:54:36] "GET /static/pdfjs/web/images/toolbarButton-viewLayers.svg HTTP/1.1" 304 226 0.000544
+2025-04-06 16:54:36,910 [INFO] 192.168.10.105 - - [06/Apr/2025 16:54:36] "GET /static/pdfjs/web/images/toolbarButton-viewAttachments.svg HTTP/1.1" 304 229 0.000570
+2025-04-06 16:54:36,911 [INFO] 192.168.10.105 - - [06/Apr/2025 16:54:36] "GET /static/pdfjs/web/images/toolbarButton-viewOutline.svg HTTP/1.1" 304 227 0.000482
+2025-04-06 16:54:36,913 [INFO] 192.168.10.105 - - [06/Apr/2025 16:54:36] "GET /static/pdfjs/web/images/toolbarButton-editorStamp.svg HTTP/1.1" 304 226 0.001616
+2025-04-06 16:54:36,915 [INFO] 192.168.10.105 - - [06/Apr/2025 16:54:36] "GET /static/pdfjs/web/images/toolbarButton-editorFreeText.svg HTTP/1.1" 304 227 0.000863
+2025-04-06 16:54:36,916 [INFO] 192.168.10.105 - - [06/Apr/2025 16:54:36] "GET /static/pdfjs/web/images/toolbarButton-secondaryToolbarToggle.svg HTTP/1.1" 304 238 0.000465
+2025-04-06 16:54:36,917 [INFO] 192.168.10.105 - - [06/Apr/2025 16:54:36] "GET /static/pdfjs/web/images/toolbarButton-editorHighlight.svg HTTP/1.1" 304 230 0.000669
+2025-04-06 16:54:36,920 [INFO] 192.168.10.105 - - [06/Apr/2025 16:54:36] "GET /static/pdfjs/web/images/toolbarButton-editorInk.svg HTTP/1.1" 304 226 0.000853
+2025-04-06 16:54:36,921 [INFO] 192.168.10.105 - - [06/Apr/2025 16:54:36] "GET /static/pdfjs/web/images/toolbarButton-zoomOut.svg HTTP/1.1" 304 222 0.000640
+2025-04-06 16:54:36,923 [INFO] 192.168.10.105 - - [06/Apr/2025 16:54:36] "GET /static/pdfjs/web/images/toolbarButton-zoomIn.svg HTTP/1.1" 304 221 0.000638
+2025-04-06 16:54:36,924 [INFO] 192.168.10.105 - - [06/Apr/2025 16:54:36] "GET /static/pdfjs/web/images/toolbarButton-search.svg HTTP/1.1" 304 223 0.000549
+2025-04-06 16:54:36,927 [INFO] 192.168.10.105 - - [06/Apr/2025 16:54:36] "GET /static/pdfjs/build/pdf.mjs.map HTTP/1.1" 304 212 0.000985
+2025-04-06 16:54:36,928 [INFO] 192.168.10.105 - - [06/Apr/2025 16:54:36] "GET /static/pdfjs/web/locale/locale.json HTTP/1.1" 304 209 0.000698
+2025-04-06 16:54:36,934 [INFO] 192.168.10.105 - - [06/Apr/2025 16:54:36] "GET /static/pdfjs/web/viewer.mjs.map HTTP/1.1" 304 215 0.000762
+2025-04-06 16:54:36,937 [INFO] 192.168.10.105 - - [06/Apr/2025 16:54:36] "GET /static/pdfjs/build/pdf.worker.mjs HTTP/1.1" 304 216 0.000740
+2025-04-06 16:54:37,001 [INFO] 192.168.10.105 - - [06/Apr/2025 16:54:37] "GET /static/pdfjs/web/locale/ja/viewer.ftl HTTP/1.1" 304 210 0.000575
+2025-04-06 16:54:37,005 [INFO] 192.168.10.105 - - [06/Apr/2025 16:54:37] "GET /static/pdfjs/web/locale/en-US/viewer.ftl HTTP/1.1" 304 206 0.000465
+2025-04-06 16:54:37,067 [INFO] 192.168.10.105 - - [06/Apr/2025 16:54:37] "GET /static/pdfjs/build/pdf.worker.mjs.map HTTP/1.1" 304 220 0.000773
+2025-04-06 16:54:37,130 [INFO] 192.168.10.105 - - [06/Apr/2025 16:54:37] "GET /pdf_view/69135-The_Company_of_the_Dragon_1.1/1 HTTP/1.1" 200 9059714 0.062212
+2025-04-06 16:54:37,157 [INFO] 192.168.10.105 - - [06/Apr/2025 16:54:37] "GET /static/pdfjs/web/images/loading.svg HTTP/1.1" 304 209 0.000803
+2025-04-06 16:54:37,158 [INFO] 192.168.10.105 - - [06/Apr/2025 16:54:37] "GET /static/pdfjs/web/images/loading-icon.gif HTTP/1.1" 304 213 0.000607
+2025-04-06 16:54:52,685 [INFO] (19196) accepted ('127.0.0.1', 55250)
+2025-04-06 16:54:52,686 [INFO] SSE connection established
+2025-04-06 16:55:01,415 [INFO] 処理を開始します
+2025-04-06 16:55:01,416 [INFO] 辞書ファイルを読み込みます: ./data\dict.txt
+2025-04-06 16:55:01,424 [INFO] 大文字小文字を区別する辞書エントリ(1): 11 大文字小文字を区別しない辞書エントリ(0): 1111
+2025-04-06 16:55:01,424 [INFO] 辞書の読み込みが完了しました: ./data\dict.txt
+2025-04-06 16:55:01,476 [INFO] 対象パラグラフ数: 5838
+2025-04-06 16:55:06,230 [INFO] 192.168.10.105 - - [06/Apr/2025 16:55:06] "POST /api/dict_replace_all/69135-The_Company_of_the_Dragon_1.1 HTTP/1.1" 200 148 4.815979
+2025-04-06 16:55:06,345 [INFO] 192.168.10.105 - - [06/Apr/2025 16:55:06] "GET /api/book_data/69135-The_Company_of_the_Dragon_1.1 HTTP/1.1" 200 7720291 0.108783
+2025-04-06 16:55:08,760 [INFO] 192.168.10.105 - - [06/Apr/2025 16:55:08] "GET /static/pdfjs/web/viewer.html?file=%2Fpdf_view%2F69135-The_Company_of_the_Dragon_1.1%2F1 HTTP/1.1" 304 210 0.001180
+2025-04-06 16:55:08,779 [INFO] 192.168.10.105 - - [06/Apr/2025 16:55:08] "GET /static/pdfjs/build/pdf.mjs HTTP/1.1" 304 208 0.000729
+2025-04-06 16:55:08,782 [INFO] 192.168.10.105 - - [06/Apr/2025 16:55:08] "GET /static/pdfjs/web/viewer.mjs HTTP/1.1" 304 211 0.001411
+2025-04-06 16:55:08,783 [INFO] 192.168.10.105 - - [06/Apr/2025 16:55:08] "GET /static/pdfjs/web/viewer.css HTTP/1.1" 304 210 0.000549
+2025-04-06 16:55:08,799 [INFO] 192.168.10.105 - - [06/Apr/2025 16:55:08] "GET /static/pdfjs/web/images/toolbarButton-viewThumbnail.svg HTTP/1.1" 304 230 0.001580
+2025-04-06 16:55:08,801 [INFO] 192.168.10.105 - - [06/Apr/2025 16:55:08] "GET /static/pdfjs/web/images/toolbarButton-sidebarToggle.svg HTTP/1.1" 304 230 0.000774
+2025-04-06 16:55:08,802 [INFO] 192.168.10.105 - - [06/Apr/2025 16:55:08] "GET /static/pdfjs/web/images/toolbarButton-viewLayers.svg HTTP/1.1" 304 226 0.000531
+2025-04-06 16:55:08,804 [INFO] 192.168.10.105 - - [06/Apr/2025 16:55:08] "GET /static/pdfjs/web/images/toolbarButton-secondaryToolbarToggle.svg HTTP/1.1" 304 238 0.000791
+2025-04-06 16:55:08,806 [INFO] 192.168.10.105 - - [06/Apr/2025 16:55:08] "GET /static/pdfjs/web/images/toolbarButton-editorHighlight.svg HTTP/1.1" 304 230 0.000837
+2025-04-06 16:55:08,807 [INFO] 192.168.10.105 - - [06/Apr/2025 16:55:08] "GET /static/pdfjs/web/images/toolbarButton-viewAttachments.svg HTTP/1.1" 304 229 0.000772
+2025-04-06 16:55:08,808 [INFO] 192.168.10.105 - - [06/Apr/2025 16:55:08] "GET /static/pdfjs/web/images/toolbarButton-viewOutline.svg HTTP/1.1" 304 227 0.000565
+2025-04-06 16:55:08,810 [INFO] 192.168.10.105 - - [06/Apr/2025 16:55:08] "GET /static/pdfjs/web/images/toolbarButton-editorStamp.svg HTTP/1.1" 304 226 0.000597
+2025-04-06 16:55:08,812 [INFO] 192.168.10.105 - - [06/Apr/2025 16:55:08] "GET /static/pdfjs/web/images/toolbarButton-search.svg HTTP/1.1" 304 223 0.000987
+2025-04-06 16:55:08,814 [INFO] 192.168.10.105 - - [06/Apr/2025 16:55:08] "GET /static/pdfjs/web/images/toolbarButton-editorFreeText.svg HTTP/1.1" 304 227 0.000986
+2025-04-06 16:55:08,815 [INFO] 192.168.10.105 - - [06/Apr/2025 16:55:08] "GET /static/pdfjs/web/images/toolbarButton-editorInk.svg HTTP/1.1" 304 226 0.000565
+2025-04-06 16:55:08,817 [INFO] 192.168.10.105 - - [06/Apr/2025 16:55:08] "GET /static/pdfjs/web/images/toolbarButton-zoomOut.svg HTTP/1.1" 304 222 0.000931
+2025-04-06 16:55:08,818 [INFO] 192.168.10.105 - - [06/Apr/2025 16:55:08] "GET /static/pdfjs/web/images/toolbarButton-zoomIn.svg HTTP/1.1" 304 221 0.000982
+2025-04-06 16:55:08,820 [INFO] 192.168.10.105 - - [06/Apr/2025 16:55:08] "GET /static/pdfjs/web/viewer.mjs.map HTTP/1.1" 304 215 0.000668
+2025-04-06 16:55:08,821 [INFO] 192.168.10.105 - - [06/Apr/2025 16:55:08] "GET /static/pdfjs/build/pdf.mjs.map HTTP/1.1" 304 212 0.000630
+2025-04-06 16:55:08,822 [INFO] 192.168.10.105 - - [06/Apr/2025 16:55:08] "GET /static/pdfjs/web/locale/locale.json HTTP/1.1" 304 209 0.000361
+2025-04-06 16:55:08,830 [INFO] 192.168.10.105 - - [06/Apr/2025 16:55:08] "GET /static/pdfjs/build/pdf.worker.mjs HTTP/1.1" 304 216 0.001697
+2025-04-06 16:55:08,892 [INFO] 192.168.10.105 - - [06/Apr/2025 16:55:08] "GET /static/pdfjs/web/locale/ja/viewer.ftl HTTP/1.1" 304 210 0.001277
+2025-04-06 16:55:08,898 [INFO] 192.168.10.105 - - [06/Apr/2025 16:55:08] "GET /static/pdfjs/web/locale/en-US/viewer.ftl HTTP/1.1" 304 206 0.000837
+2025-04-06 16:55:08,938 [INFO] 192.168.10.105 - - [06/Apr/2025 16:55:08] "GET /static/pdfjs/build/pdf.worker.mjs.map HTTP/1.1" 304 220 0.000548
+2025-04-06 16:55:09,036 [INFO] 192.168.10.105 - - [06/Apr/2025 16:55:09] "GET /pdf_view/69135-The_Company_of_the_Dragon_1.1/1 HTTP/1.1" 200 9059714 0.096786
+2025-04-06 16:55:09,060 [INFO] 192.168.10.105 - - [06/Apr/2025 16:55:09] "GET /static/pdfjs/web/images/loading.svg HTTP/1.1" 304 209 0.001000
+2025-04-06 16:55:09,066 [INFO] 192.168.10.105 - - [06/Apr/2025 16:55:09] "GET /static/pdfjs/web/images/loading-icon.gif HTTP/1.1" 304 213 0.000970
+2025-04-06 16:58:10,057 [INFO] wsgi exiting
+2025-04-06 16:58:30,808 [INFO] Traceback (most recent call last):
+2025-04-06 16:58:30,810 [INFO] File "C:\Data\Source\pdf-paraparatrans\pdf-paraparatrans.py", line 499, in <module>
+    wsgi.server(eventlet.listen(('', 5077)), app)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-04-06 16:58:30,810 [INFO] File "C:\Users\runeq\AppData\Roaming\Python\Python313\site-packages\eventlet\wsgi.py", line 1085, in server
+    pool.waitall()
+    ~~~~~~~~~~~~^^
+2025-04-06 16:58:30,811 [INFO] File "C:\Users\runeq\AppData\Roaming\Python\Python313\site-packages\eventlet\greenpool.py", line 125, in waitall
+    self.no_coros_running.wait()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+2025-04-06 16:58:30,811 [INFO] File "C:\Users\runeq\AppData\Roaming\Python\Python313\site-packages\eventlet\event.py", line 124, in wait
+    result = hub.switch()
+2025-04-06 16:58:30,811 [INFO] File "C:\Users\runeq\AppData\Roaming\Python\Python313\site-packages\eventlet\hubs\hub.py", line 310, in switch
+    return self.greenlet.switch()
+           ~~~~~~~~~~~~~~~~~~~~^^
+2025-04-06 16:58:30,812 [INFO] File "C:\Users\runeq\AppData\Roaming\Python\Python313\site-packages\eventlet\hubs\hub.py", line 362, in run
+    self.wait(sleep_time)
+    ~~~~~~~~~^^^^^^^^^^^^
+2025-04-06 16:58:30,812 [INFO] File "C:\Users\runeq\AppData\Roaming\Python\Python313\site-packages\eventlet\hubs\selects.py", line 36, in wait
+    time.sleep(seconds)
+    ~~~~~~~~~~^^^^^^^^^
+2025-04-06 16:58:30,812 [INFO] KeyboardInterrupt

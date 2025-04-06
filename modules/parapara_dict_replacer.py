@@ -21,9 +21,7 @@ def load_dictionary(dict_file: str) -> Tuple[Dict[str, str], Dict[str, str]]:
     """
     def wrap_value(val: str) -> str:
         # 置換対象がアルファベットのみなら q_ と _q でラップする
-        print(f"wrap_value: {val}")
         if re.fullmatch(r'[A-Za-z]+', val):
-            print(f"wrap_value: {val}")
             return f"q_{val}_q"
         return val
 
@@ -50,6 +48,9 @@ def load_dictionary(dict_file: str) -> Tuple[Dict[str, str], Dict[str, str]]:
     # キーの長さで降順ソート（それぞれについて）
     dict_cs = {k: v for k, v in sorted(dict_cs.items(), key=lambda x: len(x[0]), reverse=True)}
     dict_ci = {k: v for k, v in sorted(dict_ci.items(), key=lambda x: len(x[0]), reverse=True)}
+    # dict_csの要素数
+    print(f"大文字小文字を区別する辞書エントリ(1): {len(dict_cs)} 大文字小文字を区別しない辞書エントリ(0): {len(dict_ci)}")
+
     return dict_cs, dict_ci
 
 def replace_with_dict(text: str, dict_cs: Dict[str, str], dict_ci: Dict[str, str]) -> str:
@@ -82,7 +83,10 @@ def file_replace_with_dict(trans_file: str, dict_file: str):
     
     with open(trans_file, encoding='utf-8') as f:
         data = json.load(f)
-    
+
+    # 対象パラグラフ数
+    print(f"対象パラグラフ数: {len(data.get('paragraphs', []))}")
+
     for paragraph in data.get("paragraphs", []):
         if "src_text" in paragraph:
             replaced_text = replace_with_dict(paragraph["src_text"], dict_cs, dict_ci)

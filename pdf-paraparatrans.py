@@ -1,11 +1,26 @@
+import eventlet
+eventlet.monkey_patch()
+
 from flask import Flask, request, render_template, redirect, url_for, send_from_directory, jsonify, send_file
 import os
 import json
 import datetime
 import io
-import logging
 import sys
 from PyPDF2 import PdfReader, PdfWriter
+
+# modulesディレクトリをPythonのモジュール検索パスに追加
+sys.path.append(os.path.join(os.path.dirname(__file__), 'modules'))
+
+# ログ設定
+import logging
+from modules.stream_logger import init_logging 
+from modules.sse_endpoint import create_log_stream_endpoint
+# ログ初期化（ログファイル＋SSEキューへの出力）
+init_logging("pdf-paraparatrans.log")
+# Flaskの静的ファイルアクセスログを抑制
+logging.getLogger('werkzeug').setLevel(logging.WARNING)
+
 
 # .envのひな形
 ENV_TEMPLATE = """
@@ -26,8 +41,6 @@ if not os.path.exists(ENV_PATH):
     with open(ENV_PATH, "w", encoding="utf-8") as f:
         f.write(ENV_TEMPLATE)
 
-# modulesディレクトリをPythonのモジュール検索パスに追加
-sys.path.append(os.path.join(os.path.dirname(__file__), 'modules'))
 from modules.parapara_pdf2json import extract_paragraphs
 from modules.api_translate import translate_text
 from modules.parapara_trans import paraparatrans_json_file
@@ -40,8 +53,6 @@ from modules.parapara_dict_trans import dict_trans
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
 
-# ログ設定
-logging.basicConfig(level=logging.DEBUG)
 
 # PDFとJSONの配置ディレクトリ（必要に応じて変更してください）
 BASE_FOLDER = "./data"  # Windows例。Linux等の場合はパスを変更してください
@@ -62,8 +73,7 @@ if not os.path.exists(DICT_PATH):
     with open(DICT_PATH, "w", encoding="utf-8") as f:
         f.write(DICT_TEMPLATE)
 
-# ログ設定
-logging.basicConfig(level=logging.DEBUG)
+app.add_url_rule('/logstream', 'logstream', create_log_stream_endpoint())
 
 def get_resource_path(relative_path):
     """PyInstaller で EXE 化された時のパスを取得する"""
@@ -484,5 +494,10 @@ def recalc_trans_status_counts(book_data):
     book_data["trans_status_counts"] = counts
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5077, debug=False)
+    from flask import Flask
+    from eventlet import wsgi
+    wsgi.server(eventlet.listen(('', 5077)), app)
+
+
+
 
