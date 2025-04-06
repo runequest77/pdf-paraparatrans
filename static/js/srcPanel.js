@@ -58,7 +58,13 @@ function onTransButtonClick(event, paragraph, divSrc) {
             if (autoRadio) { autoRadio.checked = true; }
         }
     })
-    .catch(error => console.error('Error:', error));
+    .catch(
+        // ユーザーにポップアップでエラーを通知
+        error => {
+            console.error('Error:', error);
+            alert('翻訳中にエラーが発生しました。詳細はコンソールを確認してください。');
+        }
+    );
 }
 
 // 編集ボックスの保存

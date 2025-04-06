@@ -30,12 +30,12 @@ function transPage() {
                 console.log('翻訳が成功しました。');
             } else {
                 console.error('エラー:', data.message);
-                alert('翻訳エラー: ' + data.message);
+                alert('翻訳エラー(response): ' + data.message);
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('翻訳中にエラーが発生しました。詳細はコンソールを確認してください。');
+            alert('翻訳中にエラー(catch)');
         })
         .finally(() => {
             // 成功・失敗に関わらず必ず実行
@@ -61,12 +61,12 @@ function transAllPages() {
                 console.log('翻訳が成功しました。');
             } else {
                 console.error('エラー:', data.message);
-                alert('翻訳エラー: ' + data.message);
+                alert('翻訳エラー(response): ' + data.message);
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('翻訳中にエラーが発生しました。詳細はコンソールを確認してください。');
+            alert('翻訳中にエラー(catch)');
         })
         .finally(() => {
             // 成功・失敗に関わらず必ず実行

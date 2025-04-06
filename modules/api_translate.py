@@ -13,12 +13,13 @@ else:
     print("Using Google translator.")
 
 def translate_text(text, source="EN", target="JA"):
+    print(f"translate_text")
     """
-    環境変数の設定に応じた翻訳サービスでテキストを翻訳します。
+    環境変数に基づいて翻訳サービスを選択し、テキストを翻訳する。
     """
     return translate_text_env(text, source, target)
 
 if __name__ == "__main__":
     html_text = "<p>Hello <strong>ParaParaTrans</strong>!</p>"
-    translated_text = translate_text(html_text)
+    translated_text, status_code = translate_text(html_text)
     print(translated_text)

@@ -38,8 +38,7 @@ def process_group(paragraphs_group, data, filepath):
     try:
         translated_text = translate_text(concatenated_text, source="en", target="ja")
     except Exception as e:
-        print(f"Error: 翻訳APIの呼び出しに失敗しました: {e}")
-        return
+        raise Exception(f"翻訳APIの呼び出しに失敗しました: {e}")
     
     # 翻訳結果を【id】のパターンで分割
     parts = re.split(r'(?=【\d+】)', translated_text)

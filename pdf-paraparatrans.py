@@ -194,9 +194,9 @@ def translate_all_api(pdf_name):
         return jsonify({"status": "error", "message": "JSONが存在しません"}), 400
     try:
         paraparatrans_json_file(json_path, 1, 9999)
+        return jsonify({"status": "ok"}), 200
     except Exception as e:
         return jsonify({"status": "error", "message": f"全翻訳エラー: {str(e)}"}), 500
-    return jsonify({"status": "ok"}), 200
 
 # API:短文翻訳
 @app.route("/api/translate", methods=["POST"])
@@ -205,12 +205,16 @@ def translate_api():
     if not data or "text" not in data:
         return jsonify({"status": "error", "message": "No text provided"}), 400
 
-    print("translate_api:data:")
-    print(json.dumps(data, indent=2, ensure_ascii=False))
-
     text = data["text"]
-    translation = translate_text(text, source="en", target="ja")
-    return jsonify({"status": "ok", "translation": translation}), 200
+    source = data.get("source", "EN")
+    target = data.get("target", "JA")
+
+    try:
+        translated_text = translate_text(text, source, target)
+        return jsonify({"status": "ok", "translated_text": translated_text}), 200
+    except Exception as e:
+        app.logger.error(f"Translation error: {str(e)}")
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 # API:構造ファイル保存
 @app.route("/api/save_structure/<pdf_name>", methods=["POST"])
@@ -304,10 +308,13 @@ def paraparatrans_api(pdf_name):
     if not os.path.exists(json_path):
         return jsonify({"status": "error", "message": "対象のJSONファイルが存在しません"}), 404
 
-    #pythoで数字を文字列に変換する
     print ("json_path:" + json_path + " start_page:" + str(start_page) + " end_page:" + str(end_page))
-    updated_data = paraparatrans_json_file(json_path, start_page, end_page)
-    return jsonify({"status": "ok", "data": updated_data}), 200
+    try:
+        updated_data = paraparatrans_json_file(json_path, start_page, end_page)
+        return jsonify({"status": "ok", "data": updated_data}), 200
+    except Exception as e:
+        app.logger.error(f"翻訳処理中にエラーが発生しました: {str(e)}")
+        return jsonify({"status": "error", "message": f"翻訳処理中にエラーが発生しました: {str(e)}"}), 500
 
 # APIW:book_data取得
 @app.route("/api/reload_book_data/<pdf_name>", methods=["GET"])
