@@ -52,3 +52,24 @@ def init_logging(log_file_name="app.log", level=logging.INFO):
     sse_handler = SSELogQueueHandler()
     sse_handler.setFormatter(formatter)
     logger.addHandler(sse_handler)
+
+
+import time
+
+def setup_progress(total, prefix=""):
+    """1秒に1回だけログ出力する progress 関数を返す"""
+    logger = logging.getLogger()
+    count = [0]  # クロージャーで可変にするためリスト
+    last_log_time = [0]
+
+    def progress(message=None):
+        count[0] += 1
+        now = time.time()
+        if now - last_log_time[0] >= 1 or count[0] >= total:
+            msg = f"[PROGRESS] {prefix}{count[0]} / {total}"
+            if message:
+                msg += f" - {message}"
+            logger.info(msg)
+            last_log_time[0] = now
+
+    return progress

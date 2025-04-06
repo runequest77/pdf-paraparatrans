@@ -13,7 +13,8 @@ document.addEventListener("DOMContentLoaded", () => {
   color: white;
   border-radius: 8px;
   padding: 10px;
-  overflow-y: auto;
+  overflow: auto;
+  resize: both;
   backdrop-filter: blur(5px);
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   font-family: monospace;
@@ -22,6 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
 #logWindow.minimized {
   height: 30px;
   overflow: hidden;
+  resize: none;
 }
 #logWindow .log-header {
   display: flex;
@@ -29,6 +31,8 @@ document.addEventListener("DOMContentLoaded", () => {
   align-items: center;
   font-size: 14px;
   margin-bottom: 5px;
+  cursor: move;
+  user-select: none;
 }
 #logWindow .log-header button {
   background: transparent;
@@ -80,15 +84,45 @@ document.addEventListener("DOMContentLoaded", () => {
 
     div.textContent = line;
     logContent.appendChild(div);
-    logContent.scrollTop = logContent.scrollHeight;
+
+    // ログ末端にスクロール（非同期で安定させる）
+    requestAnimationFrame(() => {
+      logContent.scrollTop = logContent.scrollHeight;
+    });
   }
 
   const sse = new EventSource("/logstream");
   sse.onmessage = (e) => {
     console.log("[SSE受信]", e.data);
-    const lines = e.data.split("\\n");
+    const lines = e.data.split("\n");
     lines.forEach(line => {
       if (line.trim()) renderLogLine(line);
     });
   };
+
+  // 🖱️ ドラッグでウインドウを移動
+  const header = logWindow.querySelector(".log-header");
+  let isDragging = false;
+  let offsetX = 0;
+  let offsetY = 0;
+
+  header.addEventListener("mousedown", (e) => {
+    isDragging = true;
+    offsetX = e.clientX - logWindow.offsetLeft;
+    offsetY = e.clientY - logWindow.offsetTop;
+    e.preventDefault();
+  });
+
+  document.addEventListener("mousemove", (e) => {
+    if (isDragging) {
+      logWindow.style.left = `${e.clientX - offsetX}px`;
+      logWindow.style.top = `${e.clientY - offsetY}px`;
+      logWindow.style.bottom = "auto"; // bottom固定を解除
+      logWindow.style.right = "auto";  // right固定を解除
+    }
+  });
+
+  document.addEventListener("mouseup", () => {
+    isDragging = false;
+  });
 });

@@ -1925,3 +1925,170 @@ ConnectionAbortedError: [WinError 10053] 確立された接続がホスト コ�
 2025-04-06 18:20:44,315 [INFO] 大文字小文字を区別する辞書エントリ(1): 11 大文字小文字を区別しない辞書エントリ(0): 1111
 2025-04-06 18:20:44,316 [INFO] 辞書の読み込みが完了しました: ./data\dict.txt
 2025-04-06 18:20:44,387 [INFO] 対象パラグラフ数: 5838
+2025-04-06 18:24:04,139 [INFO] Using DeepL translator.
+2025-04-06 18:24:04,140 [INFO] Using DeepL translator.
+2025-04-06 18:24:04,149 [INFO] * Serving Flask app 'pdf-paraparatrans'
+2025-04-06 18:24:04,149 [INFO] * Debug mode: on
+2025-04-06 18:24:04,653 [INFO] Using DeepL translator.
+2025-04-06 18:24:04,655 [INFO] Using DeepL translator.
+2025-04-06 18:24:04,684 [WARNING]  * Debugger is active!
+2025-04-06 18:25:48,044 [INFO] 処理を開始します
+2025-04-06 18:25:48,045 [INFO] 辞書ファイルを読み込みます: ./data\dict.txt
+2025-04-06 18:25:48,058 [INFO] 大文字小文字を区別する辞書エントリ(1): 11 大文字小文字を区別しない辞書エントリ(0): 1111
+2025-04-06 18:25:48,059 [INFO] 辞書の読み込みが完了しました: ./data\dict.txt
+2025-04-06 18:25:48,109 [INFO] 対象パラグラフ数: 5838
+2025-04-06 18:41:52,504 [INFO] Using DeepL translator.
+2025-04-06 18:41:52,505 [INFO] Using DeepL translator.
+2025-04-06 18:41:52,542 [WARNING]  * Debugger is active!
+2025-04-06 18:53:51,830 [INFO] Using DeepL translator.
+2025-04-06 18:53:51,832 [INFO] Using DeepL translator.
+2025-04-06 18:53:51,864 [WARNING]  * Debugger is active!
+2025-04-06 18:56:11,650 [INFO] Using DeepL translator.
+2025-04-06 18:56:11,652 [INFO] Using DeepL translator.
+2025-04-06 18:56:11,691 [WARNING]  * Debugger is active!
+2025-04-06 18:56:31,391 [INFO] Using DeepL translator.
+2025-04-06 18:56:31,393 [INFO] Using DeepL translator.
+2025-04-06 18:56:31,424 [WARNING]  * Debugger is active!
+2025-04-06 19:01:09,096 [INFO] Using DeepL translator.
+2025-04-06 19:01:09,098 [INFO] Using DeepL translator.
+2025-04-06 19:01:09,150 [WARNING]  * Debugger is active!
+2025-04-06 19:01:30,647 [INFO] Using DeepL translator.
+2025-04-06 19:01:30,648 [INFO] Using DeepL translator.
+2025-04-06 19:01:30,660 [INFO] * Serving Flask app 'pdf-paraparatrans'
+2025-04-06 19:01:30,660 [INFO] * Debug mode: on
+2025-04-06 19:01:31,167 [INFO] Using DeepL translator.
+2025-04-06 19:01:31,169 [INFO] Using DeepL translator.
+2025-04-06 19:01:31,201 [WARNING]  * Debugger is active!
+2025-04-06 19:01:43,838 [INFO] Using DeepL translator.
+2025-04-06 19:01:43,840 [INFO] Using DeepL translator.
+2025-04-06 19:01:43,871 [WARNING]  * Debugger is active!
+2025-04-06 19:01:46,440 [INFO] Using DeepL translator.
+2025-04-06 19:01:46,442 [INFO] Using DeepL translator.
+2025-04-06 19:01:46,470 [WARNING]  * Debugger is active!
+2025-04-06 19:02:04,634 [INFO] 処理を開始します
+2025-04-06 19:02:04,634 [INFO] 辞書ファイルを読み込みます: ./data\dict.txt
+2025-04-06 19:02:04,649 [INFO] 大文字小文字を区別する辞書エントリ(1): 11 大文字小文字を区別しない辞書エントリ(0): 1111
+2025-04-06 19:02:04,649 [INFO] 辞書の読み込みが完了しました: ./data\dict.txt
+2025-04-06 19:02:04,700 [INFO] [PROGRESS] パラグラフ置換中......1 / 5838
+2025-04-06 19:02:05,700 [INFO] [PROGRESS] パラグラフ置換中......1318 / 5838 - 71-73	 	Mern			-ira
+
+2025-04-06 19:02:06,700 [INFO] [PROGRESS] パラグラフ置換中......2592 / 5838 - An emissary arrives from Argrath White Bull, a former Sartarite slave uniting the tribes of Prax against the Empire. He is requesting to meet with the leaders of the Company of the Dragon on the border between Prax and Sartar. What is the purpose of this meeting?  What does it portend?
+
+2025-04-06 19:02:07,701 [INFO] [PROGRESS] パラグラフ置換中......3854 / 5838 - Shrine
+
+2025-04-06 19:02:08,702 [INFO] [PROGRESS] パラグラフ置換中......5133 / 5838 - Runes:  ? 60% (monstrous), u 90% (voracious).
+
+2025-04-06 19:02:09,279 [INFO] [PROGRESS] パラグラフ置換中......5838 / 5838 - 270
+2025-04-06 19:03:56,779 [INFO] Using DeepL translator.
+2025-04-06 19:03:56,781 [INFO] Using DeepL translator.
+2025-04-06 19:03:56,809 [WARNING]  * Debugger is active!
+2025-04-06 19:05:13,936 [INFO] Using DeepL translator.
+2025-04-06 19:05:13,938 [INFO] Using DeepL translator.
+2025-04-06 19:05:13,985 [WARNING]  * Debugger is active!
+2025-04-06 19:05:21,776 [INFO] Using DeepL translator.
+2025-04-06 19:05:21,777 [INFO] Using DeepL translator.
+2025-04-06 19:05:21,785 [INFO] * Serving Flask app 'pdf-paraparatrans'
+2025-04-06 19:05:21,786 [INFO] * Debug mode: on
+2025-04-06 19:05:22,297 [INFO] Using DeepL translator.
+2025-04-06 19:05:22,299 [INFO] Using DeepL translator.
+2025-04-06 19:05:22,329 [WARNING]  * Debugger is active!
+2025-04-06 19:05:35,038 [INFO] 処理を開始します
+2025-04-06 19:05:35,039 [INFO] 辞書ファイルを読み込みます: ./data\dict.txt
+2025-04-06 19:05:35,052 [INFO] 大文字小文字を区別する辞書エントリ(1): 11 大文字小文字を区別しない辞書エントリ(0): 1111
+2025-04-06 19:05:35,053 [INFO] 辞書の読み込みが完了しました: ./data\dict.txt
+2025-04-06 19:05:35,114 [INFO] [PROGRESS] パラグラフ置換中......1 / 5838
+2025-04-06 19:05:36,115 [INFO] [PROGRESS] パラグラフ置換中......1243 / 5838 - •Distinctive Features:  Light brown to olive complexion; long black hair, straight or wavy, sometimes with shades of red or gold in it; eyes ranging from coal black to pale gray. She might be wiry and Tom-boyish, or doe-eyed and soft natured. 
+2025-04-06 19:05:37,115 [INFO] [PROGRESS] パラグラフ置換中......2504 / 5838 - Audiences of the ancient epics—the Iliad, Odyssey, Aeneid, Mahabharata, Ramayana, etc—expected this sort of “divine” intervention. As modern audiences we are a tad more cynical. If you play it right, however, it is unlikely the players will complain you did not drag them off to an early death.
+
+2025-04-06 19:05:38,116 [INFO] [PROGRESS] パラグラフ置換中......3798 / 5838 - Born in 721 ST on the island of Jrustela, Nykomaestos (“Nyko”) was an earnest and clever boy, his potential quickly identified by the zzaburi who made him a neophyte and trained him.  His Watcher has a slightly older neophyte. Glykonos, who tormented the younger boy every chance he got.  They grew into bitter academic rivals.  Nyko attained zzaburi status after several years studying the myths and practices of the paynim of Esrolia.  Here he had the opportunity to rub shoulders with Draconic mystics as well.  His thesis on the curious marital customs of the matriarchy and their religious beliefs raised eyebrows in Jrustela, but he found the Theyalans (how he refers to Orlanthi) a fascinating people.
+
+2025-04-06 19:05:39,116 [INFO] [PROGRESS] パラグラフ置換中......5093 / 5838 - Strike Ranks (D/S): 3/2 
+
+2025-04-06 19:05:39,714 [INFO] [PROGRESS] パラグラフ置換中......5838 / 5838 - 270
+2025-04-06 19:05:39,823 [INFO] 処理が完了しました: ./data\69135-The_Company_of_the_Dragon_1.1.json
+2025-04-06 19:06:36,700 [INFO] Using DeepL translator.
+2025-04-06 19:06:36,702 [INFO] Using DeepL translator.
+2025-04-06 19:06:36,754 [WARNING]  * Debugger is active!
+2025-04-06 19:06:42,896 [INFO] Using DeepL translator.
+2025-04-06 19:06:42,897 [INFO] Using DeepL translator.
+2025-04-06 19:06:42,906 [INFO] * Serving Flask app 'pdf-paraparatrans'
+2025-04-06 19:06:42,906 [INFO] * Debug mode: on
+2025-04-06 19:06:43,430 [INFO] Using DeepL translator.
+2025-04-06 19:06:43,432 [INFO] Using DeepL translator.
+2025-04-06 19:06:43,463 [WARNING]  * Debugger is active!
+2025-04-06 19:06:49,974 [INFO] 処理を開始します
+2025-04-06 19:06:49,975 [INFO] 辞書ファイルを読み込みます: ./data\dict.txt
+2025-04-06 19:06:49,985 [INFO] 大文字小文字を区別する辞書エントリ(1): 11 大文字小文字を区別しない辞書エントリ(0): 1111
+2025-04-06 19:06:49,986 [INFO] 辞書の読み込みが完了しました: ./data\dict.txt
+2025-04-06 19:06:50,035 [INFO] [PROGRESS] パラグラフ置換中......1 / 5838 - 0 Page
+2025-04-06 19:06:51,036 [INFO] [PROGRESS] パラグラフ置換中......1239 / 5838 - 58 Page
+2025-04-06 19:06:52,036 [INFO] [PROGRESS] パラグラフ置換中......2452 / 5838 - 112 Page
+2025-04-06 19:06:53,037 [INFO] [PROGRESS] パラグラフ置換中......3659 / 5838 - 167 Page
+2025-04-06 19:06:54,037 [INFO] [PROGRESS] パラグラフ置換中......4920 / 5838 - 221 Page
+2025-04-06 19:06:54,801 [INFO] [PROGRESS] パラグラフ置換中......5838 / 5838 - 270 Page
+2025-04-06 19:06:54,909 [INFO] 処理が完了しました: ./data\69135-The_Company_of_the_Dragon_1.1.json
+2025-04-06 19:24:21,247 [INFO] Using DeepL translator.
+2025-04-06 19:24:21,249 [INFO] Using DeepL translator.
+2025-04-06 19:24:21,257 [INFO] * Serving Flask app 'pdf-paraparatrans'
+2025-04-06 19:24:21,257 [INFO] * Debug mode: on
+2025-04-06 19:24:21,761 [INFO] Using DeepL translator.
+2025-04-06 19:24:21,763 [INFO] Using DeepL translator.
+2025-04-06 19:24:21,793 [WARNING]  * Debugger is active!
+2025-04-06 19:31:55,974 [INFO] Using DeepL translator.
+2025-04-06 19:31:55,975 [INFO] Using DeepL translator.
+2025-04-06 19:31:55,983 [INFO] * Serving Flask app 'pdf-paraparatrans'
+2025-04-06 19:31:55,983 [INFO] * Debug mode: on
+2025-04-06 19:31:56,511 [INFO] Using DeepL translator.
+2025-04-06 19:31:56,512 [INFO] Using DeepL translator.
+2025-04-06 19:31:56,542 [WARNING]  * Debugger is active!
+2025-04-06 19:33:21,150 [INFO] Using DeepL translator.
+2025-04-06 19:33:21,152 [INFO] Using DeepL translator.
+2025-04-06 19:33:21,160 [INFO] * Serving Flask app 'pdf-paraparatrans'
+2025-04-06 19:33:21,160 [INFO] * Debug mode: on
+2025-04-06 19:33:21,685 [INFO] Using DeepL translator.
+2025-04-06 19:33:21,686 [INFO] Using DeepL translator.
+2025-04-06 19:33:21,714 [WARNING]  * Debugger is active!
+2025-04-06 19:34:45,369 [INFO] Using DeepL translator.
+2025-04-06 19:34:45,370 [INFO] Using DeepL translator.
+2025-04-06 19:34:45,379 [INFO] * Serving Flask app 'pdf-paraparatrans'
+2025-04-06 19:34:45,379 [INFO] * Debug mode: on
+2025-04-06 19:34:45,894 [INFO] Using DeepL translator.
+2025-04-06 19:34:45,896 [INFO] Using DeepL translator.
+2025-04-06 19:34:45,927 [WARNING]  * Debugger is active!
+2025-04-06 20:08:23,548 [INFO] Using DeepL translator.
+2025-04-06 20:08:23,551 [INFO] Using DeepL translator.
+2025-04-06 20:08:23,587 [WARNING]  * Debugger is active!
+2025-04-06 21:08:26,308 [INFO] Using DeepL translator.
+2025-04-06 21:08:26,309 [INFO] Using DeepL translator.
+2025-04-06 21:08:26,531 [WARNING]  * Debugger is active!
+2025-04-06 21:16:16,967 [INFO] Using DeepL translator.
+2025-04-06 21:16:16,969 [INFO] Using DeepL translator.
+2025-04-06 21:16:16,988 [INFO] * Serving Flask app 'pdf-paraparatrans'
+2025-04-06 21:16:16,989 [INFO] * Debug mode: on
+2025-04-06 21:16:17,506 [INFO] Using DeepL translator.
+2025-04-06 21:16:17,508 [INFO] Using DeepL translator.
+2025-04-06 21:16:17,539 [WARNING]  * Debugger is active!
+2025-04-06 21:16:26,129 [INFO] Using DeepL translator.
+2025-04-06 21:16:26,130 [INFO] Using DeepL translator.
+2025-04-06 21:16:26,161 [WARNING]  * Debugger is active!
+2025-04-06 21:16:28,746 [INFO] Using DeepL translator.
+2025-04-06 21:16:28,748 [INFO] Using DeepL translator.
+2025-04-06 21:16:28,779 [WARNING]  * Debugger is active!
+2025-04-06 21:18:04,549 [INFO] Using DeepL translator.
+2025-04-06 21:18:04,551 [INFO] Using DeepL translator.
+2025-04-06 21:18:04,559 [INFO] * Serving Flask app 'pdf-paraparatrans'
+2025-04-06 21:18:04,560 [INFO] * Debug mode: on
+2025-04-06 21:18:05,065 [INFO] Using DeepL translator.
+2025-04-06 21:18:05,068 [INFO] Using DeepL translator.
+2025-04-06 21:18:05,108 [WARNING]  * Debugger is active!
+2025-04-06 21:18:15,726 [INFO] 処理を開始します
+2025-04-06 21:18:15,726 [INFO] 辞書ファイルを読み込みます: ./data\dict.txt
+2025-04-06 21:18:15,756 [INFO] 大文字小文字を区別する辞書エントリ(1): 11 大文字小文字を区別しない辞書エントリ(0): 1111
+2025-04-06 21:18:15,757 [INFO] 辞書の読み込みが完了しました: ./data\dict.txt
+2025-04-06 21:18:15,804 [INFO] [PROGRESS] パラグラフ置換中......1 / 5838 - 0 Page
+2025-04-06 21:18:16,805 [INFO] [PROGRESS] パラグラフ置換中......1253 / 5838 - 58 Page
+2025-04-06 21:18:17,805 [INFO] [PROGRESS] パラグラフ置換中......2504 / 5838 - 114 Page
+2025-04-06 21:18:18,806 [INFO] [PROGRESS] パラグラフ置換中......3771 / 5838 - 171 Page
+2025-04-06 21:18:19,806 [INFO] [PROGRESS] パラグラフ置換中......5064 / 5838 - 229 Page
+2025-04-06 21:18:20,430 [INFO] [PROGRESS] パラグラフ置換中......5838 / 5838 - 270 Page
+2025-04-06 21:18:20,539 [INFO] 処理が完了しました: ./data\69135-The_Company_of_the_Dragon_1.1.json

@@ -11,6 +11,9 @@ import re
 import sys
 from typing import Dict, Tuple
 
+from modules.stream_logger import setup_progress
+
+
 def load_dictionary(dict_file: str) -> Tuple[Dict[str, str], Dict[str, str]]:
     """CSVの対訳辞書を読み込む
     3列目がなければ0として扱う。
@@ -77,6 +80,7 @@ def count_alphabet_chars(text: str) -> int:
     return len(re.findall(r'[a-zA-Z]', text))
 
 def file_replace_with_dict(trans_file: str, dict_file: str):
+    
     print(f"処理を開始します")
     dict_cs, dict_ci = load_dictionary(dict_file)
     print(f"辞書の読み込みが完了しました: {dict_file}")
@@ -85,10 +89,11 @@ def file_replace_with_dict(trans_file: str, dict_file: str):
         data = json.load(f)
 
     # 対象パラグラフ数
-    print(f"対象パラグラフ数: {len(data.get('paragraphs', []))}")
+    progress = setup_progress(len(data.get("paragraphs", [])), "パラグラフ置換中......")
 
     for paragraph in data.get("paragraphs", []):
         if "src_text" in paragraph:
+            progress(f"{paragraph["page"]} Page")
             replaced_text = replace_with_dict(paragraph["src_text"], dict_cs, dict_ci)
             # 対訳辞書の変更により、置換結果が以前と異なる場合は翻訳状態を "none" に変更
             if replaced_text != paragraph.get("src_replaced") and paragraph.get("trans_status") == "auto":
@@ -108,6 +113,8 @@ def file_replace_with_dict(trans_file: str, dict_file: str):
     with open(trans_file, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
+    print(f"処理が完了しました: {trans_file}")
+
 def main():
     if len(sys.argv) != 3:
         print("使い方: python translate_json.py 翻訳データ.json 対訳辞書.csv")
@@ -117,7 +124,6 @@ def main():
     dict_file = sys.argv[2]
     
     file_replace_with_dict(trans_json, dict_file)
-    print(f"処理が完了しました: {trans_json}")
 
 if __name__ == "__main__":
     main()
