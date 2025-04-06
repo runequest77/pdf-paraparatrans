@@ -7,23 +7,15 @@ from dotenv import load_dotenv
 
 log_queue = queue.Queue()
 
-print("log_queue id:", id(log_queue))
-
 class SSELogQueueHandler(logging.Handler):
     def emit(self, record):
         msg = self.format(record)
-        try:
-            log_queue.put(msg)
-            sys.__stdout__.write(f"[SSELogQueueHandler] emit success: {msg}\n")
-            sys.__stdout__.flush()
-        except Exception as e:
-            sys.__stderr__.write(f"[SSELogQueueHandler] emit error: {e}\n")
-            sys.__stderr__.flush()
+        log_queue.put(msg)
 
 class StreamLogger:
     def __init__(self, original):
         self.original = original
-        self.logger = logging.getLogger()  # ← ログ出力にも渡す
+        self.logger = logging.getLogger()
 
     def write(self, message):
         self.original.write(message)

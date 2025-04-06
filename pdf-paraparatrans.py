@@ -1,6 +1,3 @@
-import eventlet
-eventlet.monkey_patch()
-
 from flask import Flask, request, render_template, redirect, url_for, send_from_directory, jsonify, send_file
 import os
 import json
@@ -494,9 +491,7 @@ def recalc_trans_status_counts(book_data):
     book_data["trans_status_counts"] = counts
 
 if __name__ == "__main__":
-    from flask import Flask
-    from eventlet import wsgi
-    wsgi.server(eventlet.listen(('', 5077)), app)
+    app.run(host="0.0.0.0", port=5077, debug=True, threaded=True)
 
 
 

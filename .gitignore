@@ -2,7 +2,7 @@
 /data/
 
 # ログ
-/log/
+/logs/
 
 # Pythonのコンパイル済みファイル
 __pycache__/

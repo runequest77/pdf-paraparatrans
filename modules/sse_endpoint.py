@@ -1,12 +1,7 @@
 import time
-from flask import Response, stream_with_context
-from modules.stream_logger import log_queue
-# from stream_logger import log_queue as q2
 import queue
-
-print("q1 id:", id(log_queue))
-# print("q2 id:", id(q2))
-# print("同じキューか？", q1 is q2)
+from flask import Response, stream_with_context
+from modules.stream_logger import log_queue # importの仕方でオブジェクトのIDが変わるのに注意。気づくのに3時間かかった。
 
 def create_log_stream_endpoint():
     def stream():
