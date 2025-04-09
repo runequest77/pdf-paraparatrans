@@ -88,6 +88,7 @@ def get_paths(pdf_name):
     json_path = os.path.join(BASE_FOLDER, pdf_name + ".json")
     return pdf_path, json_path
 
+# Flaskテンプレートでループのインデックスを取得するためのフィルタ
 @app.context_processor
 def utility_processor():
     def enumerate_filter(iterable):

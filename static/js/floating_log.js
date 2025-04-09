@@ -11,15 +11,57 @@ document.addEventListener("DOMContentLoaded", () => {
   height: 300px;
   background: rgba(0, 0, 0, 0.7);
   color: white;
+  border: 4px solid rgba(255, 255, 255, 0.5); /* ボーダーを太くして掴みやすくする */
   border-radius: 8px;
   padding: 10px;
-  overflow: auto;
-  resize: both;
+  overflow-y: auto; /* 縦スクロールのみ許可 */
+  overflow-x: hidden; /* 横スクロールを非表示 */
+  box-sizing: border-box; /* ボーダーを含めたサイズ計算 */
   backdrop-filter: blur(5px);
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   font-family: monospace;
   z-index: 9999;
+  min-width: 200px; /* 最小幅を設定 */
+  min-height: 100px; /* 最小高さを設定 */
 }
+
+#logWindow.resizing {
+  cursor: nwse-resize; /* リサイズ中のカーソルを変更 */
+}
+
+#logWindow .resize-handle {
+  position: absolute;
+  width: 30px; /* 掴みやすくするためサイズを拡大 */
+  height: 30px;
+  background: transparent; /* 背景を透明にする */
+  z-index: 10000;
+  pointer-events: auto; /* クリックを受け取れるようにする */
+}
+
+#logWindow .resize-handle.top-left {
+  top: -15px; /* サイズ拡大に合わせて調整 */
+  left: -15px;
+  cursor: nwse-resize;
+}
+
+#logWindow .resize-handle.top-right {
+  top: -15px;
+  right: -15px; /* スクロールバーの外側に配置 */
+  cursor: nesw-resize;
+}
+
+#logWindow .resize-handle.bottom-left {
+  bottom: -15px;
+  left: -15px;
+  cursor: nesw-resize;
+}
+
+#logWindow .resize-handle.bottom-right {
+  bottom: -15px;
+  right: -15px; /* スクロールバーの外側に配置 */
+  cursor: nwse-resize;
+}
+
 #logWindow.minimized {
   height: 30px;
   overflow: hidden;
@@ -33,6 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
   margin-bottom: 5px;
   cursor: move;
   user-select: none;
+  padding: 0 15px; /* 角のリサイズ範囲と重ならないように調整 */
 }
 #logWindow .log-header button {
   background: transparent;
@@ -61,6 +104,10 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
     </div>
     <div id="logContent"></div>
+    <div class="resize-handle top-left"></div>
+    <div class="resize-handle top-right"></div>
+    <div class="resize-handle bottom-left"></div>
+    <div class="resize-handle bottom-right"></div>
   `;
   document.body.appendChild(logWindow);
 
@@ -100,29 +147,112 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
 
-  // 🖱️ ドラッグでウインドウを移動
-  const header = logWindow.querySelector(".log-header");
+  let isResizing = false;
   let isDragging = false;
-  let offsetX = 0;
-  let offsetY = 0;
+  let resizeDirection = null;
+  let startX, startY, startWidth, startHeight, startLeft, startTop;
 
-  header.addEventListener("mousedown", (e) => {
-    isDragging = true;
-    offsetX = e.clientX - logWindow.offsetLeft;
-    offsetY = e.clientY - logWindow.offsetTop;
-    e.preventDefault();
-  });
+  // オーバーレイ要素を作成
+  const overlay = document.createElement("div");
+  overlay.style.position = "fixed";
+  overlay.style.top = "0";
+  overlay.style.left = "0";
+  overlay.style.width = "100%";
+  overlay.style.height = "100%";
+  overlay.style.background = "transparent";
+  overlay.style.zIndex = "9998"; // logWindow より下に配置
+  overlay.style.display = "none"; // 初期状態では非表示
+  document.body.appendChild(overlay);
 
-  document.addEventListener("mousemove", (e) => {
-    if (isDragging) {
-      logWindow.style.left = `${e.clientX - offsetX}px`;
-      logWindow.style.top = `${e.clientY - offsetY}px`;
-      logWindow.style.bottom = "auto"; // bottom固定を解除
-      logWindow.style.right = "auto";  // right固定を解除
+  // マウスダウンでリサイズまたはドラッグを開始
+  logWindow.addEventListener("mousedown", (e) => {
+    const target = e.target;
+
+    // リサイズハンドルをクリックした場合
+    if (target.classList.contains("resize-handle")) {
+      isResizing = true;
+      const rect = logWindow.getBoundingClientRect();
+      startX = e.clientX;
+      startY = e.clientY;
+      startWidth = rect.width;
+      startHeight = rect.height;
+      startLeft = rect.left;
+      startTop = rect.top;
+
+      // リサイズ方向を設定
+      if (target.classList.contains("top-left")) resizeDirection = "top-left";
+      else if (target.classList.contains("top-right")) resizeDirection = "top-right";
+      else if (target.classList.contains("bottom-left")) resizeDirection = "bottom-left";
+      else if (target.classList.contains("bottom-right")) resizeDirection = "bottom-right";
+
+      logWindow.classList.add("resizing");
+      overlay.style.display = "block"; // オーバーレイを表示
+      e.stopPropagation();
+      e.preventDefault();
+      return; // リサイズ処理を優先
+    }
+
+    // ドラッグ処理を開始
+    const header = e.target.closest(".log-header");
+    if (header) {
+      isDragging = true;
+      startX = e.clientX - logWindow.offsetLeft;
+      startY = e.clientY - logWindow.offsetTop;
+      overlay.style.display = "block"; // オーバーレイを表示
+      e.stopPropagation();
+      e.preventDefault();
     }
   });
 
+  // マウスムーブでリサイズまたはドラッグを実行
+  document.addEventListener("mousemove", (e) => {
+    if (isResizing) {
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+
+      switch (resizeDirection) {
+        case "top-left":
+          logWindow.style.width = `${Math.max(200, startWidth - dx)}px`;
+          logWindow.style.height = `${Math.max(100, startHeight - dy)}px`;
+          logWindow.style.left = `${startLeft + dx}px`;
+          logWindow.style.top = `${startTop + dy}px`;
+          break;
+        case "top-right":
+          logWindow.style.width = `${Math.max(200, startWidth + dx)}px`;
+          logWindow.style.height = `${Math.max(100, startHeight - dy)}px`;
+          logWindow.style.top = `${startTop + dy}px`;
+          break;
+        case "bottom-left":
+          logWindow.style.width = `${Math.max(200, startWidth - dx)}px`;
+          logWindow.style.height = `${Math.max(100, startHeight + dy)}px`;
+          logWindow.style.left = `${startLeft + dx}px`;
+          break;
+        case "bottom-right":
+          logWindow.style.width = `${Math.max(200, startWidth + dx)}px`;
+          logWindow.style.height = `${Math.max(100, startHeight + dy)}px`;
+          break;
+      }
+      e.preventDefault();
+    }
+
+    if (isDragging) {
+      logWindow.style.left = `${e.clientX - startX}px`;
+      logWindow.style.top = `${e.clientY - startY}px`;
+      logWindow.style.bottom = "auto"; // bottom固定を解除
+      logWindow.style.right = "auto";  // right固定を解除
+      e.preventDefault();
+    }
+  });
+
+  // マウスアップでリサイズまたはドラッグを終了
   document.addEventListener("mouseup", () => {
-    isDragging = false;
+    if (isResizing || isDragging) {
+      isResizing = false;
+      isDragging = false;
+      resizeDirection = null;
+      logWindow.classList.remove("resizing");
+      overlay.style.display = "none"; // オーバーレイを非表示
+      logWindow.style.backgroundColor = ""; // 背景色をリセット
+    }
   });
 });
