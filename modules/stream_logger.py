@@ -53,7 +53,11 @@ def init_logging(log_file_name="app.log", level=logging.INFO):
     sse_handler.setFormatter(formatter)
     logger.addHandler(sse_handler)
 
-
+    # コンソール出力
+    console_handler = logging.StreamHandler(sys.__stdout__)
+    console_handler.setFormatter(formatter)
+    logger.addHandler(console_handler)
+    
 import time
 
 def setup_progress(total, prefix=""):

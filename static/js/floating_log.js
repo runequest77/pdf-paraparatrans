@@ -4,18 +4,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const style = document.createElement("style");
   style.textContent = `
 #logWindow {
+  display: flex;
+  flex-direction: column;
   position: fixed;
   bottom: 20px;
   right: 20px;
   width: 400px;
   height: 300px;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.5);
   color: white;
   border: 4px solid rgba(255, 255, 255, 0.5); /* ボーダーを太くして掴みやすくする */
   border-radius: 8px;
   padding: 10px;
-  overflow-y: auto; /* 縦スクロールのみ許可 */
-  overflow-x: hidden; /* 横スクロールを非表示 */
   box-sizing: border-box; /* ボーダーを含めたサイズ計算 */
   backdrop-filter: blur(5px);
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
@@ -25,40 +25,46 @@ document.addEventListener("DOMContentLoaded", () => {
   min-height: 100px; /* 最小高さを設定 */
 }
 
+#logContent {
+  flex: 1; /* 高さを使い切る */
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
 #logWindow.resizing {
   cursor: nwse-resize; /* リサイズ中のカーソルを変更 */
 }
 
 #logWindow .resize-handle {
   position: absolute;
-  width: 30px; /* 掴みやすくするためサイズを拡大 */
-  height: 30px;
+  width: 20px; /* 掴みやすくするためサイズを拡大 */
+  height: 20px;
   background: transparent; /* 背景を透明にする */
   z-index: 10000;
   pointer-events: auto; /* クリックを受け取れるようにする */
 }
 
 #logWindow .resize-handle.top-left {
-  top: -15px; /* サイズ拡大に合わせて調整 */
-  left: -15px;
+  top: -10px; /* サイズ拡大に合わせて調整 */
+  left: -10px;
   cursor: nwse-resize;
 }
 
 #logWindow .resize-handle.top-right {
-  top: -15px;
-  right: -15px; /* スクロールバーの外側に配置 */
+  top: -10px;
+  right: -10px; /* スクロールバーの外側に配置 */
   cursor: nesw-resize;
 }
 
 #logWindow .resize-handle.bottom-left {
-  bottom: -15px;
-  left: -15px;
+  bottom: -10px;
+  left: -10px;
   cursor: nesw-resize;
 }
 
 #logWindow .resize-handle.bottom-right {
-  bottom: -15px;
-  right: -15px; /* スクロールバーの外側に配置 */
+  bottom: -10px;
+  right: -10px; /* スクロールバーの外側に配置 */
   cursor: nwse-resize;
 }
 
