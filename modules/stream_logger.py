@@ -53,11 +53,7 @@ def init_logging(log_file_name="app.log", level=logging.INFO):
     sse_handler.setFormatter(formatter)
     logger.addHandler(sse_handler)
 
-    # コンソール出力
-    console_handler = logging.StreamHandler(sys.__stdout__)
-    console_handler.setFormatter(formatter)
-    logger.addHandler(console_handler)
-    
+
 import time
 
 def setup_progress(total, prefix=""):
@@ -69,11 +65,15 @@ def setup_progress(total, prefix=""):
     def progress(message=None):
         count[0] += 1
         now = time.time()
+        progress_msg = f"{prefix}{count[0]} / {total}"
+        if message:
+            progress_msg += f" - {message}"
+        
+        # 1秒ごとにログにも出力
         if now - last_log_time[0] >= 1 or count[0] >= total:
-            msg = f"[PROGRESS] {prefix}{count[0]} / {total}"
-            if message:
-                msg += f" - {message}"
-            logger.info(msg)
+            # コンソールに1行で進捗を表示
+            sys.stdout.write(f"\r{progress_msg}")
+            sys.stdout.flush()
             last_log_time[0] = now
 
     return progress

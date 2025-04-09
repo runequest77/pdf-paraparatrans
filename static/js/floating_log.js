@@ -68,20 +68,16 @@ document.addEventListener("DOMContentLoaded", () => {
   cursor: nwse-resize;
 }
 
-#logWindow.minimized {
-  height: 30px;
-  overflow: hidden;
-  resize: none;
-}
 #logWindow .log-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-size: 14px;
+  background: rgba(64, 128, 64, 0.4);
   margin-bottom: 5px;
   cursor: move;
   user-select: none;
-  padding: 0 15px; /* 角のリサイズ範囲と重ならないように調整 */
+  padding: 2px 4px 2px 10px; /* 角のリサイズ範囲と重ならないように調整 */
 }
 #logWindow .log-header button {
   background: transparent;
@@ -103,10 +99,9 @@ document.addEventListener("DOMContentLoaded", () => {
   logWindow.id = "logWindow";
   logWindow.innerHTML = `
     <div class="log-header">
-      <span>📜 ログ</span>
+      <span>Log</span>
       <div>
-        <button id="minimizeBtn">🔽</button>
-        <button id="closeBtn">✖</button>
+        <button id="closeBtn" onclick="hideLog()">✖</button>
       </div>
     </div>
     <div id="logContent"></div>
@@ -116,13 +111,6 @@ document.addEventListener("DOMContentLoaded", () => {
     <div class="resize-handle bottom-right"></div>
   `;
   document.body.appendChild(logWindow);
-
-  document.getElementById("minimizeBtn").onclick = () => {
-    logWindow.classList.toggle("minimized");
-  };
-  document.getElementById("closeBtn").onclick = () => {
-    logWindow.style.display = "none";
-  };
 
   const logContent = document.getElementById("logContent");
 
@@ -262,3 +250,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+
+function showLog() {
+  const logWindow = document.getElementById("logWindow");
+  logWindow.style.display = "flex";
+}
+
+function hideLog() {
+  const logWindow = document.getElementById("logWindow");
+  logWindow.style.display = "none";
+}
+

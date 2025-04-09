@@ -402,8 +402,6 @@ def save_order_api(pdf_name):
     order_json = request.form.get("order_json")
     title = request.form.get("title")
     
-    print("order_json:" + order_json)
-
     if not pdf_name or not order_json:
         return jsonify({"status": "error", "message": "pdf_name と order_json は必須です"}), 400
 
@@ -424,7 +422,7 @@ def save_order_api(pdf_name):
         new_order_val = item.get("order")
         new_block_tag = item.get("block_tag")
         new_group_id = item.get("group_id")
-        print(f"p_id: {p_id}, new_order_val: {new_order_val}, new_block_tag: {new_block_tag}, new_group_id: {new_group_id}")
+        # print(f"p_id: {p_id}, new_order_val: {new_order_val}, new_block_tag: {new_block_tag}, new_group_id: {new_group_id}")
 
         for p in paragraphs:
             if str(p.get("id")) == p_id:
@@ -447,6 +445,7 @@ def save_order_api(pdf_name):
         changed_count += 1
 
     if changed_count > 0:
+        print(f"p_id: {p_id}, new_order_val: {new_order_val}, new_block_tag: {new_block_tag}, new_group_id: {new_group_id}")
         with open(json_path, "w", encoding="utf-8") as f:
             json.dump(book_data, f, ensure_ascii=False, indent=2)
 
