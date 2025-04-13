@@ -216,6 +216,7 @@ function jumpToPage(pageNum) {
     setTimeout(fitToWidth, 600);
 
     renderParagraphs();
+    document.getElementById("srcPanel").focus();
 }
 
 function initResizers() {

@@ -385,7 +385,6 @@ def save_order_api(pdf_name):
         new_block_tag = item.get("block_tag")
         new_group_id = item.get("group_id")
         new_join = item.get("join", 0)
-        # print(f"p_id: {p_id}, new_order_val: {new_order_val}, new_block_tag: {new_block_tag}, new_group_id: {new_group_id}")
 
         for p in paragraphs:
             if str(p.get("id")) == p_id:
@@ -411,9 +410,15 @@ def save_order_api(pdf_name):
         changed_count += 1
 
     if changed_count > 0:
-        print(f"p_id: {p_id}, new_order_val: {new_order_val}, new_block_tag: {new_block_tag}, new_group_id: {new_group_id}, new_join: {new_join}")
-        with open(json_path, "w", encoding="utf-8") as f:
-            json.dump(book_data, f, ensure_ascii=False, indent=2)
+        temp_file = json_path + ".tmp"
+        try:
+            with open(temp_file, "w", encoding="utf-8") as f:
+                json.dump(book_data, f, ensure_ascii=False, indent=2)
+            os.replace(temp_file, json_path)  # アトミックにリネーム
+        except Exception as e:
+            if os.path.exists(temp_file):
+                os.remove(temp_file)
+            return jsonify({"status": "error", "message": f"保存中のエラー: {str(e)}"}), 500
 
     return jsonify({"status": "ok", "changed": changed_count}), 200
 

@@ -7,11 +7,30 @@ HotkeyMapper.map("Ctrl+Shift+ArrowUp", moveCurrentParagraphUp, { description: "�
 HotkeyMapper.map("Ctrl+Shift+ArrowDown", moveCurrentParagraphDown, { description: "選択しながら移動(下)"});
 HotkeyMapper.map("Ctrl+Alt+ArrowUp", toggleGroupSelectedParagraphsUp, { description: "カレント行を選択(上)"});
 HotkeyMapper.map("Ctrl+Alt+ArrowDown", toggleGroupSelectedParagraphsDown, { description: "カレント行を選択(下)"});
+HotkeyMapper.map("ArrowLeft", prevPage, { description: "次のページ" });
+HotkeyMapper.map("ArrowRight", nextPage, { description: "前のページ" });
+HotkeyMapper.map("ArrowUp", moveCurrentParagraphUp, { description: "パラグラフを移動(上)"});
+HotkeyMapper.map("ArrowDown", moveCurrentParagraphDown, { description: "パラグラフを移動(下)"});
 HotkeyMapper.map("Ctrl+ArrowLeft", prevPage, { description: "次のページ" });
 HotkeyMapper.map("Ctrl+ArrowRight", nextPage, { description: "前のページ" });
 HotkeyMapper.map("Escape", resetSelection, { description: "選択解除" });
 HotkeyMapper.map("Ctrl+S", saveOrder, { description: "構造保存" });
+HotkeyMapper.map("ArrowUp", rollUp, { description: "スクロールアップ" });
+HotkeyMapper.map("ArrowDown", rollDown, { description: "スクロールダウン" });
 
+function rollUp() {
+    const srcPanel = document.getElementById('srcPanel'); // srcPanelの要素を取得
+    if (srcPanel) {
+        srcPanel.scrollBy({ top: -srcPanel.clientHeight, behavior: 'smooth' }); // 1画面分上にスクロール
+    }
+}
+
+function rollDown() {
+    const srcPanel = document.getElementById('srcPanel'); // srcPanelの要素を取得
+    if (srcPanel) {
+        srcPanel.scrollBy({ top: srcPanel.clientHeight, behavior: 'smooth' }); // 1画面分下にスクロール
+    }
+}
 
 function moveCurrentParagraphUp() {
     moveCurrentParagraphBy(-1, event.shiftKey);
