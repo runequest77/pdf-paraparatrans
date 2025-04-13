@@ -8,16 +8,17 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/tocPanel.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/srcPanel.css') }}">
+
     <link rel="stylesheet" href="{{ url_for('static', filename='css/auto-toggle.css') }}">
     <script src="{{ url_for('static', filename='js/auto-toggle.js') }}"></script>    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/hotkey-mapper.css') }}">
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
     <style class="book-data-head-styles"></style>   
     <script src="/static/js/floating_log.js"></script>
 
-    <link rel="stylesheet" href="https://unpkg.com/winbox@0.2.82/dist/winbox.min.css">
-    <script src="https://unpkg.com/winbox@0.2.82/dist/winbox.bundle.js"></script>
   </head>
 
 <body data-pdf-name="{{ pdf_name }}">
@@ -79,6 +80,7 @@
               </tr>
             </table>
             <button id="openLogButton" onclick="showLog()">Log</button>
+            <button id="openHotKeyButton" onclick="ShortcutBinder.showHelpWindow()">HotKey</button>
             <span id="quickEditMode" class="auto-toggle" data-auto-toggle="storage:session;shortcut:ctrl+q">高速編集</span>
             <button id="saveOrderButton">構造保存</button>
           </div>
@@ -116,8 +118,9 @@
   <script src="{{ url_for('static', filename='js/pdfPanel.js') }}"></script>    
   <script src="{{ url_for('static', filename='js/srcPanel.js') }}"></script>    
   <script src="{{ url_for('static', filename='js/detail.js') }}"></script>    
-  <script src="{{ url_for('static', filename='js/keyDown.js') }}"></script>    
   <script src="{{ url_for('static', filename='js/fetch.js') }}"></script>    
+  <script src="{{ url_for('static', filename='js/hotkey-mapper.js') }}" defer></script>    
+  <script src="{{ url_for('static', filename='js/keyDown.js') }}" defer></script>    
 </body>
 
 </html>

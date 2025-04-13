@@ -1,5 +1,43 @@
+/** 画面に対するショートカットキーを */
+
+HotkeyMapper.map("Ctrl+.", toggleGroupSelectedParagraphs, { description: "グループ化/解除" });
+HotkeyMapper.map("Ctrl+ArrowUp", moveCurrentParagraphUp, { description: "パラグラフを移動(上)"});
+HotkeyMapper.map("Ctrl+ArrowDown", moveCurrentParagraphDown, { description: "パラグラフを移動(下)"});
+HotkeyMapper.map("Ctrl+Shift+ArrowUp", moveCurrentParagraphUp, { description: "選択しならが移動(上)"});
+HotkeyMapper.map("Ctrl+Shift+ArrowDown", moveCurrentParagraphDown, { description: "選択しながら移動(下)"});
+HotkeyMapper.map("Ctrl+Alt+ArrowUp", toggleGroupSelectedParagraphsUp, { description: "カレント行を選択(上)"});
+HotkeyMapper.map("Ctrl+Alt+ArrowDown", toggleGroupSelectedParagraphsDown, { description: "カレント行を選択(下)"});
+HotkeyMapper.map("Ctrl+ArrowLeft", prevPage, { description: "次のページ" });
+HotkeyMapper.map("Ctrl+ArrowRight", nextPage, { description: "前のページ" });
+HotkeyMapper.map("Escape", resetSelection, { description: "選択解除" });
+HotkeyMapper.map("Ctrl+S", saveOrder, { description: "構造保存" });
+
+
+function moveCurrentParagraphUp() {
+    moveCurrentParagraphBy(-1, event.shiftKey);
+}
+function moveCurrentParagraphDown() {
+    moveCurrentParagraphBy(1, event.shiftKey);
+}
+
+function toggleGroupSelectedParagraphsUp() {
+    toggleGroupSelectedParagraphs(-1);
+}
+function toggleGroupSelectedParagraphsDown() {
+    toggleGroupSelectedParagraphs(1);
+}
+function moveSelectedByOffsetUp(event) {
+    moveSelectedByOffset(-1,event.shiftKey);
+}
+function moveSelectedByOffsetDown(event) {
+    moveSelectedByOffset(1,event.shiftKey);
+}
+
+
 // キーボードイベントのリスナーを追加
 document.addEventListener('keydown', (event) => {
+
+    let key = event.key.toLowerCase();
 
     // 高速編集モードがONの場合
     if (window.autoToggle.getState("quickEditMode")) {
@@ -13,37 +51,6 @@ document.addEventListener('keydown', (event) => {
             event.preventDefault();
             toggleGroupSelectedParagraphs();
         }
-
-        // Ctrl + Alt + 上/下矢印で選択されているパラグラフを移動
-        if (event.ctrlKey && event.altKey && event.key === 'ArrowUp') {
-            event.preventDefault();
-            moveSelectedByOffset(-1);
-        } else if (event.ctrlKey && event.altKey && event.key === 'ArrowDown') {
-            event.preventDefault();
-            moveSelectedByOffset(1);
-        }
-
-    }
-
-    // Ctrl + 上/下矢印でカレントパラグラフを移動
-    if (event.ctrlKey && !event.altKey && event.key === 'ArrowUp') {
-        event.preventDefault();
-        moveCurrentParagraphBy(-1, event.shiftKey);
-    } else if (event.ctrlKey && !event.altKey && event.key === 'ArrowDown') {
-        event.preventDefault();
-        moveCurrentParagraphBy(1, event.shiftKey);
-    }
-
-    // Ctrl + ← / →でページ送り
-    if (event.ctrlKey && !event.shiftKey && !event.altKey && (event.key === 'ArrowLeft' || event.key === 'ArrowRight')) {
-        if (event.key === 'ArrowLeft') {
-            event.preventDefault();
-            prevPage();
-        } else {
-            event.preventDefault();
-            nextPage();
-        }
-        return;
     }
 
     const paragraphs = document.querySelectorAll('.paragraph-box');
@@ -57,17 +64,6 @@ document.addEventListener('keydown', (event) => {
     currentParagraph = paragraphs[currentParagraphIndex];
     currentParagraph.classList.add('highlight');
 
-    // Escで選択解除
-    if (event.key === 'Escape') {
-        event.preventDefault();
-        clearSelection();
-    }
-
-    // Ctrl + Sで編集状態を保存
-    if (event.ctrlKey && event.key === 's') {
-        event.preventDefault();
-        saveOrder();
-    }
 });
 
 
@@ -89,4 +85,5 @@ function onKeyDown(event, divSrc, paragraph, srcText, transText, blockTagSpan) {
         updateEditUiBackground(divSrc, paragraph.trans_status);
     }
 }
+
 

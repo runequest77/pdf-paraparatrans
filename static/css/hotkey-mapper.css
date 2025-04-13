@@ -1,0 +1,85 @@
+/* HotkeyMapper.css */
+
+.hotkey-help-window {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  min-width: 300px;
+  max-width: 600px;
+  max-height: 70%;
+  z-index: 100;
+  background: var(--hotkey-bg, #fff);
+  color: var(--hotkey-fg, #000);
+  border: 1px solid #888;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+  display: flex;
+  flex-direction: column;
+}
+
+/* 固定ヘッダー */
+.hotkey-help-header {
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5em 1em;
+  font-weight: bold;
+  background-color: var(--hotkey-header-bg);
+  border-bottom: 1px solid #ccc;
+}
+
+/* スクロール対象のテーブル */
+.hotkey-help-table-container {
+  overflow: auto;
+  flex-grow: 1;
+}
+
+  .hotkey-help-close {
+    background: none;
+    border: none;
+    font-size: 1.2em;
+    cursor: pointer;
+    color: inherit;
+  }
+  
+  .hotkey-help-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .hotkey-help-table th,
+  .hotkey-help-table td {
+    padding: 0.5em 1em;
+    border-bottom: 1px solid #bbb;
+    text-align: left;
+  }
+  
+  .hotkey-help-table th {
+    background-color: var(--hotkey-header-bg);
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+
+  /* ライトモード（デフォルト） */
+  :root {
+    --hotkey-bg: #ffffff;
+    --hotkey-fg: #000000;
+    --hotkey-header-bg: #e0e0e0;
+  }
+    
+  /* ダークモード対応 */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --hotkey-bg: #2c2c2c;
+      --hotkey-fg: #f5f5f5;
+      --hotkey-header-bg: #3a3a3a;
+    }
+  }
+  
+

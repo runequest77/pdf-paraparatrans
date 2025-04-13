@@ -20,6 +20,9 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('saveOrderButton').addEventListener('click', saveOrder);
     // ページ翻訳
     document.getElementById('pageTransButton').addEventListener('click', transPage);
+
+
+    window.autoToggle.init();
     // トグル/チェックボックスのカスタムイベント
     document.addEventListener('auto-toggle-change', autoToggleChanged);
 });

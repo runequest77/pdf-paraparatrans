@@ -15,6 +15,7 @@ async function fetchBookData() {
     }
 }
 
+/** @function transPage */
 function transPage() {
     fetch(`/api/paraparatrans/${encodeURIComponent(pdfName)}`, {
         method: 'POST',
@@ -195,12 +196,14 @@ function saveOrder() {
         const blockTag = paragraphDiv.querySelector('.block-tag')?.innerText.trim() || "";
         const groupClass = Array.from(paragraphDiv.classList).find(cls => cls.startsWith('group-id-'));
         const groupId = groupClass ? parseInt(groupClass.replace('group-id-', '')) : null;
+        const join = paragraphDiv.querySelector('.join')?.innerText.trim() || "";
 
         orderList.push({
             id: pId,
             order: i+1,
             block_tag: blockTag,
-            group_id: groupId
+            group_id: groupId,
+            join: join
         });
     }
 

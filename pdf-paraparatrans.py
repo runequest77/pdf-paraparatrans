@@ -9,16 +9,7 @@ from PyPDF2 import PdfReader, PdfWriter
 # modulesディレクトリをPythonのモジュール検索パスに追加
 sys.path.append(os.path.join(os.path.dirname(__file__), 'modules'))
 
-# ログ設定
-import logging
-from modules.stream_logger import init_logging 
-from modules.sse_endpoint import create_log_stream_endpoint
-# ログ初期化（ログファイル＋SSEキューへの出力）
-init_logging("pdf-paraparatrans.log")
-# Flaskの静的ファイルアクセスログを抑制
-logging.getLogger('werkzeug').setLevel(logging.WARNING)
-
-
+from dotenv import load_dotenv
 # .envのひな形
 ENV_TEMPLATE = """
 # 使用する翻訳APIをコメントアウトしてください。
@@ -37,6 +28,22 @@ if not os.path.exists(ENV_PATH):
     print(f".env が存在しません。ひな形を作成します: {ENV_PATH}")
     with open(ENV_PATH, "w", encoding="utf-8") as f:
         f.write(ENV_TEMPLATE)
+
+load_dotenv(ENV_PATH)
+
+# ログ設定
+import logging
+from modules.stream_logger import init_logging 
+from modules.sse_endpoint import create_log_stream_endpoint
+# ログ初期化（ログファイル＋SSEキューへの出力）
+init_logging("pdf-paraparatrans.log")
+# Flaskの静的ファイルアクセスログを抑制
+# ログレベルはenvファイルの設定に従う。未指定の場合はWARNING
+log_level = os.getenv("LOG_LEVEL", "WARNING").upper()
+if log_level not in ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]:
+    raise ValueError(f"Invalid LOG_LEVEL: {log_level}")
+logging.getLogger('werkzeug').setLevel(log_level)
+
 
 from modules.parapara_pdf2json import extract_paragraphs
 from modules.api_translate import translate_text
@@ -258,6 +265,7 @@ def update_paragraph_api(pdf_name):
     new_trans_text = data.get("new_trans_text")
     new_status = data.get("trans_status", "draft")
     new_block_tag = data.get("block_tag", "p")
+    new_join = data.get("join", 0)
 
     print(json.dumps(data, indent=2, ensure_ascii=False))
 
@@ -279,6 +287,7 @@ def update_paragraph_api(pdf_name):
     found["trans_text"] = new_trans_text
     found["trans_status"] = new_status
     found["block_tag"] = new_block_tag
+    found["join"] = new_join
     found["modified_at"] = datetime.datetime.now().isoformat()
     recalc_trans_status_counts(book_data)
     with open(json_path, "w", encoding="utf-8") as f:
@@ -349,53 +358,6 @@ def pdf_view_page(pdf_name, page_number):
         output.seek(0)
         return send_file(output, download_name=f"{pdf_name}_page_{page_number}.pdf", as_attachment=False)
 
-# API:並べ替えを保存
-# @app.route("/api/save_order/<pdf_name>", methods=["POST"])
-# def save_order_api(pdf_name):
-#     order_json = request.form.get("order_json")
-#     title = request.form.get("title")
-#     if not pdf_name or not order_json:
-#         return jsonify({"status": "error", "message": "pdf_name と order_json は必須です"}), 400
-
-#     pdf_path, json_path = get_paths(pdf_name)
-#     if not os.path.exists(json_path):
-#         return jsonify({"status": "error", "message": "JSONが存在しません"}), 404
-
-#     with open(json_path, "r", encoding="utf-8") as f:
-#         book_data = json.load(f)
-
-#     new_order = json.loads(order_json)
-#     paragraphs = book_data.get("paragraphs", [])
-
-#     changed_count = 0
-
-#     for item in new_order:
-#         p_id = str(item.get("id"))
-#         new_order_val = item.get("order")
-#         new_block_tag = item.get("block_tag")
-
-#         for p in paragraphs:
-#             if str(p.get("id")) == p_id:
-#                 updated = False
-#                 if p.get("order") != new_order_val:
-#                     p["order"] = new_order_val
-#                     updated = True
-#                 if new_block_tag is not None and p.get("block_tag") != new_block_tag:
-#                     p["block_tag"] = new_block_tag
-#                     updated = True
-#                 if updated:
-#                     changed_count += 1
-#                 break
-
-#     if title is not None and book_data.get("title") != title:
-#         book_data["title"] = title
-#         changed_count += 1
-
-#     if changed_count > 0:
-#         with open(json_path, "w", encoding="utf-8") as f:
-#             json.dump(book_data, f, ensure_ascii=False, indent=2)
-
-#     return jsonify({"status": "ok", "changed": changed_count}), 200
 
 @app.route("/api/save_order/<pdf_name>", methods=["POST"])
 def save_order_api(pdf_name):
@@ -422,6 +384,7 @@ def save_order_api(pdf_name):
         new_order_val = item.get("order")
         new_block_tag = item.get("block_tag")
         new_group_id = item.get("group_id")
+        new_join = item.get("join", 0)
         # print(f"p_id: {p_id}, new_order_val: {new_order_val}, new_block_tag: {new_block_tag}, new_group_id: {new_group_id}")
 
         for p in paragraphs:
@@ -436,6 +399,9 @@ def save_order_api(pdf_name):
                 if new_group_id is not None and p.get("group_id") != new_group_id:
                     p["group_id"] = new_group_id
                     updated = True
+                if new_join is not None and p.get("join") != new_join:
+                    p["join"] = new_join
+                    updated = True
                 if updated:
                     changed_count += 1
                 break
@@ -445,7 +411,7 @@ def save_order_api(pdf_name):
         changed_count += 1
 
     if changed_count > 0:
-        print(f"p_id: {p_id}, new_order_val: {new_order_val}, new_block_tag: {new_block_tag}, new_group_id: {new_group_id}")
+        print(f"p_id: {p_id}, new_order_val: {new_order_val}, new_block_tag: {new_block_tag}, new_group_id: {new_group_id}, new_join: {new_join}")
         with open(json_path, "w", encoding="utf-8") as f:
             json.dump(book_data, f, ensure_ascii=False, indent=2)
 
@@ -498,7 +464,12 @@ def recalc_trans_status_counts(book_data):
     book_data["trans_status_counts"] = counts
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5077, debug=True, threaded=True)
+    # portはenvファイルの設定に従う。未指定の場合は5077
+    port = os.getenv("PORT", 5077)
+    if not port.isdigit():
+        raise ValueError(f"Invalid PORT: {port}")
+    port = int(port)  
+    app.run(host="0.0.0.0", port=port, debug=True, threaded=True)
 
 
 
