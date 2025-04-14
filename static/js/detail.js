@@ -200,8 +200,7 @@ function jumpToPage(pageNum) {
 
     currentPage = parseInt(pageNum,10);
 
-    if (window.autoToggle.getState("quickEditMode")) {
-        // ページ移動で自動構成保存
+    if (isPageEdited) {
         saveOrder();
     }
     document.getElementById("pageInput").value = currentPage;

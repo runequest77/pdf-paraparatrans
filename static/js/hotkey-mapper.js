@@ -213,12 +213,17 @@ function normalizeHotkey(hotkey) {
   function handleKeydown(event, capturePhase) {
     if (event.repeat || event.isComposing) return;
     const key = getPressedKeyString(event);
+    console.log("key1:", key, capturePhase);
     const isCapture = captureHotkeys.has(key);
     if (capturePhase !== isCapture) return;
+    console.log("key2:", key, capturePhase);
     const entry = hotkeyMap.get(key);
     if (!entry) return;
+    console.log("key3:", key, capturePhase);
     if (isTypingContext() && !entry.allowInInput) return;
+    console.log("key4:", key, capturePhase);
     event.preventDefault();
+    console.log("HotkeyMapper: 発火", key);
     entry.handler(event);
   }
 

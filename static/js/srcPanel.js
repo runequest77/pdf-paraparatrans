@@ -1,4 +1,6 @@
 let selectedParagraphs = new Set(); // 選択されたパラグラフのIDを格納
+//ページが編集されたことを表す変数
+let isPageEdited = false;
 
 function initSrcPanel() {
     // ドラッグ用ハンドルのみ有効にするために handle オプションを指定
@@ -373,6 +375,8 @@ function moveSelectedAfter(targetId) {
     for (const p of result) {
         container.appendChild(p);
     }
+
+    isPageEdited = true; // ページが編集されたことを示すフラグを立てる
 }
 
 /** @function moveSelectedBefore */
@@ -398,6 +402,8 @@ function moveSelectedBefore(targetId) {
     for (const p of result) {
         container.appendChild(p);
     }
+
+    isPageEdited = true; // ページが編集されたことを示すフラグを立てる
 }
 
 /** @function moveSelectedByOffset */
@@ -439,29 +445,39 @@ function getSelectedParagraphsInOrder() {
 /** @function: updateBlockTagForSelected */
 function updateBlockTagForSelected(blockTag) {
     const selected = getSelectedParagraphsInOrder();
-    const allData = bookData.paragraphs;
+    // 何も選択されていない場合はカレントレコードを更新
+    if (selected.length === 0) {
+        selected.push(document.querySelector('.paragraph-box.current'));
+    }
 
     selected.forEach(div => {
-        const id = parseInt(div.id.replace('paragraph-', ''));
-        const p = allData.find(p => p.id === id);
-        if (!p) return;
-
-        p.block_tag = blockTag;
-
-        const blockTagSpan = div.querySelector('.block-tag');
-        const typeSelect = div.querySelector('.type-select');
-        blockTagSpan.innerText = blockTag;
-        if (typeSelect) typeSelect.value = blockTag;
-
-        const currentStatus = p.trans_status;
-
-        // クラス更新：既存の block-tag-* と status-* だけを更新
-        div.classList.remove(
-            ...Array.from(div.classList).filter(cls => cls.startsWith('block-tag-') || cls.startsWith('status-'))
-        );
-        div.classList.add(`block-tag-${blockTag}`, `status-${currentStatus}`);
+        updateBlockTag(div, blockTag);
     });
 }
+
+/** @function: updateBlockTag */
+function updateBlockTag(div, blockTag) {
+    const id = parseInt(div.id.replace('paragraph-', ''));
+    const p = bookData.paragraphs.find(p => p.id === id);
+    if (!p) return;
+    
+    p.block_tag = blockTag;
+
+    const blockTagSpan = div.querySelector('.block-tag');
+    const typeSelect = div.querySelector('.type-select');
+    blockTagSpan.innerText = blockTag;
+    if (typeSelect) typeSelect.value = blockTag;
+
+    const currentStatus = p.trans_status;
+
+    // クラス更新：既存の block-tag-* と status-* だけを更新
+    div.classList.remove(
+        ...Array.from(div.classList).filter(cls => cls.startsWith('block-tag-') || cls.startsWith('status-'))
+    );
+    div.classList.add(`block-tag-${blockTag}`, `status-${currentStatus}`);
+    isPageEdited = true; // ページが編集されたことを示すフラグを立てる
+}
+
 
 
 function handleBlockTagShortcut(key) {
@@ -573,6 +589,8 @@ function toggleGroupSelectedParagraphs() {
             else div.classList.add('group-middle');
         });
     }
+    isPageEdited = true; // ページが編集されたことを示すフラグを立てる
+
 }
 
 function toggleEditUI(divSrc) {
@@ -640,6 +658,8 @@ function linkParagraphs(paragraphs, prev_id, next_id) {
   
     prev.next_id = next_id;
     next.prev_id = prev_id;
+
+    isPageEdited = true; // ページが編集されたことを示すフラグを立てる
 }
 
 function connectToPrev(paragraph) {
@@ -760,4 +780,108 @@ function connectSelectedParagraphsByPrevId() {
 
 function togglePrevConnectionCurrent() {
     togglePrevConnectionByIndex(currentParagraphIndex);
+}
+
+
+/** @function focusNearestHeading */
+function focusNearestHeading(direction) {
+    const paragraphs = getAllParagraphs();
+    let index = currentParagraphIndex;
+
+    while (true) {
+        index += direction;
+
+        // 範囲外に出た場合
+        if (index < 0) {
+            console.warn('見出しが見つかりませんでした。先頭に移動します。');
+            setCurrentParagraph(0); // 先頭パラグラフに移動
+            return;
+        }
+        if (index >= paragraphs.length) {
+            console.warn('見出しが見つかりませんでした。末尾に移動します。');
+            setCurrentParagraph(paragraphs.length - 1); // 末尾パラグラフに移動
+            return;
+        }
+
+        const paragraph = paragraphs[index];
+        const id = parseInt(paragraph.id.replace('paragraph-', ''));
+        const p = bookData.paragraphs.find(p => p.id === id);
+
+        // 見出し (h1 ～ h6) の場合に移動
+        if (p && /^h[1-6]$/.test(p.block_tag)) {
+            setCurrentParagraph(index);
+            return;
+        }
+    }
+}
+
+/** @function selectUntilNextHeading */
+function selectUntilNextHeading() {
+    const paragraphs = getAllParagraphs();
+    let index = currentParagraphIndex;
+    let foundHeading = false;
+
+    while (index < paragraphs.length - 1) {
+        index++;
+
+        const paragraph = paragraphs[index];
+        const id = parseInt(paragraph.id.replace('paragraph-', ''));
+        const p = bookData.paragraphs.find(p => p.id === id);
+
+        // 見出し (h1 ～ h6) に到達したら終了
+        if (p && /^h[1-6]$/.test(p.block_tag)) {
+            foundHeading = true;
+            break;
+        }
+
+        // 選択状態にする
+        paragraph.classList.add('selected');
+    }
+
+    // 見出しが見つからなければ末尾行まで選択
+    if (!foundHeading) {
+        for (let i = currentParagraphIndex + 1; i < paragraphs.length; i++) {
+            paragraphs[i].classList.add('selected');
+        }
+    } else {
+        // 見出しが見つかった場合、カレント行を見出しの手前に設定
+        index--;
+    }
+
+    // 選択範囲の末尾をカレントにしてフォーカス
+    setCurrentParagraph(index, true);
+}
+
+/** @function selectUntilPreviousHeading */
+function selectUntilPreviousHeading() {
+    const paragraphs = getAllParagraphs();
+    let index = currentParagraphIndex;
+    let foundHeading = false;
+
+    while (index > 0) {
+        index--;
+
+        const paragraph = paragraphs[index];
+        const id = parseInt(paragraph.id.replace('paragraph-', ''));
+        const p = bookData.paragraphs.find(p => p.id === id);
+
+        // 見出し (h1 ～ h6) に到達したら終了
+        if (p && /^h[1-6]$/.test(p.block_tag)) {
+            foundHeading = true;
+            break;
+        }
+
+        // 選択状態にする
+        paragraph.classList.add('selected');
+    }
+
+    // 見出しが見つからなければ先頭行まで選択
+    if (!foundHeading) {
+        for (let i = 0; i < currentParagraphIndex; i++) {
+            paragraphs[i].classList.add('selected');
+        }
+    }
+
+    // 選択範囲の先頭をカレントにしてフォーカス
+    setCurrentParagraph(index, true);
 }

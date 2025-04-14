@@ -5,6 +5,7 @@ import datetime
 import io
 import sys
 from PyPDF2 import PdfReader, PdfWriter
+import uuid  # ファイル名の一意性を確保するために追加
 
 # modulesディレクトリをPythonのモジュール検索パスに追加
 sys.path.append(os.path.join(os.path.dirname(__file__), 'modules'))
@@ -410,7 +411,7 @@ def save_order_api(pdf_name):
         changed_count += 1
 
     if changed_count > 0:
-        temp_file = json_path + ".tmp"
+        temp_file = f"{json_path}.{uuid.uuid4().hex}.tmp"  # ユニークな一時ファイル名を生成
         try:
             with open(temp_file, "w", encoding="utf-8") as f:
                 json.dump(book_data, f, ensure_ascii=False, indent=2)

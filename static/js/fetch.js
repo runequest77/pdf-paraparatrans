@@ -221,56 +221,13 @@ function saveOrder() {
     .then(response => response.json())
     .then(data => {
         console.log('Order saved:', data);
-        // fetchBookData();
+        isPageEdited = false;
     })
     .catch(error => {
         console.error('Error saving order:', error);
         alert('ページ構造保存中にエラーが発生しました');
     });
 }
-
-// function saveOrder() {
-//     const container = document.getElementById("srcParagraphs");
-//     const boxes = Array.from(container.querySelectorAll('.paragraph-box'));
-//     const newOrder = [];
-
-
-    
-//     for (let i = 0; i < boxes.length; i++) {
-//         const div = boxes[i];
-//         const id = parseInt(div.id.replace('paragraph-', ''));
-//         const groupClass = Array.from(div.classList).find(cls => cls.startsWith('group-id-'));
-//         const groupId = groupClass ? parseInt(groupClass.replace('group-id-', '')) : null;
-
-//         newOrder.push({
-//             id: id,
-//             order: i,
-//             group_id: groupId
-//         });
-//     }
-
-//     fetch(`/api/update_order/${encodeURIComponent(pdfName)}`, {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json'
-//         },
-//         body: JSON.stringify({ order: newOrder })
-//     })
-//     .then(response => response.json())
-//     .then(data => {
-//         if (data.status === "ok") {
-//             console.log("順序とグループ情報を保存しました");
-//         } else {
-//             alert("保存に失敗しました: " + data.message);
-//         }
-//     })
-//     .catch(err => {
-//         console.error("保存中にエラー:", err);
-//         alert("保存中にエラーが発生しました");
-//     });
-// }
-
-
 
 function exportHtml() {
     fetch(`/api/export_html/${encodeURIComponent(pdfName)}`, {
