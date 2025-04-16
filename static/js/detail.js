@@ -1,7 +1,9 @@
 // detail.htmlのグローバル変数は3つ
 pdfName = document.body.dataset.pdfName;
 bookData = {};
+paragraphMap = {};// 文章IDをキーにしたマップ
 currentPage = 1;
+
 // let selectedParagraphRange = { start: null, end: null };
 
 window.onload = function() {

@@ -10,7 +10,6 @@ HotkeyMapper.map("Ctrl+ArrowDown", () => focusNearestHeading(1), { description: 
 HotkeyMapper.map("Ctrl+Shift+ArrowUp", selectUntilPreviousHeading, { description: "前の見出しまで選択"});
 HotkeyMapper.map("Ctrl+Shift+ArrowDown", selectUntilNextHeading, { description: "次の見出しまで選択"});
 
-
 HotkeyMapper.map("ArrowLeft", prevPage, { description: "次のページ" });
 HotkeyMapper.map("ArrowRight", nextPage, { description: "前のページ" });
 HotkeyMapper.map("Ctrl+ArrowLeft", prevPage, { description: "次のページ" });
@@ -18,19 +17,25 @@ HotkeyMapper.map("Ctrl+ArrowRight", nextPage, { description: "前のページ" }
 HotkeyMapper.map("Ctrl+Shift+ArrowLeft", prevPage, { description: "次のページ" });
 HotkeyMapper.map("Ctrl+Shift+ArrowRight", nextPage, { description: "前のページ" });
 
-HotkeyMapper.map("Ctrl+0", () => updateBlockTagForSelected("p"), { description: "本文", useCapture : true });
-HotkeyMapper.map("Ctrl+1", () => updateBlockTagForSelected("h1"), { description: "h1", useCapture : true });
-HotkeyMapper.map("Ctrl+2", () => updateBlockTagForSelected("h2"), { description: "h2", useCapture : true });
-HotkeyMapper.map("Ctrl+3", () => updateBlockTagForSelected("h3"), { description: "h3", useCapture : true });
-HotkeyMapper.map("Ctrl+4", () => updateBlockTagForSelected("h4"), { description: "h4", useCapture : true });
-HotkeyMapper.map("Ctrl+5", () => updateBlockTagForSelected("h5"), { description: "h5", useCapture : true });
-HotkeyMapper.map("Ctrl+6", () => updateBlockTagForSelected("h6"), { description: "h6", useCapture : true });
-HotkeyMapper.map("Ctrl+h", () => updateBlockTagForSelected("header"), { description: "header", useCapture : true });
-HotkeyMapper.map("Ctrl+f", () => updateBlockTagForSelected("footer"), { description: "footer", useCapture : true });
+// パラグラフに対する編集はAltキー
+//moveSelectedByOffset
+HotkeyMapper.map("Alt+0", () => updateBlockTagForSelected("p"), { description: "本文", useCapture : true });
+HotkeyMapper.map("Alt+1", () => updateBlockTagForSelected("h1"), { description: "h1", useCapture : true });
+HotkeyMapper.map("Alt+2", () => updateBlockTagForSelected("h2"), { description: "h2", useCapture : true });
+HotkeyMapper.map("Alt+3", () => updateBlockTagForSelected("h3"), { description: "h3", useCapture : true });
+HotkeyMapper.map("Alt+4", () => updateBlockTagForSelected("h4"), { description: "h4", useCapture : true });
+HotkeyMapper.map("Alt+5", () => updateBlockTagForSelected("h5"), { description: "h5", useCapture : true });
+HotkeyMapper.map("Alt+6", () => updateBlockTagForSelected("h6"), { description: "h6", useCapture : true });
+HotkeyMapper.map("Alt+h", () => updateBlockTagForSelected("header"), { description: "header", useCapture : true });
+HotkeyMapper.map("Alt+f", () => updateBlockTagForSelected("footer"), { description: "footer", useCapture : true });
 
-HotkeyMapper.map("Ctrl+.", toggleGroupSelectedParagraphs, { description: "グループ化/解除" });
-HotkeyMapper.map("Ctrl+Alt+ArrowUp", toggleGroupSelectedParagraphsUp, { description: "カレント行を選択(上)"});
-HotkeyMapper.map("Ctrl+Alt+ArrowDown", toggleGroupSelectedParagraphsDown, { description: "カレント行を選択(下)"});
+HotkeyMapper.map("Alt+.", toggleGroupSelectedParagraphs, { description: "グループ化/解除" });
+
+HotkeyMapper.map("Alt+ArrowUp", () => moveSelectedByOffset(-1), { description: "選択範囲を上へ"});
+HotkeyMapper.map("Alt+ArrowDown", () => moveSelectedByOffset(1), { description: "選択範囲を下へ)"});
+
+//
+
 HotkeyMapper.map("Escape", resetSelection, { description: "選択解除" });
 HotkeyMapper.map("Ctrl+S", saveOrder, { description: "構造保存" });
 HotkeyMapper.map("RollUp", rollUp, { description: "スクロールアップ" });

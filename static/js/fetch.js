@@ -6,6 +6,13 @@ async function fetchBookData() {
         document.getElementById("titleInput").value = bookData.title;
         document.getElementById("pageCount").innerText = bookData.page_count;
 
+        if (bookData.paragraphs) {
+            paragraphMap = {};
+            bookData.paragraphs.forEach(paragraph => {
+                paragraphMap[paragraph.id] = paragraph;
+            });
+        }
+
         updateTransStatusCounts(bookData.trans_status_counts);
         updateHeadStyles();
         showToc();
@@ -17,6 +24,7 @@ async function fetchBookData() {
 
 /** @function transPage */
 function transPage() {
+    saveOrder(); // 順序を保存してから翻訳
     fetch(`/api/paraparatrans/${encodeURIComponent(pdfName)}`, {
         method: 'POST',
         headers: {
@@ -47,6 +55,7 @@ function transPage() {
 function transAllPages() {
     const totalPages = bookData.page_count;
     if (!confirm(`全 ${totalPages} ページを翻訳します。よろしいですか？`)) return;
+    saveOrder();
 
     fetch(`/api/paraparatrans/${encodeURIComponent(pdfName)}`, {
         method: 'POST',
@@ -180,56 +189,50 @@ function dictTrans() {
     });
 }
 
-
-// 順序再発行＆保存処理
+/** * @function updateTransStatusCounts
+ * @param {Object} counts - 翻訳ステータスのカウントオブジェクト
+ * ページ内順序再発行＆保存処理
+ */
 function saveOrder() {
     const container = document.getElementById('srcParagraphs');
     const children = container.children;
-    const orderList = [];
+    const updates = [];
 
+    // ページ内のパラグラフをループして、順序を取得
     for (let i = 0; i < children.length; i++) {
         const paragraphDiv = children[i];
         const idElem = paragraphDiv.querySelector('.paragraph-id');
         if (!idElem) continue;
 
-        const pId = idElem.innerText.trim();
+        const pId = idElem.innerText.trim() ;
         const blockTag = paragraphDiv.querySelector('.block-tag')?.innerText.trim() || "";
         const groupClass = Array.from(paragraphDiv.classList).find(cls => cls.startsWith('group-id-'));
         const groupId = groupClass ? parseInt(groupClass.replace('group-id-', '')) : null;
         const join = paragraphDiv.querySelector('.join')?.innerText.trim() || "";
 
-        orderList.push({
-            id: pId,
+        // 書き込み後fetchしないため、クライアント側のデータも更新
+        // 更新しないとページ遷移後に情報が巻き戻って見える
+        paragraphMap[pId].order = i + 1; // 1-based index
+        paragraphMap[pId].block_tag = blockTag;
+        paragraphMap[pId].group_id = groupId;
+        paragraphMap[pId].join = join;
+
+        updates.push({
+            id: parseInt(pId),
             order: i+1,
             block_tag: blockTag,
-            group_id: groupId,
-            join: join
+            group_id: parseInt(groupId),
+            join: parseInt(join)
         });
     }
 
-    const formData = new URLSearchParams();
-    formData.append('order_json', JSON.stringify(orderList));
-    formData.append('title', document.getElementById('titleInput').value);
-
-    fetch(`/api/save_order/${encodeURIComponent(pdfName)}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: formData.toString()
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Order saved:', data);
-        isPageEdited = false;
-    })
-    .catch(error => {
-        console.error('Error saving order:', error);
-        alert('ページ構造保存中にエラーが発生しました');
-    });
+    //updatesが空でない場合のみ送信
+    if (updates.length === 0) return;
+    updateParagraphs(updates);
 }
 
 function exportHtml() {
+    saveOrder(); // 順序を保存してからHTMLをエクスポート
     fetch(`/api/export_html/${encodeURIComponent(pdfName)}`, {
         method: 'POST',
         headers: {
@@ -248,5 +251,33 @@ function exportHtml() {
     .catch(error => {
         console.error("Error exporting HTML:", error);
         alert("対訳HTML出力中にエラーが発生しました");
+    });
+}
+
+function updateParagraphs(updates, title = null) {
+    const payload = {
+        updates: updates,
+        title: title || document.getElementById('titleInput').value
+    };
+
+    fetch(`/api/update_paragraphs/${encodeURIComponent(pdfName)}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "ok") {
+            console.log("パラグラフ更新が成功しました");
+        } else {
+            console.error("パラグラフ更新エラー:", data.message);
+            alert("パラグラフ更新エラー: " + data.message);
+        }
+    })
+    .catch(error => {
+        console.error("パラグラフ更新中にエラーが発生しました:", error);
+        alert("パラグラフ更新中にエラーが発生しました");
     });
 }

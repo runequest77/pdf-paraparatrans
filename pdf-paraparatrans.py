@@ -6,6 +6,8 @@ import io
 import sys
 from PyPDF2 import PdfReader, PdfWriter
 import uuid  # ファイル名の一意性を確保するために追加
+import tempfile
+
 
 # modulesディレクトリをPythonのモジュール検索パスに追加
 sys.path.append(os.path.join(os.path.dirname(__file__), 'modules'))
@@ -387,9 +389,13 @@ def save_order_api(pdf_name):
         new_group_id = item.get("group_id")
         new_join = item.get("join", 0)
 
+        print(f"before ID: {p_id}, Order: {new_order_val}, Block Tag: {new_block_tag}, Group ID: {new_group_id}, Join: {new_join}")
+        
+
         for p in paragraphs:
             if str(p.get("id")) == p_id:
                 updated = False
+                print (f"after ID: {p_id}, Order: {p.get('order')}, Block Tag: {p.get('block_tag')}, Group ID: {p.get('group_id')}, Join: {p.get('join')}")
                 if p.get("order") != new_order_val:
                     p["order"] = new_order_val
                     updated = True
@@ -413,6 +419,9 @@ def save_order_api(pdf_name):
     if changed_count > 0:
         temp_file = f"{json_path}.{uuid.uuid4().hex}.tmp"  # ユニークな一時ファイル名を生成
         try:
+            print(f"write ID: {p_id}, Order: {new_order_val}, Block Tag: {new_block_tag}, Group ID: {new_group_id}, Join: {new_join}")
+
+
             with open(temp_file, "w", encoding="utf-8") as f:
                 json.dump(book_data, f, ensure_ascii=False, indent=2)
             os.replace(temp_file, json_path)  # アトミックにリネーム
@@ -468,6 +477,108 @@ def recalc_trans_status_counts(book_data):
         if st in counts:
             counts[st] += 1
     book_data["trans_status_counts"] = counts
+
+@app.route("/api/update_paragraphs/<pdf_name>", methods=["POST"])
+def update_paragraphs_api(pdf_name):
+    pdf_path, json_path = get_paths(pdf_name)
+    print(f"Tset:1")
+    if not os.path.exists(json_path):
+        return jsonify({"status": "error", "message": "JSONファイルが存在しません"}), 404
+
+    data = request.get_json()
+    print(f"Tset:2")
+
+    title = request.form.get("title")
+    if not data or "title" not in data:
+        return jsonify({"status": "error", "message": "title がありません"}), 400
+    print(f"Tset:3")
+
+    updates = data.get("updates")
+    if not updates:
+        return jsonify({"status": "error", "message": "updates がありません"}), 400
+    print(f"Tset:4")
+
+    try:
+        # JSON読み込み
+        with open(json_path, "r", encoding="utf-8") as f:
+            book_data = json.load(f)
+
+        if title is not None:
+            book_data["title"] = title
+
+        paragraphs = book_data["paragraphs"]
+
+        # 更新処理
+        updates = sorted(updates, key=lambda x: x["id"])
+        from collections import deque
+        import datetime
+
+        print(f"Tset:5")
+
+        def apply_update(p, upd):
+            p["modified_at"] = datetime.datetime.now().isoformat()
+
+            print(f"Tset:10")
+
+            p["src_text"] = upd.get("src_text", p.get("src_text"))
+            p["trans_text"] = upd.get("trans_text", p.get("trans_text"))
+            p["trans_status"] = upd.get("trans_status", p.get("trans_status"))
+
+            print(f"Tset:11")
+
+            p["order"] = upd.get("order", p.get("order"))
+            p["block_tag"] = upd.get("block_tag", p.get("block_tag"))
+
+            print(f"Tset:12")
+
+            group_id = upd.get("group_id")
+            if group_id is not None and group_id >= 0:
+                p["group_id"] = group_id
+            elif "group_id" in p:
+                del p["group_id"]  # group_idを削除
+
+            print(f"Tset:13")
+
+            join = upd.get("join")
+            if join is not None and join >= 0:
+                p["join"] = join
+            elif "join" in p:
+                del p["join"]  # joinを削除
+
+            print(f"Tset:14")
+
+
+        update_queue = deque(updates)
+        current = update_queue.popleft()
+
+        print(f"Tset:6")
+
+        for p in paragraphs:
+            while current["id"] < p["id"]:
+                raise ValueError(f"ID {current['id']} は paragraphs に存在しません")
+
+            if p["id"] == current["id"]:
+                apply_update(p, current)
+                if update_queue:
+                    current = update_queue.popleft()
+                else:
+                    break
+
+        print(f"Tset:7")
+
+        # アトミックセーブ
+        tmp_fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(json_path), suffix=".json", text=True)
+        with os.fdopen(tmp_fd, "w", encoding="utf-8") as tmp_file:
+            json.dump(book_data, tmp_file, ensure_ascii=False, indent=2)
+        os.replace(tmp_path, json_path)
+
+        return jsonify({"status": "ok"}), 200
+
+    except ValueError as ve:
+        return jsonify({"status": "error", "message": str(ve)}), 400
+    except Exception as e:
+        return jsonify({"status": "error", "message": f"更新中にエラーが発生しました: {str(e)}"}), 500
+
 
 if __name__ == "__main__":
     # portはenvファイルの設定に従う。未指定の場合は5077

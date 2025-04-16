@@ -1,11 +1,16 @@
 let selectedParagraphs = new Set(); // 選択されたパラグラフのIDを格納
+// ページ内のパラグラフのインデックス
+let currentParagraphIndex = 0;
 //ページが編集されたことを表す変数
 let isPageEdited = false;
 
 function initSrcPanel() {
-    // ドラッグ用ハンドルのみ有効にするために handle オプションを指定
     $("#srcParagraphs").sortable({
-        handle: ".drag-handle"
+    // ドラッグ用ハンドルのみ有効にするために handle オプションを指定
+    handle: ".drag-handle",
+        update: function (event, ui) {
+            saveOrder();
+        }
     });
 }
 
@@ -325,7 +330,6 @@ function selectParagraphRange(startIndex, endIndex) {
 }
 
 document.addEventListener('click', (event) => {
-
     document.querySelectorAll('.edit-ui').forEach(editUI => {
         if (editUI.style.display === 'block') {
             const paragraphBox = editUI.closest('.paragraph-box');
@@ -342,9 +346,15 @@ document.addEventListener('click', (event) => {
     const paragraphs = Array.from(document.querySelectorAll('.paragraph-box'));
     const clickedIndex = paragraphs.indexOf(paragraphBox);
 
-    if (event.ctrlKey) {
+    if (event.shiftKey) {
+        // Shiftキーが押されている場合、範囲選択
+        const currentIndex = currentParagraphIndex;
+        selectParagraphRange(currentIndex, clickedIndex);
+    } else if (event.ctrlKey) {
+        // Ctrlキーが押されている場合、選択をトグル
         setCurrentParagraph(clickedIndex, event.shiftKey);
     } else {
+        // 通常クリックの場合、選択をリセットしてカレントを変更
         resetSelection();
         setCurrentParagraph(clickedIndex, event.shiftKey);
     }
@@ -406,7 +416,11 @@ function moveSelectedBefore(targetId) {
     isPageEdited = true; // ページが編集されたことを示すフラグを立てる
 }
 
-/** @function moveSelectedByOffset */
+/** @function moveSelectedByOffset 
+ * 選択されたパラグラフ範囲を指定されたオフセット分だけ移動
+ * 
+ * ※ 実際には選択されたパラグラフではなく、その前後のパラグラフを操作する
+*/
 function moveSelectedByOffset(offset) {
     const container = document.getElementById('srcParagraphs');
     const all = Array.from(container.querySelectorAll('.paragraph-box'));
@@ -435,6 +449,9 @@ function moveSelectedByOffset(offset) {
         // 下へ → 後ろに挿入する
         moveSelectedAfter(target.id);
     }
+
+    currentParagraphIndex = targetIndex;
+    isPageEdited = true;
 }
 
 /** @function getSelectedParagraphsInOrder */
@@ -505,20 +522,22 @@ function handleBlockTagShortcut(key) {
 }
 
 
-let currentParagraphIndex = 0;
-
 function getAllParagraphs() {
     return Array.from(document.querySelectorAll('.paragraph-box'));
 }
 
-/** @function setCurrentParagraph */
+/** @function setCurrentParagraph 
+ * 指定されたインデックスのパラグラフをカレントにする
+*/
 function setCurrentParagraph(index, isShiftHeld = false) {
     const paragraphs = getAllParagraphs();
 
-    // current・selectedの制御
+    // 常にページ全体のパラグラフを処理
     paragraphs.forEach(p => {
+        // カレントを解除
         p.classList.remove('current');
         if (!isShiftHeld) {
+            // shiftキーが押されていなければ、選択を解除
             p.classList.remove('selected');
         }
     });
@@ -528,11 +547,7 @@ function setCurrentParagraph(index, isShiftHeld = false) {
 
     const current = paragraphs[currentParagraphIndex];
     current.classList.add('current');
-
-    // quickEditMode中は自動で選択も付ける
-    if (window.autoToggle.getState("quickEditMode")) {
-        current.classList.add('selected');
-    }
+    current.classList.add('selected');
 
     current.scrollIntoView({ block: 'center', behavior: 'smooth' });
 }
@@ -544,7 +559,10 @@ function toggleCurrentParagraphSelection() {
     current.classList.toggle('selected');
 }
 
-/** @function moveCurrentParagraphBy */
+/** @function moveCurrentParagraphBy 
+ * 現在のパラグラフを指定されたオフセット分だけ移動
+ * expandSelection=true(通常はshiftキーが押されている場合)は選択範囲を拡張
+*/
 function moveCurrentParagraphBy(offset, expandSelection = false) {
     const paragraphs = getAllParagraphs();
     const nextIndex = currentParagraphIndex + offset;
@@ -559,7 +577,9 @@ function moveCurrentParagraphBy(offset, expandSelection = false) {
     setCurrentParagraph(nextIndex, expandSelection);
 }
 
-/** @function getSelectedParagraphsInOrder */
+/** @function getSelectedParagraphsInOrder
+ * 選択されたパラグラフに対するグループ化/解除
+ */
 function toggleGroupSelectedParagraphs() {
     const selected = getSelectedParagraphsInOrder();
     if (selected.length < 2) return;
@@ -571,6 +591,11 @@ function toggleGroupSelectedParagraphs() {
     // ✅ グループ解除：srcParagraphs 全体からfirstGroupIdに属するグループ を削除
     const all = getAllParagraphs();
     all.forEach(div => {
+        let id = div.id.replace('paragraph-', '');
+        // paragraphMap[id]のgroup_idがfirstGroupIdと一致する場合、グループ解除
+        if (paragraphMap[id] && paragraphMap[id].group_id === firstGroupId) {
+            paragraphMap[id].group_id = null;
+        }
         if (div.classList.contains(firstGroupClass)) {
             div.classList.remove(firstGroupClass, 'group-start', 'group-middle', 'group-end');
         }
@@ -580,6 +605,11 @@ function toggleGroupSelectedParagraphs() {
     if (!firstGroupClass) {
         const newGroupClass = `group-id-${firstGroupId}`;
         selected.forEach((div, index) => {
+            let id = div.id.replace('paragraph-', '');
+            if (paragraphMap[id]) {
+                paragraphMap[id].group_id = firstGroupId;
+            }
+    
             // 既存のgroup-idを削除
             div.classList.remove(...Array.from(div.classList).filter(cls => cls.startsWith('group-id-')));
             // 新しいグループIDを追加
