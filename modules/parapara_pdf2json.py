@@ -32,20 +32,33 @@ def extract_paragraphs(pdf_path, json_path=None):
 
     style_and_paragraphs = generate_paragraphs(book_data["pages"])
 
+    # generate_paragraphs から返された paragraphs 配列を辞書に変換
+    paragraphs_list = style_and_paragraphs.get("paragraphs", [])
+    paragraphs_dict = {}
+    initial_counts = {"none": 0, "auto": 0, "draft": 0, "fixed": 0}
+    for p in paragraphs_list:
+        p_id_str = str(p.get("id"))
+        if p_id_str: # IDがある場合のみ辞書に追加
+            paragraphs_dict[p_id_str] = p
+            # 初期ステータスカウント
+            st = p.get("trans_status", "none")
+            if st in initial_counts:
+                initial_counts[st] += 1
+            else:
+                initial_counts["none"] += 1
+        else:
+            print(f"Warning: Paragraph found without ID: {p}")
+
+
     json_data = {
         "src_filename": pdf_path,
         "title": book_data["title"],
         "width": book_data["width"],
         "height": book_data["height"],
         "page_count": book_data["page_count"],
-        "trans_status_counts": {
-            "none": 0,
-            "auto": 0,
-            "draft": 0,
-            "fixed": 0
-        },
+        "trans_status_counts": initial_counts, # 計算した初期値を設定
         "head_styles": style_and_paragraphs["head_styles"],
-        "paragraphs": style_and_paragraphs["paragraphs"]
+        "paragraphs": paragraphs_dict # 辞書形式で格納
     }
 
     # JSON出力

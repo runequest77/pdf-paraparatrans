@@ -88,12 +88,14 @@ def file_replace_with_dict(trans_file: str, dict_file: str):
     with open(trans_file, encoding='utf-8') as f:
         data = json.load(f)
 
-    # 対象パラグラフ数
-    progress = setup_progress(len(data.get("paragraphs", [])), "パラグラフ置換中......")
+    paragraphs_dict = data.get("paragraphs", {}) # 辞書として取得
 
-    for paragraph in data.get("paragraphs", []):
+    # 対象パラグラフ数
+    progress = setup_progress(len(paragraphs_dict), "パラグラフ置換中......") # 辞書の要素数を総数とする
+
+    for paragraph in paragraphs_dict.values(): # 辞書の値 (パラグラフオブジェクト) をイテレート
         if "src_text" in paragraph:
-            progress(f"{paragraph["page"]} Page")
+            progress(f"{paragraph.get('page', 'N/A')} Page") # page がない場合も考慮
             replaced_text = replace_with_dict(paragraph["src_text"], dict_cs, dict_ci)
             # 対訳辞書の変更により、置換結果が以前と異なる場合は翻訳状態を "none" に変更
             if replaced_text != paragraph.get("src_replaced") and paragraph.get("trans_status") == "auto":

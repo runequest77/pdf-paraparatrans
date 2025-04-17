@@ -13,7 +13,11 @@ def json2html(json_file_path: str):
     content_entries = ""
     current_page = -1
 
-    for paragraph in data['paragraphs']:
+    paragraphs_dict = data.get('paragraphs', {}) # 辞書として取得
+    # HTML出力順序のため、ページ番号と順序でソート
+    paragraphs_list = sorted(paragraphs_dict.values(), key=lambda p: (p.get("page", 0), p.get("order", 0)))
+
+    for paragraph in paragraphs_list: # ソートされたリストをイテレート
         block_tag = paragraph.get("block_tag", "div").lower()
         if block_tag in ("header", "footer"):
             continue

@@ -57,6 +57,7 @@ from modules.parapara_tagging_headerfooter import headerfooter_tagging
 from modules.parapara_tagging_by_structure import structure_tagging
 from modules.parapara_dict_create import dict_create
 from modules.parapara_dict_trans import dict_trans
+from modules.parapara_init import parapara_init  # parapara_initをインポート
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
 
@@ -141,14 +142,39 @@ def get_pdf_files():
 
 @app.route("/")
 def index():
+    settings_path = os.path.join(BASE_FOLDER, "paraparatrans.settings.json")
+    
+    # paraparatrans.settings.jsonが存在しない場合、parapara_initを実行
+    if not os.path.exists(settings_path):
+        parapara_init(BASE_FOLDER)
+    
+    # paraparatrans.settings.jsonを読み込む
+    with open(settings_path, "r", encoding="utf-8") as f:
+        settings = json.load(f)
+    
+    # ファイルリストを取得
+    files = settings.get("files", {})
+    pdf_list = []
+    for pdf_name, file_data in files.items():
+        pdf_list.append({
+            "pdf_name": pdf_name,
+            "json_name": os.path.splitext(pdf_name)[0] + ".json",
+            "title": file_data.get("title", pdf_name),
+            "auto_count": file_data.get("trans_status_counts", {}).get("auto", 0),
+            "fixed_count": file_data.get("trans_status_counts", {}).get("fixed", 0),
+            "updated": datetime.datetime.fromtimestamp(
+                os.path.getmtime(file_data.get("src_filename", ""))
+            ).strftime("%Y/%m/%d") if os.path.exists(file_data.get("src_filename", "")) else ""
+        })
+    
+    # フィルタ処理
     filter_text = request.args.get("filter", "").lower().strip()
-    pdf_list = get_pdf_files()
     if filter_text:
-        filtered = []
-        for item in pdf_list:
-            if (filter_text in item["title"].lower()) or (filter_text in item["pdf_name"].lower()):
-                filtered.append(item)
-        pdf_list = filtered
+        pdf_list = [
+            item for item in pdf_list
+            if filter_text in item["title"].lower() or filter_text in item["pdf_name"].lower()
+        ]
+    
     return render_template("index.html", pdf_list=pdf_list, filter_text=filter_text)
 
 @app.route("/detail/<pdf_name>")
@@ -192,7 +218,14 @@ def create_book_data_api(pdf_name):
     pdf_path, json_path = get_paths(pdf_name)
     if os.path.exists(json_path):
         return jsonify({"status": "ok", "message": "既に抽出済みです"}), 200
+    # extract_paragraphs は paragraphs を辞書形式で返すように修正されている必要がある
     book_data = extract_paragraphs(pdf_path)
+    # 必要であればここで book_data["paragraphs"] が辞書であることを確認するバリデーションを追加
+    if not isinstance(book_data.get("paragraphs"), dict):
+        app.logger.error(f"extract_paragraphs did not return a dictionary for paragraphs in {pdf_name}")
+        # エラーレスポンスを返すか、配列から辞書に変換する処理を入れるか検討
+        # return jsonify({"status": "error", "message": "Paragraphs format error after extraction."}), 500
+        # ここではログ出力のみに留める
     with open(json_path, "w", encoding="utf-8") as f:
         json.dump(book_data, f, ensure_ascii=False, indent=2)
     return jsonify({"status": "ok"}), 200
@@ -220,8 +253,11 @@ def translate_api():
     source = data.get("source", "EN")
     target = data.get("target", "JA")
 
+    print(f"FOR DEBUG(LEFT50/1TRANS):{text[:50]}")
+
     try:
         translated_text = translate_text(text, source, target)
+        print(f"FOR DEBUG(LEFT50/1TRANS):{translated_text[:50]}")
         return jsonify({"status": "ok", "translated_text": translated_text}), 200
     except Exception as e:
         app.logger.error(f"Translation error: {str(e)}")
@@ -239,10 +275,21 @@ def save_structure_api(pdf_name):
         return jsonify({"status": "error", "message": "paragraphs がありません"}), 400
     with open(json_path, "r", encoding="utf-8") as f:
         book_data = json.load(f)
-    new_paragraphs = json.loads(paragraphs_json)
-    book_data["paragraphs"] = new_paragraphs
+    try:
+        new_paragraphs_dict = json.loads(paragraphs_json)
+        if not isinstance(new_paragraphs_dict, dict):
+            return jsonify({"status": "error", "message": "送信された paragraphs は辞書形式ではありません"}), 400
+        # TODO: 必要であれば、辞書のキーが文字列のIDであるか、値がパラグラフオブジェクトの形式かなどの詳細なバリデーションを追加
+        book_data["paragraphs"] = new_paragraphs_dict
+    except json.JSONDecodeError:
+        return jsonify({"status": "error", "message": "paragraphs_json の形式が不正です"}), 400
+
     if title is not None:
         book_data["title"] = title
+
+    # 翻訳ステータスカウントを再計算
+    recalc_trans_status_counts(book_data)
+
     with open(json_path, "w", encoding="utf-8") as f:
         json.dump(book_data, f, ensure_ascii=False, indent=2)
     return jsonify({"status": "ok"}), 200
@@ -278,13 +325,13 @@ def update_paragraph_api(pdf_name):
     with open(json_path, "r", encoding="utf-8") as f:
         book_data = json.load(f)
 
-    found = None
-    for p in book_data["paragraphs"]:
-        if str(p["id"]) == str(paragraph_id):
-            found = p
-            break
-    if found is None:
+    paragraphs_dict = book_data.get("paragraphs", {}) # 辞書として取得
+    paragraph_id_str = str(paragraph_id) # 比較用に文字列化
+
+    if paragraph_id_str not in paragraphs_dict:
         return jsonify({"status": "error", "message": "該当パラグラフが見つかりません"}), 404
+
+    found = paragraphs_dict[paragraph_id_str] # キーで直接アクセス
 
     found["src_text"] = new_src_text
     found["trans_text"] = new_trans_text
@@ -292,7 +339,7 @@ def update_paragraph_api(pdf_name):
     found["block_tag"] = new_block_tag
     found["join"] = new_join
     found["modified_at"] = datetime.datetime.now().isoformat()
-    recalc_trans_status_counts(book_data)
+    recalc_trans_status_counts(book_data) # recalc_trans_status_counts も辞書対応が必要
     with open(json_path, "w", encoding="utf-8") as f:
         json.dump(book_data, f, ensure_ascii=False, indent=2)
     return jsonify({"status": "ok"}), 200
@@ -377,53 +424,63 @@ def save_order_api(pdf_name):
     with open(json_path, "r", encoding="utf-8") as f:
         book_data = json.load(f)
 
-    new_order = json.loads(order_json)
-    paragraphs = book_data.get("paragraphs", [])
+    new_order = json.loads(order_json) # new_order は配列のままと想定
+    paragraphs_dict = book_data.get("paragraphs", {}) # 辞書として取得
 
     changed_count = 0
+    last_processed_item = {} # 保存時のログ表示用
 
     for item in new_order:
-        p_id = str(item.get("id"))
+        p_id_str = str(item.get("id"))
         new_order_val = item.get("order")
         new_block_tag = item.get("block_tag")
         new_group_id = item.get("group_id")
         new_join = item.get("join", 0)
+        last_processed_item = item # ログ用に保持
 
-        print(f"before ID: {p_id}, Order: {new_order_val}, Block Tag: {new_block_tag}, Group ID: {new_group_id}, Join: {new_join}")
-        
+        print(f"Processing ID: {p_id_str}, Order: {new_order_val}, Block Tag: {new_block_tag}, Group ID: {new_group_id}, Join: {new_join}")
 
-        for p in paragraphs:
-            if str(p.get("id")) == p_id:
-                updated = False
-                print (f"after ID: {p_id}, Order: {p.get('order')}, Block Tag: {p.get('block_tag')}, Group ID: {p.get('group_id')}, Join: {p.get('join')}")
-                if p.get("order") != new_order_val:
-                    p["order"] = new_order_val
-                    updated = True
-                if new_block_tag is not None and p.get("block_tag") != new_block_tag:
-                    p["block_tag"] = new_block_tag
-                    updated = True
-                if new_group_id is not None and p.get("group_id") != new_group_id:
-                    p["group_id"] = new_group_id
-                    updated = True
-                if new_join is not None and p.get("join") != new_join:
-                    p["join"] = new_join
-                    updated = True
-                if updated:
-                    changed_count += 1
-                break
+        if p_id_str in paragraphs_dict:
+            p = paragraphs_dict[p_id_str]
+            updated = False
+            print (f"  Found ID: {p_id_str}, Current Order: {p.get('order')}, Block Tag: {p.get('block_tag')}, Group ID: {p.get('group_id')}, Join: {p.get('join')}")
+            if p.get("order") != new_order_val:
+                p["order"] = new_order_val
+                updated = True
+            if new_block_tag is not None and p.get("block_tag") != new_block_tag:
+                p["block_tag"] = new_block_tag
+                updated = True
+            if new_group_id is not None and p.get("group_id") != new_group_id:
+                p["group_id"] = new_group_id
+                updated = True
+            if new_join is not None and p.get("join") != new_join:
+                p["join"] = new_join
+                updated = True
+            if updated:
+                changed_count += 1
+                print(f"  Updated ID: {p_id_str}")
+        else:
+            print(f"  Warning: Paragraph ID {p_id_str} not found in book_data['paragraphs']")
+
 
     if title is not None and book_data.get("title") != title:
         book_data["title"] = title
         changed_count += 1
+        print("Title updated.")
 
     if changed_count > 0:
         temp_file = f"{json_path}.{uuid.uuid4().hex}.tmp"  # ユニークな一時ファイル名を生成
         try:
-            print(f"write ID: {p_id}, Order: {new_order_val}, Block Tag: {new_block_tag}, Group ID: {new_group_id}, Join: {new_join}")
-
+            # 保存時のログは最後に処理したアイテム情報を使う (ループ変数はスコープ外になる可能性があるため)
+            log_p_id = str(last_processed_item.get("id", "N/A"))
+            log_order = last_processed_item.get("order", "N/A")
+            log_block_tag = last_processed_item.get("block_tag", "N/A")
+            log_group_id = last_processed_item.get("group_id", "N/A")
+            log_join = last_processed_item.get("join", "N/A")
+            print(f"Writing changes to file. Last processed item for logging - ID: {log_p_id}, Order: {log_order}, Block Tag: {log_block_tag}, Group ID: {log_group_id}, Join: {log_join}")
 
             with open(temp_file, "w", encoding="utf-8") as f:
-                json.dump(book_data, f, ensure_ascii=False, indent=2)
+                json.dump(book_data, f, ensure_ascii=False, indent=2) # book_data["paragraphs"] は辞書のまま保存
             os.replace(temp_file, json_path)  # アトミックにリネーム
         except Exception as e:
             if os.path.exists(temp_file):
@@ -472,10 +529,14 @@ def dict_trans_api(pdf_name):
 
 def recalc_trans_status_counts(book_data):
     counts = {"none": 0, "auto": 0, "draft": 0, "fixed": 0}
-    for p in book_data["paragraphs"]:
-        st = p["trans_status"]
+    paragraphs_dict = book_data.get("paragraphs", {}) # 辞書として取得
+    for p in paragraphs_dict.values(): # 辞書の値 (パラグラフオブジェクト) をイテレート
+        st = p.get("trans_status", "none") # trans_status がない場合も考慮
         if st in counts:
             counts[st] += 1
+        else:
+            counts["none"] += 1 # 未定義のステータスは none としてカウント (あるいはエラーログ)
+            print(f"Warning: Unknown trans_status '{st}' found in paragraph ID {p.get('id', 'N/A')}. Counted as 'none'.")
     book_data["trans_status_counts"] = counts
 
 @app.route("/api/update_paragraphs/<pdf_name>", methods=["POST"])
@@ -506,65 +567,65 @@ def update_paragraphs_api(pdf_name):
         if title is not None:
             book_data["title"] = title
 
-        paragraphs = book_data["paragraphs"]
+        paragraphs_dict = book_data.get("paragraphs", {}) # 辞書として取得
 
         # 更新処理
-        updates = sorted(updates, key=lambda x: x["id"])
-        from collections import deque
+        # updates は辞書形式 { "1": { "src_text": ... }, "3": { ... } }
+        # JSONを介するので、明確に並び替えのある項目以外は文字で扱う
+
         import datetime
 
         print(f"Tset:5")
 
-        def apply_update(p, upd):
+        def apply_update(p, upd_value): # 第2引数は更新内容のオブジェクト
             p["modified_at"] = datetime.datetime.now().isoformat()
+            p_id = p.get("id", "N/A") # ログ用
+            print(f"Tset:10 - Applying update for ID: {p_id}")
 
-            print(f"Tset:10")
+            p["src_text"] = upd_value.get("src_text", p.get("src_text"))
+            p["trans_text"] = upd_value.get("trans_text", p.get("trans_text"))
+            p["trans_status"] = upd_value.get("trans_status", p.get("trans_status"))
+            print(f"Tset:11 - Text/Status updated for ID: {p_id}")
 
-            p["src_text"] = upd.get("src_text", p.get("src_text"))
-            p["trans_text"] = upd.get("trans_text", p.get("trans_text"))
-            p["trans_status"] = upd.get("trans_status", p.get("trans_status"))
+            p["order"] = upd_value.get("order", p.get("order"))
+            p["block_tag"] = upd_value.get("block_tag", p.get("block_tag"))
+            print(f"Tset:12 - Order/Tag updated for ID: {p_id}")
 
-            print(f"Tset:11")
-
-            p["order"] = upd.get("order", p.get("order"))
-            p["block_tag"] = upd.get("block_tag", p.get("block_tag"))
-
-            print(f"Tset:12")
-
-            group_id = upd.get("group_id")
-            if group_id is not None and group_id >= 0:
+            group_id = upd_value.get("group_id")
+            # group_idがparagraphs_dictに存在しない場合は、group_idを削除
+            if group_id is not None and group_id in paragraphs_dict:
                 p["group_id"] = group_id
             elif "group_id" in p:
                 del p["group_id"]  # group_idを削除
+            print(f"Tset:13 - Group ID updated/removed for ID: {p_id}")
 
-            print(f"Tset:13")
-
-            join = upd.get("join")
+            join = upd_value.get("join")
             if join is not None and join >= 0:
                 p["join"] = join
             elif "join" in p:
                 del p["join"]  # joinを削除
+            print(f"Tset:14 - Join updated/removed for ID: {p_id}")
 
-            print(f"Tset:14")
 
+        updated_ids = set()
+        updates_dict = data.get("updates", {}) # updates を辞書として取得
+        if not isinstance(updates_dict, dict):
+             return jsonify({"status": "error", "message": "updates は辞書形式である必要があります"}), 400
 
-        update_queue = deque(updates)
-        current = update_queue.popleft()
+        for p_id_str, upd_value in updates_dict.items():
+            if p_id_str in paragraphs_dict:
+                apply_update(paragraphs_dict[p_id_str], upd_value)
+                updated_ids.add(p_id_str)
+            else:
+                # 存在しないIDが指定された場合のエラーハンドリング
+                print(f"Warning: Update requested for non-existent paragraph ID {p_id_str}. Skipping.")
+                # または: raise ValueError(f"ID {p_id_str} は paragraphs に存在しません")
 
-        print(f"Tset:6")
+        print(f"Tset:7 - Updates applied for {len(updated_ids)} paragraphs.")
 
-        for p in paragraphs:
-            while current["id"] < p["id"]:
-                raise ValueError(f"ID {current['id']} は paragraphs に存在しません")
-
-            if p["id"] == current["id"]:
-                apply_update(p, current)
-                if update_queue:
-                    current = update_queue.popleft()
-                else:
-                    break
-
-        print(f"Tset:7")
+        # 翻訳ステータスカウントを再計算
+        recalc_trans_status_counts(book_data)
+        print(f"Tset:8 - Recalculated trans_status_counts.")
 
         # アトミックセーブ
         tmp_fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(json_path), suffix=".json", text=True)
@@ -587,7 +648,3 @@ if __name__ == "__main__":
         raise ValueError(f"Invalid PORT: {port}")
     port = int(port)  
     app.run(host="0.0.0.0", port=port, debug=True, threaded=True)
-
-
-
-

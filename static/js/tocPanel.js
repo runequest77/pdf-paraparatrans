@@ -3,15 +3,18 @@ function initTocPanel() {
 }
 
 function showToc(isTrans) {
-  const paragraphs = bookData.paragraphs;
+  const paragraphsDict = bookData.paragraphs; // 辞書として取得
   const tbody = document.querySelector(".tocTable tbody");
 
-  if (!paragraphs || paragraphs.length === 0) {
+  // 辞書が空かどうかのチェック
+  if (!paragraphsDict || Object.keys(paragraphsDict).length === 0) {
     tbody.innerHTML = "";
   } else {
-    const tocTree = buildTocTree(paragraphs);
+    // 辞書の値を配列にして buildTocTree に渡す
+    const paragraphsArray = Object.values(paragraphsDict);
+    const tocTree = buildTocTree(paragraphsArray);
     tbody.innerHTML = renderTocTableRows(tocTree);
-    expandUpToLimit(30);    
+    expandUpToLimit(30);
   }
 }
 
@@ -51,11 +54,12 @@ function renderTocTableRows(tocNode) {
 }
 
 
-function buildTocTree(paragraphs) {
-  const headlines = paragraphs.filter(p => /^h[1-6]$/.test(p.block_tag));
+function buildTocTree(paragraphsArray) { // 引数を配列として受け取る
+  // 配列をフィルタリング
+  const headlines = paragraphsArray.filter(p => /^h[1-6]$/.test(p.block_tag));
 
   const root = {
-    id: -1,
+    id: -1, // ルートノードのIDは特別扱い
     page: -1,
     block_tag: "h0",
     src_text: "src_root",

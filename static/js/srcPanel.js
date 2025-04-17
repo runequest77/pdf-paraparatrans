@@ -16,33 +16,9 @@ function initSrcPanel() {
 
 // 編集ボックスの単文での翻訳
 function onTransButtonClick(event, paragraph, divSrc) {
-    fetch('/api/translate', {
-        method: 'POST',
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ text: paragraph.src_replaced })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.status === "ok") {
-            paragraph.trans_auto = data.translation;
-            paragraph.trans_text = data.translation;
-            paragraph.trans_status = "auto";
-            divSrc.querySelector('.trans-auto').innerHTML = paragraph.trans_auto;
-            divSrc.querySelector('.trans-text').innerHTML = paragraph.trans_text;
-            let autoRadio = divSrc.querySelector(`input[name='status-${paragraph.id}'][value='auto']`);
-            if (autoRadio) { autoRadio.checked = true; }
-        }
-    })
-    .catch(
-        // ユーザーにポップアップでエラーを通知
-        error => {
-            console.error('Error:', error);
-            alert('翻訳中にエラーが発生しました。詳細はコンソールを確認してください。');
-        }
-    );
+    transParagraph(paragraph, divSrc);
 }
+
 
 // 編集ボックスの保存
 function onSaveButtonClick(event, paragraph, divSrc, srcText, transText, blockTagSelect, blockTagSpan) {
@@ -101,11 +77,16 @@ function renderParagraphs() {
     srcContainer.style.display = 'none'; // チラつき防止にいったん非表示
     srcContainer.innerHTML = "";
 
-    bookData.paragraphs.sort((a, b) => (a.page === b.page ? a.order - b.order : a.page - b.page));
+    // bookData.paragraphs は辞書なので、値を取得してソートする
+    const paragraphsArray = Object.values(bookData.paragraphs);
+    paragraphsArray.sort((a, b) => (a.page === b.page ? a.order - b.order : a.page - b.page));
 
-    for (let i = 0; i < bookData.paragraphs.length; i++) {
-        let p = bookData.paragraphs[i];
-        if (p.page !== currentPage) continue;
+    // 現在のページに表示するパラグラフのみをフィルタリング（ソート後に実施）
+    const currentPageParagraphs = paragraphsArray.filter(p => p.page === currentPage);
+
+    for (let i = 0; i < currentPageParagraphs.length; i++) {
+        let p = currentPageParagraphs[i];
+        // if (p.page !== currentPage) continue; // フィルタリング済みなので不要
 
         let divSrc = document.createElement("div");
         let blockTagClass = `block-tag-${p.block_tag}`;
@@ -113,16 +94,18 @@ function renderParagraphs() {
         let joinClass = (p.prev_id || p.id) !== p.id ? 'show' : 'hide';
 
         let statusClass = `status-${p.trans_status}`;
-        divSrc.className = `paragraph-box ${blockTagClass}`;
+        divSrc.className = `paragraph-box ${blockTagClass}`; // statusClass は edit-box に適用されるためここでは不要かも
 
         // グループ情報に基づいてクラスを付与
         if (p.group_id) {
-            const prev = bookData.paragraphs[i - 1];
-            const next = bookData.paragraphs[i + 1];
-            const sameGroupPrev = prev?.group_id === p.group_id && prev?.page === currentPage;
-            const sameGroupNext = next?.group_id === p.group_id && next?.page === currentPage;
+            // ソートされた現在のページリストで前後の要素を確認
+            const prev = currentPageParagraphs[i - 1];
+            const next = currentPageParagraphs[i + 1];
+            // 前後の要素が同じグループIDを持つかチェック (ページチェックは不要)
+            const sameGroupPrev = prev?.group_id === p.group_id;
+            const sameGroupNext = next?.group_id === p.group_id;
 
-            if (!sameGroupPrev && sameGroupNext) {
+            if (!sameGroupPrev && sameGroupNext) { // グループ開始
                 divSrc.classList.add('group-start');
             } else if (sameGroupPrev && sameGroupNext) {
                 divSrc.classList.add('group-middle');
@@ -452,6 +435,9 @@ function moveSelectedByOffset(offset) {
 
     currentParagraphIndex = targetIndex;
     isPageEdited = true;
+
+    // カレント行にスクロール
+    target.scrollIntoView({ block: 'center', behavior: 'smooth' });
 }
 
 /** @function getSelectedParagraphsInOrder */
@@ -474,9 +460,12 @@ function updateBlockTagForSelected(blockTag) {
 
 /** @function: updateBlockTag */
 function updateBlockTag(div, blockTag) {
-    const id = parseInt(div.id.replace('paragraph-', ''));
-    const p = bookData.paragraphs.find(p => p.id === id);
-    if (!p) return;
+    const idStr = div.id.replace('paragraph-', ''); // IDは文字列キーとして使用
+    const p = bookData.paragraphs[idStr]; // 辞書アクセス
+    if (!p) {
+        console.error(`Paragraph with ID ${idStr} not found in bookData.paragraphs`);
+        return;
+    }
     
     p.block_tag = blockTag;
 
@@ -585,32 +574,41 @@ function toggleGroupSelectedParagraphs() {
     if (selected.length < 2) return;
 
     // 先頭のグループクラスとパラグラフidを取得
-    const firstGroupId = selected[0].id.replace('paragraph-', '');
-    const firstGroupClass = selected[0].classList.contains(`group-id-${firstGroupId}`) ? `group-id-${firstGroupId}` : null;
+    const firstParagraphIdStr = selected[0].id.replace('paragraph-', '');
+    const firstParagraph = bookData.paragraphs[firstParagraphIdStr]; // 辞書アクセス
+    const firstGroupId = firstParagraph?.group_id; // 先頭のグループIDを取得 (数値またはundefined)
+    const firstGroupIdStr = firstGroupId?.toString(); // クラス名比較用に文字列化
 
-    // ✅ グループ解除：srcParagraphs 全体からfirstGroupIdに属するグループ を削除
-    const all = getAllParagraphs();
-    all.forEach(div => {
-        let id = div.id.replace('paragraph-', '');
-        // paragraphMap[id]のgroup_idがfirstGroupIdと一致する場合、グループ解除
-        if (paragraphMap[id] && paragraphMap[id].group_id === firstGroupId) {
-            paragraphMap[id].group_id = null;
-        }
-        if (div.classList.contains(firstGroupClass)) {
-            div.classList.remove(firstGroupClass, 'group-start', 'group-middle', 'group-end');
-        }
-    });
-    
-    //グループが設定されていなかった場合は、選択範囲をグループ化
-    if (!firstGroupClass) {
-        const newGroupClass = `group-id-${firstGroupId}`;
-        selected.forEach((div, index) => {
-            let id = div.id.replace('paragraph-', '');
-            if (paragraphMap[id]) {
-                paragraphMap[id].group_id = firstGroupId;
+    // グループ化されているかどうかの判定（先頭要素がグループIDを持っているか）
+    const isGrouped = !!firstGroupId;
+
+    if (isGrouped) {
+        // ✅ グループ解除：選択された要素が属するグループ全体を解除
+        const all = getAllParagraphs(); // DOM要素のリスト
+        all.forEach(div => {
+            const idStr = div.id.replace('paragraph-', '');
+            const p = bookData.paragraphs[idStr]; // 辞書アクセス
+            // 解除対象のグループIDを持つパラグラフのデータを更新
+            if (p && p.group_id === firstGroupId) {
+                p.group_id = undefined; // または null
+                // DOM要素のクラスも更新
+                div.classList.remove(`group-id-${firstGroupIdStr}`, 'group-start', 'group-middle', 'group-end');
             }
-    
-            // 既存のgroup-idを削除
+        });
+    } else {
+        // ✅ グループ化：選択範囲を新しいグループにする
+        // 新しいグループIDは選択範囲の先頭パラグラフのIDを使用 (文字列として)
+        const newGroupId = firstParagraphIdStr;
+        const newGroupClass = `group-id-${newGroupId}`;
+
+        selected.forEach((div, index) => {
+            const idStr = div.id.replace('paragraph-', '');
+            const p = bookData.paragraphs[idStr]; // 辞書アクセス
+            if (p) {
+                p.group_id = newGroupId; // データ更新 (文字列IDをグループIDとして設定)
+            }
+
+            // 既存のgroup-idクラスを削除
             div.classList.remove(...Array.from(div.classList).filter(cls => cls.startsWith('group-id-')));
             // 新しいグループIDを追加
             div.classList.add(newGroupClass);
@@ -675,14 +673,16 @@ function cancelEditUI(divSrc) {
 /**
  * paragraphs: JSON内のparagraphs配列（配列参照を保持）
  * prev_id: 接続元のパラグラフのID
- * next_id: 接続先のパラグラフのID
+ * next_id: 接続先のパラグラフのID (数値型と想定)
  */
-function linkParagraphs(paragraphs, prev_id, next_id) {
-    const prev = paragraphs.find(p => p.id === prev_id);
-    const next = paragraphs.find(p => p.id === next_id);
+function linkParagraphs(paragraphsDict, prev_id, next_id) {
+    const prevIdStr = prev_id.toString();
+    const nextIdStr = next_id.toString();
+    const prev = paragraphsDict[prevIdStr]; // 辞書アクセス
+    const next = paragraphsDict[nextIdStr]; // 辞書アクセス
   
     if (!prev || !next) {
-      console.warn(`片方のパラグラフが見つかりません: prev_id=${prev_id}, next_id=${next_id}`);
+      console.warn(`linkParagraphs: 片方のパラグラフが見つかりません: prev_id=${prev_id}, next_id=${next_id}`);
       return;
     }
   
@@ -693,82 +693,106 @@ function linkParagraphs(paragraphs, prev_id, next_id) {
 }
 
 function connectToPrev(paragraph) {
-    const all = [...bookData.paragraphs].sort((a, b) => a.page === b.page ? a.order - b.order : a.page - b.page);
+    // 全パラグラフをページと順序でソート (辞書の値から配列を作成)
+    const allSorted = Object.values(bookData.paragraphs).sort((a, b) => a.page === b.page ? a.order - b.order : a.page - b.page);
     const srcContainer = document.getElementById("srcParagraphs");
+    // 現在表示されている（=現在のページ）パラグラフのDOMリスト
     const containerList = Array.from(srcContainer.querySelectorAll(".paragraph-box"));
-    const currentIndex = containerList.findIndex(div => parseInt(div.id.replace("paragraph-", "")) === paragraph.id);
+    // DOMリスト内での現在のパラグラフのインデックス
+    const currentIndexInView = containerList.findIndex(div => div.id === `paragraph-${paragraph.id}`);
 
-    if (currentIndex === -1) return;
+    if (currentIndexInView === -1) {
+        console.warn(`connectToPrev: Current paragraph DOM element not found for ID ${paragraph.id}`);
+        return;
+    }
 
-    let prevParagraph;
-    if (currentIndex === 0) {
-        // 前ページの最後のパラグラフ
-        const indexInAll = all.findIndex(p => p.id === paragraph.id);
-        if (indexInAll > 0) prevParagraph = all[indexInAll - 1];
+    let prevParagraph = null;
+    if (currentIndexInView === 0) {
+        // 表示されている最初の要素の場合、ソート済み全リストから前の要素を探す
+        const indexInAll = allSorted.findIndex(p => p.id === paragraph.id);
+        if (indexInAll > 0) {
+            prevParagraph = allSorted[indexInAll - 1];
+        }
     } else {
-        // srcContainer内の1つ前
-        const prevDiv = containerList[currentIndex - 1];
-        const prevId = parseInt(prevDiv.id.replace("paragraph-", ""));
-        prevParagraph = bookData.paragraphs.find(p => p.id === prevId);
+        // 表示されているリスト内の前の要素のIDを取得
+        const prevDiv = containerList[currentIndexInView - 1];
+        const prevIdStr = prevDiv.id.replace("paragraph-", "");
+        prevParagraph = bookData.paragraphs[prevIdStr]; // 辞書アクセス
     }
 
     if (prevParagraph) {
+        console.log(`Connecting ${paragraph.id} to previous ${prevParagraph.id}`);
         paragraph.prev_id = prevParagraph.id;
         prevParagraph.next_id = paragraph.id;
     }
 }
 
 function connectToNext(paragraph) {
-    const all = [...bookData.paragraphs].sort((a, b) => a.page === b.page ? a.order - b.order : a.page - b.page);
+    // 全パラグラフをページと順序でソート (辞書の値から配列を作成)
+    const allSorted = Object.values(bookData.paragraphs).sort((a, b) => a.page === b.page ? a.order - b.order : a.page - b.page);
     const srcContainer = document.getElementById("srcParagraphs");
+    // 現在表示されている（=現在のページ）パラグラフのDOMリスト
     const containerList = Array.from(srcContainer.querySelectorAll(".paragraph-box"));
-    const currentIndex = containerList.findIndex(div => parseInt(div.id.replace("paragraph-", "")) === paragraph.id);
+    // DOMリスト内での現在のパラグラフのインデックス
+    const currentIndexInView = containerList.findIndex(div => div.id === `paragraph-${paragraph.id}`);
 
-    if (currentIndex === -1) return;
+    if (currentIndexInView === -1) {
+        console.warn(`connectToNext: Current paragraph DOM element not found for ID ${paragraph.id}`);
+        return;
+    }
 
-    let nextParagraph;
-    if (currentIndex === containerList.length - 1) {
-        // 次ページの最初のパラグラフ
-        const indexInAll = all.findIndex(p => p.id === paragraph.id);
-        if (indexInAll >= 0 && indexInAll < all.length - 1) nextParagraph = all[indexInAll + 1];
+    let nextParagraph = null;
+    if (currentIndexInView === containerList.length - 1) {
+        // 表示されている最後の要素の場合、ソート済み全リストから次の要素を探す
+        const indexInAll = allSorted.findIndex(p => p.id === paragraph.id);
+        if (indexInAll >= 0 && indexInAll < allSorted.length - 1) {
+            nextParagraph = allSorted[indexInAll + 1];
+        }
     } else {
-        // srcContainer内の1つ後
-        const nextDiv = containerList[currentIndex + 1];
-        const nextId = parseInt(nextDiv.id.replace("paragraph-", ""));
-        nextParagraph = bookData.paragraphs.find(p => p.id === nextId);
+        // 表示されているリスト内の次の要素のIDを取得
+        const nextDiv = containerList[currentIndexInView + 1];
+        const nextIdStr = nextDiv.id.replace("paragraph-", "");
+        nextParagraph = bookData.paragraphs[nextIdStr]; // 辞書アクセス
     }
 
     if (nextParagraph) {
+        console.log(`Connecting ${paragraph.id} to next ${nextParagraph.id}`);
         paragraph.next_id = nextParagraph.id;
         nextParagraph.prev_id = paragraph.id;
     }
 }
   
 function togglePrevConnectionRange(fromIndex, toIndex) {
+    // 現在表示されているDOM要素のリストとそのID（文字列）のリストを取得
     const srcDivs = Array.from(document.getElementById("srcParagraphs").querySelectorAll(".paragraph-box"));
-    const srcIds = srcDivs.map(div => parseInt(div.id.replace("paragraph-", "")));
-    const [start, end] = [fromIndex, toIndex].sort((a, b) => a - b);
+    const srcIdStrs = srcDivs.map(div => div.id.replace("paragraph-", ""));
+    const [start, end] = [fromIndex, toIndex].sort((a, b) => a - b); // from/toIndex はDOMリストのインデックス
+
+    // 全パラグラフをソートしたリスト（ページを跨いだ接続のため）
+    const allSorted = Object.values(bookData.paragraphs).sort((a, b) => a.page === b.page ? a.order - b.order : a.page - b.page);
 
     for (let i = start; i <= end; i++) {
         const currentDiv = srcDivs[i];
-        const currentId = srcIds[i];
-        if (!currentDiv || isNaN(currentId)) continue;
+        const currentIdStr = srcIdStrs[i];
+        if (!currentDiv || !currentIdStr) continue;
 
-        const paragraph = bookData.paragraphs.find(p => p.id === currentId);
-        if (!paragraph) continue;
+        const paragraph = bookData.paragraphs[currentIdStr]; // 辞書アクセス
+        if (!paragraph) {
+            console.warn(`togglePrevConnectionRange: Paragraph data not found for ID ${currentIdStr}`);
+            continue;
+        }
 
         let prevParagraph = null;
 
-        if (i > 0 && !isNaN(srcIds[i - 1])) {
-            const prevId = srcIds[i - 1];
-            prevParagraph = bookData.paragraphs.find(p => p.id === prevId);
+        if (i > 0 && srcIdStrs[i - 1]) {
+            // 表示リスト内の前の要素
+            const prevIdStr = srcIdStrs[i - 1];
+            prevParagraph = bookData.paragraphs[prevIdStr]; // 辞書アクセス
         } else {
-            const all = [...bookData.paragraphs].sort((a, b) =>
-                a.page === b.page ? a.order - b.order : a.page - b.page
-            );
-            const indexInAll = all.findIndex(p => p.id === paragraph.id);
+            // 表示リストの先頭の場合、全ソートリストから探す
+            const indexInAll = allSorted.findIndex(p => p.id.toString() === currentIdStr);
             if (indexInAll > 0) {
-                prevParagraph = all[indexInAll - 1];
+                prevParagraph = allSorted[indexInAll - 1]; // ソート済みリストから前の要素を取得
             }
         }
 
@@ -834,8 +858,8 @@ function focusNearestHeading(direction) {
         }
 
         const paragraph = paragraphs[index];
-        const id = parseInt(paragraph.id.replace('paragraph-', ''));
-        const p = bookData.paragraphs.find(p => p.id === id);
+        const idStr = paragraph.id.replace('paragraph-', '');
+        const p = bookData.paragraphs[idStr]; // 辞書アクセス
 
         // 見出し (h1 ～ h6) の場合に移動
         if (p && /^h[1-6]$/.test(p.block_tag)) {
@@ -855,8 +879,8 @@ function selectUntilNextHeading() {
         index++;
 
         const paragraph = paragraphs[index];
-        const id = parseInt(paragraph.id.replace('paragraph-', ''));
-        const p = bookData.paragraphs.find(p => p.id === id);
+        const idStr = paragraph.id.replace('paragraph-', '');
+        const p = bookData.paragraphs[idStr]; // 辞書アクセス
 
         // 見出し (h1 ～ h6) に到達したら終了
         if (p && /^h[1-6]$/.test(p.block_tag)) {
@@ -892,8 +916,8 @@ function selectUntilPreviousHeading() {
         index--;
 
         const paragraph = paragraphs[index];
-        const id = parseInt(paragraph.id.replace('paragraph-', ''));
-        const p = bookData.paragraphs.find(p => p.id === id);
+        const idStr = paragraph.id.replace('paragraph-', '');
+        const p = bookData.paragraphs[idStr]; // 辞書アクセス
 
         // 見出し (h1 ～ h6) に到達したら終了
         if (p && /^h[1-6]$/.test(p.block_tag)) {

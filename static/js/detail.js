@@ -1,7 +1,7 @@
 // detail.htmlのグローバル変数は3つ
 pdfName = document.body.dataset.pdfName;
-bookData = {};
-paragraphMap = {};// 文章IDをキーにしたマップ
+bookData = {}; // paragraphs プロパティは辞書形式になる
+// paragraphMap は不要になったため削除
 currentPage = 1;
 
 // let selectedParagraphRange = { start: null, end: null };
@@ -277,4 +277,3 @@ function initResizers() {
         setTimeout(fitToWidth, 100);
     }
 }
-

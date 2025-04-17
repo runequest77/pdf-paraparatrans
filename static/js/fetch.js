@@ -6,14 +6,15 @@ async function fetchBookData() {
         document.getElementById("titleInput").value = bookData.title;
         document.getElementById("pageCount").innerText = bookData.page_count;
 
-        if (bookData.paragraphs) {
-            paragraphMap = {};
-            bookData.paragraphs.forEach(paragraph => {
-                paragraphMap[paragraph.id] = paragraph;
-            });
-        }
+        // bookData.paragraphs は既に辞書形式で取得されるため、paragraphMap の作成は不要
+        // if (bookData.paragraphs && typeof bookData.paragraphs === 'object' && !Array.isArray(bookData.paragraphs)) {
+        //     console.log("bookData.paragraphs is a dictionary.");
+        // } else {
+        //     console.warn("bookData.paragraphs is not a dictionary or is missing.");
+        //     // 必要であればエラーハンドリングやデータ形式変換を行う
+        // }
 
-        updateTransStatusCounts(bookData.trans_status_counts);
+        updateTransStatusCounts(bookData.trans_status_counts); // この関数も辞書対応が必要か確認
         updateHeadStyles();
         showToc();
         jumpToPage(currentPage);
@@ -25,6 +26,8 @@ async function fetchBookData() {
 /** @function transPage */
 function transPage() {
     saveOrder(); // 順序を保存してから翻訳
+    if (!confirm("現在のページを翻訳します。よろしいですか？")) return;
+
     fetch(`/api/paraparatrans/${encodeURIComponent(pdfName)}`, {
         method: 'POST',
         headers: {
@@ -196,7 +199,7 @@ function dictTrans() {
 function saveOrder() {
     const container = document.getElementById('srcParagraphs');
     const children = container.children;
-    const updates = [];
+    const updatesDict = {}; // 配列ではなく辞書を作成
 
     // ページ内のパラグラフをループして、順序を取得
     for (let i = 0; i < children.length; i++) {
@@ -204,31 +207,44 @@ function saveOrder() {
         const idElem = paragraphDiv.querySelector('.paragraph-id');
         if (!idElem) continue;
 
-        const pId = idElem.innerText.trim() ;
-        const blockTag = paragraphDiv.querySelector('.block-tag')?.innerText.trim() || "";
+        const pIdStr = idElem.innerText.trim(); // IDは文字列キーとして扱う
+        const blockTag = paragraphDiv.querySelector('.block-tag')?.innerText.trim() || "p"; // デフォルトを 'p' に
         const groupClass = Array.from(paragraphDiv.classList).find(cls => cls.startsWith('group-id-'));
-        const groupId = groupClass ? parseInt(groupClass.replace('group-id-', '')) : null;
-        const join = paragraphDiv.querySelector('.join')?.innerText.trim() || "";
+        // group_id は文字列として扱う（数値にパースしない）
+        const groupId = groupClass ? groupClass.replace('group-id-', '') : undefined;
+        // join は数値として扱う（空文字やNaNの場合は 0 とする）
+        const joinStr = paragraphDiv.querySelector('.join')?.innerText.trim() || "0";
+        const join = parseInt(joinStr, 10);
+        const finalJoin = isNaN(join) ? 0 : join; // パース失敗時は 0
 
-        // 書き込み後fetchしないため、クライアント側のデータも更新
-        // 更新しないとページ遷移後に情報が巻き戻って見える
-        paragraphMap[pId].order = i + 1; // 1-based index
-        paragraphMap[pId].block_tag = blockTag;
-        paragraphMap[pId].group_id = groupId;
-        paragraphMap[pId].join = join;
+        // クライアント側の bookData.paragraphs (辞書) を直接更新
+        if (bookData.paragraphs[pIdStr]) {
+            bookData.paragraphs[pIdStr].order = i + 1; // 1-based index
+            bookData.paragraphs[pIdStr].block_tag = blockTag;
+            bookData.paragraphs[pIdStr].group_id = groupId; // 文字列またはundefined
+            bookData.paragraphs[pIdStr].join = finalJoin; // 数値
+        } else {
+            console.warn(`saveOrder: Paragraph data not found for ID ${pIdStr} in bookData.paragraphs`);
+        }
 
-        updates.push({
-            id: parseInt(pId),
-            order: i+1,
+        // 送信用辞書にデータを追加
+        updatesDict[pIdStr] = {
+            // id はキーに含まれるので不要
+            order: i + 1,
             block_tag: blockTag,
-            group_id: parseInt(groupId),
-            join: parseInt(join)
-        });
+            group_id: groupId, // 文字列またはundefined
+            join: finalJoin // 数値
+        };
     }
 
-    //updatesが空でない場合のみ送信
-    if (updates.length === 0) return;
-    updateParagraphs(updates);
+    // updatesDict が空でない場合のみ送信
+    if (Object.keys(updatesDict).length === 0) {
+        console.log("saveOrder: No changes detected.");
+        return;
+    }
+    console.log("saveOrder: Sending updates:", updatesDict);
+    updateParagraphs(updatesDict); // 辞書を渡す
+    isPageEdited = false; // 保存したので編集フラグをリセット
 }
 
 function exportHtml() {
@@ -280,4 +296,37 @@ function updateParagraphs(updates, title = null) {
         console.error("パラグラフ更新中にエラーが発生しました:", error);
         alert("パラグラフ更新中にエラーが発生しました");
     });
+}
+
+function transParagraph(paragraph, divSrc) {
+    fetch('/api/translate', {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ text: paragraph.src_replaced })
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log("翻訳結果:", data.translated_text);
+            if (data.status === "ok") {
+                paragraph.trans_auto = data.translated_text;
+                paragraph.trans_text = data.translated_text;
+                paragraph.trans_status = "auto";
+                divSrc.querySelector('.trans-auto').innerHTML = paragraph.trans_auto;
+                divSrc.querySelector('.trans-text').innerHTML = paragraph.trans_text;
+                let autoRadio = divSrc.querySelector(`input[name='status-${paragraph.id}'][value='auto']`);
+                if (autoRadio) { autoRadio.checked = true; }
+            } else {
+                console.error("パラグラフ更新エラー:", data.message);
+                alert("パラグラフ更新エラー: " + data.message);
+            }
+        })
+        .catch(
+            // ユーザーにポップアップでエラーを通知
+            error => {
+                console.error('Error:', error);
+                alert('翻訳中にエラーが発生しました。詳細はコンソールを確認してください。');
+            }
+        );
 }
