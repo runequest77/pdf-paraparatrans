@@ -239,13 +239,12 @@ async function saveOrder() {
     }
 
     // updatesDict が空でない場合のみ送信
-    if (Object.keys(updatesDict).length === 0) {
-        console.log("saveOrder: No changes detected.");
-        return; // Promise<void> を返す
-    }
-    console.log("saveOrder: Sending updates:", updatesDict);
+    // if (Object.keys(updatesDict).length === 0) {
+    //     console.log("saveOrder: No changes detected.");
+    //     return; // Promise<void> を返す
+    // }
+    console.log("saveOrder: Sending updates:", Object.keys(updatesDict).length);
     await updateParagraphs(updatesDict); // updateParagraphsもasyncなのでawait
-    isPageEdited = false; // 保存したので編集フラグをリセット
 }
 
 async function exportHtml() {
@@ -287,6 +286,7 @@ async function updateParagraphs(updates, title = null) {
         });
         const data = await response.json();
         if (data.status === "ok") {
+            isPageEdited = false;
             console.log("パラグラフ更新が成功しました");
         } else {
             console.error("パラグラフ更新エラー:", data.message);
@@ -328,3 +328,29 @@ async function transParagraph(paragraph, divSrc) {
     }
 }
 
+async function updateBookInfo() {
+    try {
+        const payload = {
+            title: document.getElementById('titleInput').value,
+            page_count: bookData.page_count, // ページ数を追加
+            trans_status_counts: bookData.trans_status_counts // 翻訳ステータスカウントを追加
+        };        
+        const response = await fetch(`/api/update_book_info/${encodeURIComponent(pdfName)}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+        if (data.status === "ok") {
+            console.log("文書情報が正常に更新されました。");
+        } else {
+            console.error("文書情報更新エラー:", data.message);
+            alert("文書情報更新エラー: " + data.message);
+        }
+    } catch (error) {
+        console.error("文書情報更新中にエラーが発生しました:", error);
+        alert("文書情報更新中にエラーが発生しました。");
+    }
+}

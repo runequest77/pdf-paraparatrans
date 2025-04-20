@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 再描画ボタン（現在は非表示）
     document.getElementById('renderButton').addEventListener('click', renderParagraphs);
     // 構成保存
-    document.getElementById('saveOrderButton').addEventListener('click', saveOrder);
+    document.getElementById('saveOrderButton').addEventListener('click', saveForce);
     // ページ翻訳
     document.getElementById('pageTransButton').addEventListener('click', transPage);
 
@@ -281,3 +281,10 @@ function initResizers() {
         setTimeout(fitToWidth, 100);
     }
 }
+
+async function saveForce() {
+    isPageEdited = true;
+    saveOrder();
+    updateBookInfo();
+}
+

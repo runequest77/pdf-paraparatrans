@@ -524,6 +524,51 @@ def dict_trans_api(pdf_name):
         return jsonify({"status": "error", "message": f"辞書翻訳エラー: {str(e)}"}), 500
     return jsonify({"status": "ok", "message": "辞書翻訳完了"}), 200
 
+@app.route("/api/update_book_info/<pdf_name>", methods=["POST"])
+def update_book_info_api(pdf_name):
+    settings_path = os.path.join(BASE_FOLDER, "paraparatrans.settings.json")
+    
+    # settingsファイルが存在しない場合はエラーを返す
+    if not os.path.exists(settings_path):
+        return jsonify({"status": "error", "message": "settingsファイルが存在しません"}), 404
+
+    # リクエストからデータを取得
+    data = request.get_json()
+    new_title = data.get("title")
+    new_page_count = data.get("page_count")
+    new_trans_status_counts = data.get("trans_status_counts")
+
+    if not new_title:
+        return jsonify({"status": "error", "message": "titleが指定されていません"}), 400
+
+    try:
+        # settingsファイルを読み込む
+        with open(settings_path, "r", encoding="utf-8") as f:
+            settings = json.load(f)
+
+        # 指定されたPDF名が存在するか確認
+        if pdf_name not in settings["files"]:
+            return jsonify({"status": "error", "message": f"{pdf_name}がsettingsに存在しません"}), 404
+
+        # タイトルを更新
+        settings["files"][pdf_name]["title"] = new_title
+
+        # ページ数を更新
+        if new_page_count is not None:
+            settings["files"][pdf_name]["page_count"] = new_page_count
+
+        # 翻訳ステータスカウントを更新
+        if new_trans_status_counts is not None:
+            settings["files"][pdf_name]["trans_status_counts"] = new_trans_status_counts
+
+        # 更新内容をファイルに書き込む
+        with open(settings_path, "w", encoding="utf-8") as f:
+            json.dump(settings, f, ensure_ascii=False, indent=2)
+
+        return jsonify({"status": "ok", "message": "文書情報が更新されました"}), 200
+
+    except Exception as e:
+        return jsonify({"status": "error", "message": f"文書情報更新中にエラーが発生しました: {str(e)}"}), 500
 def recalc_trans_status_counts(book_data):
     counts = {"none": 0, "auto": 0, "draft": 0, "fixed": 0}
     paragraphs_dict = book_data.get("paragraphs", {}) # 辞書として取得
@@ -545,16 +590,16 @@ def update_paragraphs_api(pdf_name):
 
     data = request.get_json()
     print(f"Tset:2")
-
-    title = request.form.get("title")
     if not data or "title" not in data:
         return jsonify({"status": "error", "message": "title がありません"}), 400
-    print(f"Tset:3")
 
-    updates = data.get("updates")
-    if not updates:
-        return jsonify({"status": "error", "message": "updates がありません"}), 400
-    print(f"Tset:4")
+    title = data.get("title")
+    print(f"Tset:3:" + title)
+
+    # updates = data.get("updates")
+    # if not updates:
+    #     return jsonify({"status": "ok", "message": "パラグラフの更新はありません"}), 400
+    # print(f"Tset:4")
 
     try:
         # JSON読み込み
