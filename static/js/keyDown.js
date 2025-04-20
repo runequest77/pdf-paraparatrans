@@ -28,8 +28,12 @@ HotkeyMapper.map("Alt+5", () => updateBlockTagForSelected("h5"), { description: 
 HotkeyMapper.map("Alt+6", () => updateBlockTagForSelected("h6"), { description: "h6", useCapture : true });
 HotkeyMapper.map("Alt+h", () => updateBlockTagForSelected("header"), { description: "header", useCapture : true });
 HotkeyMapper.map("Alt+f", () => updateBlockTagForSelected("footer"), { description: "footer", useCapture : true });
+HotkeyMapper.map("Alt+L", () => updateBlockTagForSelected("li"), { description: "li", useCapture : true });
+HotkeyMapper.map("Alt+T", () => updateBlockTagForSelected("td"), { description: "td", useCapture : true });
 
 HotkeyMapper.map("Alt+.", toggleGroupSelectedParagraphs, { description: "グループ化/解除" });
+HotkeyMapper.map("Alt++", toggleJoinForSelected, { description: "結合/解除" });
+HotkeyMapper.map("Alt+;", toggleJoinForSelected, { description: "結合/解除" });
 
 HotkeyMapper.map("Alt+ArrowUp", () => moveSelectedByOffset(-1), { description: "選択範囲を上へ"});
 HotkeyMapper.map("Alt+ArrowDown", () => moveSelectedByOffset(1), { description: "選択範囲を下へ)"});

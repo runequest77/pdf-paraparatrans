@@ -306,18 +306,11 @@
     bottom: 8px;
 }
 
-.edit-box .join.hide {
-    position: absolute;
-    top: -10px; /* edit-boxの上に配置 */
-    left: 50%;
-    transform: translateX(-50%);
-    width: 16px;
-    height: 16px;
-    background-color: green;
-    border-radius: 50%;
-    z-index: 10;
+.edit-box .join {
+    display: none;
 }
-.edit-box .join.show {
+.edit-box .join.visible {
+    display: block;
     position: absolute;
     top: -10px; /* edit-boxの上に配置 */
     left: 50%;
@@ -327,15 +320,15 @@
     border-radius: 50%;
     z-index: 10;
 }
-.edit-box .join.show::before,
-.edit-box .join.show::after {
+.edit-box .join.visible::before,
+.edit-box .join.visible::after {
     content: "";
     position: absolute;
     background-color: green; /* プラス記号の色 */
     z-index: 11; /* プラス記号を前面に表示 */
 }
 /* +の横線 */
-.edit-box .join.show::before {
+.edit-box .join.visible::before {
     width: 30px;
     height:10px;
     top: 50%;
@@ -343,7 +336,7 @@
     transform: translate(-50%, -50%);
 }
 /* +の縦線 */
-.edit-box .join.show::after {
+.edit-box .join.visible::after {
     width: 10px;
     height: 30px;
     top: 50%;

@@ -642,12 +642,16 @@ def update_paragraphs_api(pdf_name):
             print(f"Tset:13 - Group ID updated/removed for ID: {p_id}")
 
             join = upd_value.get("join")
-            if join is not None and join >= 0:
+            if join is not None and join == 1:
+                print(f"Debug: Setting join to 1 for ID: {p_id}")
                 p["join"] = join
             elif "join" in p:
+                print(f"Debug: Deleting join for ID: {p_id}")
                 del p["join"]  # joinを削除
-            print(f"Tset:14 - Join updated/removed for ID: {p_id}")
+            else:
+                print(f"Debug: No changes to join for ID: {p_id}")
 
+            print(f"Tset:14 - Join updated/removed for ID: {p_id}")
 
         updated_ids = set()
         updates_dict = data.get("updates", {}) # updates を辞書として取得

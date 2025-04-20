@@ -204,37 +204,30 @@ async function saveOrder() {
 
     // ページ内のパラグラフをループして、順序を取得
     for (let i = 0; i < children.length; i++) {
-        const paragraphDiv = children[i];
-        const idElem = paragraphDiv.querySelector('.paragraph-id');
+        const divP = children[i];
+        const idElem = divP.querySelector('.paragraph-id');
         if (!idElem) continue;
 
-        const pIdStr = idElem.innerText.trim(); // IDは文字列キーとして扱う
-        const blockTag = paragraphDiv.querySelector('.block-tag')?.innerText.trim() || "p"; // デフォルトを 'p' に
-        const groupClass = Array.from(paragraphDiv.classList).find(cls => cls.startsWith('group-id-'));
+        const id = idElem.innerText.trim();
+        const groupClass = Array.from(divP.classList).find(cls => cls.startsWith('group-id-'));
         // group_id は文字列として扱う（数値にパースしない）
         const groupId = groupClass ? groupClass.replace('group-id-', '') : undefined;
-        // join は数値として扱う（空文字やNaNの場合は 0 とする）
-        const joinStr = paragraphDiv.querySelector('.join')?.innerText.trim() || "0";
-        const join = parseInt(joinStr, 10);
-        const finalJoin = isNaN(join) ? 0 : join; // パース失敗時は 0
 
-        // クライアント側の bookData.paragraphs (辞書) を直接更新
-        if (bookData.paragraphs[pIdStr]) {
-            bookData.paragraphs[pIdStr].order = i + 1; // 1-based index
-            bookData.paragraphs[pIdStr].block_tag = blockTag;
-            bookData.paragraphs[pIdStr].group_id = groupId; // 文字列またはundefined
-            bookData.paragraphs[pIdStr].join = finalJoin; // 数値
+        // 本当はpを更新してるのでorder以外の更新は不要
+        if (bookData.paragraphs[id]) {
+            bookData.paragraphs[id].order = i + 1; // 1-based index
+            // bookData.paragraphs[id].block_tag = blockTag;
+            bookData.paragraphs[id].group_id = groupId;
         } else {
-            console.warn(`saveOrder: Paragraph data not found for ID ${pIdStr} in bookData.paragraphs`);
+            console.warn(`saveOrder: Paragraph data not found for ID ${id} in bookData.paragraphs`);
         }
 
         // 送信用辞書にデータを追加
-        updatesDict[pIdStr] = {
-            // id はキーに含まれるので不要
-            order: i + 1,
-            block_tag: blockTag,
-            group_id: groupId, // 文字列またはundefined
-            join: finalJoin // 数値
+        updatesDict[id] = {
+            order: bookData.paragraphs[id].order,
+            block_tag: bookData.paragraphs[id].block_tag,
+            group_id: bookData.paragraphs[id].group_id,
+            join: bookData.paragraphs[id].join
         };
     }
 

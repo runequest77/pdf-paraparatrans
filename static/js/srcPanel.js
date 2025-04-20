@@ -19,40 +19,72 @@ function onTransButtonClick(event, paragraph, divSrc) {
     transParagraph(paragraph, divSrc);
 }
 
-
 // 編集ボックスの保存
-async function onSaveButtonClick(event, paragraph, divSrc, srcText, transText, blockTagSelect, blockTagSpan) { // async を追加
+// async function onSaveButtonClick(event, paragraph, divSrc, srcText, transText, blockTagSelect, blockTagSpan) {
+//     divSrc.classList.remove('editing');
+//     srcText.contentEditable = false;
+//     transText.contentEditable = false;
+//     divSrc.querySelector('.edit-ui').style.display = 'none';
+//     // divSrc.querySelector('.edit-button').style.visibility = 'visible';
+//     $("#srcParagraphs").sortable("enable");
+//     divSrc.style.cursor = 'move';
+
+//     let selectedStatus = divSrc.querySelector(`input[name='status-${paragraph.id}']:checked`);
+//     if (selectedStatus) {
+//         paragraph.trans_status = selectedStatus.value;
+//     }
+//     const prevIdInput = divSrc.querySelector('.prev-id-input');
+
+//     paragraph.src_text = srcText.innerHTML;
+//     paragraph.trans_text = transText.innerHTML;
+//     paragraph.block_tag = blockTagSelect.value;
+//     blockTagSpan.innerText = paragraph.block_tag;
+
+//     // パラグラフの背景をblock_tagに基づいて更新
+//     let blockTagClass = `block-tag-${paragraph.block_tag}`;
+//     // statusクラスは edit-box に適用されるため、ここでは不要かも。ただし、既存のロジックを維持。
+//     // divSrc.className = divSrc.className.replace(/block-tag-\S+/g, '').trim() + ` ${blockTagClass}`; // block-tagクラスのみ更新
+
+//     // サーバー保存とクライアント更新を統合
+//     await saveParagraphData(paragraph); // await を追加
+//     updateEditUiBackground(divSrc, paragraph.trans_status);
+// }
+
+async function onSaveButtonClick(event, paragraph, divSrc, srcText, transText, blockTagSelect, blockTagSpan) {
     divSrc.classList.remove('editing');
     srcText.contentEditable = false;
     transText.contentEditable = false;
     divSrc.querySelector('.edit-ui').style.display = 'none';
-    divSrc.querySelector('.edit-button').style.visibility = 'visible'; // visibilityを直接操作
     $("#srcParagraphs").sortable("enable");
     divSrc.style.cursor = 'move';
 
-    let selectedStatus = divSrc.querySelector(`input[name='status-${paragraph.id}']:checked`);
-    if (selectedStatus) {
-        paragraph.trans_status = selectedStatus.value;
-    }
-    const prevIdInput = divSrc.querySelector('.prev-id-input');
-    if (prevIdInput) {
-        const parsed = parseInt(prevIdInput.value, 10);
-        paragraph.prev_id = isNaN(parsed) ? undefined : parsed;
+    const id = paragraph.id.toString();
+    const selectedStatus = divSrc.querySelector(`input[name='status-${id}']:checked`);
+
+    // bookData.paragraphsを直接更新
+    if (bookData.paragraphs[id]) {
+        bookData.paragraphs[id].src_text = srcText.innerHTML;
+        bookData.paragraphs[id].trans_text = transText.innerHTML;
+        bookData.paragraphs[id].block_tag = blockTagSelect.value;
+        bookData.paragraphs[id].trans_status = selectedStatus ? selectedStatus.value : bookData.paragraphs[id].trans_status;
+    } else {
+        console.warn(`Paragraph with ID ${id} not found in bookData.paragraphs.`);
     }
 
-    paragraph.src_text = srcText.innerHTML;
-    paragraph.trans_text = transText.innerHTML;
-    paragraph.block_tag = blockTagSelect.value;
-    blockTagSpan.innerText = paragraph.block_tag;
+    blockTagSpan.innerText = blockTagSelect.value;
 
     // パラグラフの背景をblock_tagに基づいて更新
-    let blockTagClass = `block-tag-${paragraph.block_tag}`;
-    // statusクラスは edit-box に適用されるため、ここでは不要かも。ただし、既存のロジックを維持。
-    divSrc.className = divSrc.className.replace(/block-tag-\S+/g, '').trim() + ` ${blockTagClass}`; // block-tagクラスのみ更新
+    const blockTagClass = `block-tag-${blockTagSelect.value}`;
+    divSrc.className = divSrc.className.replace(/block-tag-\S+/g, '').trim() + ` ${blockTagClass}`;
 
-    // サーバー保存とクライアント更新を統合
-    await saveParagraphData(paragraph); // await を追加
-    updateEditUiBackground(divSrc, paragraph.trans_status); // saveParagraphData完了後に実行される
+    // サーバー保存
+    try {
+        await saveParagraphData(bookData.paragraphs[id]);
+        updateEditUiBackground(divSrc, bookData.paragraphs[id].trans_status);
+    } catch (error) {
+        console.error('Error saving paragraph:', error);
+        alert('データ保存中にエラーが発生しました。詳細はコンソールを確認してください。');
+    }
 }
 
 function onEditCancelClick(event, paragraph, divSrc, srcText, transText, blockTagSpan) {
@@ -87,40 +119,35 @@ function renderParagraphs() {
 
     for (let i = 0; i < currentPageParagraphs.length; i++) {
         let p = currentPageParagraphs[i];
-        // if (p.page !== currentPage) continue; // フィルタリング済みなので不要
 
         let divSrc = document.createElement("div");
         let blockTagClass = `block-tag-${p.block_tag}`;
-        // prev_idがnullか自分自身でなければ、+マーカーを表示
-        let joinClass = (p.prev_id || p.id) !== p.id ? 'show' : 'hide';
+        let joinClass = p.join === 1 ? 'visible' : ''; // 修正: visible クラスのみ使用
 
         let statusClass = `status-${p.trans_status}`;
-        divSrc.className = `paragraph-box ${blockTagClass}`; // statusClass は edit-box に適用されるためここでは不要かも
+        divSrc.className = `paragraph-box ${blockTagClass}`;
 
         // グループ情報に基づいてクラスを付与
         if (p.group_id) {
-            // ソートされた現在のページリストで前後の要素を確認
             const prev = currentPageParagraphs[i - 1];
             const next = currentPageParagraphs[i + 1];
-            // 前後の要素が同じグループIDを持つかチェック (ページチェックは不要)
             const sameGroupPrev = prev?.group_id === p.group_id;
             const sameGroupNext = next?.group_id === p.group_id;
 
-            if (!sameGroupPrev && sameGroupNext) { // グループ開始
+            if (!sameGroupPrev && sameGroupNext) {
                 divSrc.classList.add('group-start');
             } else if (sameGroupPrev && sameGroupNext) {
                 divSrc.classList.add('group-middle');
             } else if (sameGroupPrev && !sameGroupNext) {
                 divSrc.classList.add('group-end');
             } else {
-                // 単体グループ（前後なし） → start + end
                 divSrc.classList.add('group-start', 'group-end');
             }
 
             divSrc.classList.add(`group-id-${p.group_id}`);
         }
 
-        divSrc.id = `paragraph-${p.id}`; // パラグラフIDをIDとして設定
+        divSrc.id = `paragraph-${p.id}`;
         divSrc.innerHTML = `
             <div class='src-html'>${p.src_html}</div>
             <div class='src-text' data-original="${p.src_text}">${p.src_text}</div>
@@ -128,7 +155,7 @@ function renderParagraphs() {
             <div class='trans-auto'>${p.trans_auto}</div>
             <div class='trans-text' data-original="${p.trans_text}">${p.trans_text}</div>
             <div class='edit-box ${statusClass}'>
-                <div class='join ${joinClass}'></div>
+                <div class='join ${joinClass}'></div> <!-- 修正: visible クラスを適用 -->
                 <button class='edit-button'>...</button>
                 <div class="drag-handle">
                     <span class='paragraph-id'>${p.id}</span>
@@ -150,9 +177,6 @@ function renderParagraphs() {
                             <option value="header">header</option>
                             <option value="footer">footer</option>
                         </select>
-                    </label>
-                    <label>連結ID:
-                        <input type="number" class="prev-id-input" value="${p.prev_id ?? ''}" />
                     </label>
                     <button class='trans-button'>自動翻訳</button>
                     <label><input type='radio' name='status-${p.id}' value='none'> 未翻訳</label>
@@ -179,19 +203,11 @@ function renderParagraphs() {
         if (statusRadio) { statusRadio.checked = true; }
 
         editButton.addEventListener('click', () => toggleEditUI(divSrc));
-        // editButton.addEventListener('click', (event) => onEditButtonClick(event));
         transButton.addEventListener('click', (e) => onTransButtonClick(e, p, divSrc));
         saveButton.addEventListener('click', (e) => onSaveButtonClick(e, p, divSrc, srcText, transText, blockTagSelect, blockTagSpan));
-        // editCancel.addEventListener('click', (e) => onEditCancelClick(e, p, divSrc, srcText, transText, blockTagSpan));
-        document.addEventListener('keydown', (e) => onKeyDown(e, divSrc, p, srcText, transText, blockTagSpan));
-
-        setCurrentParagraph(0);
-        // ラジオボタンの変更イベントを登録
-        addRadioChangeListener(divSrc, p);
     }
-    window.autoToggle.dispatchAll();
 
-    // restoreCheckboxStates();
+    window.autoToggle.dispatchAll();
     srcContainer.style.display = 'block'; // 再表示
 }
 
@@ -230,21 +246,11 @@ function toggleTrans(event) {
     });
 }
 
-// 編集パラグラフによる更新をParagraphs配列のマッチするidにセット
-function updateParagraphData(paragraphs, updatedParagraph) {
-    for (let i = 0; i < paragraphs.length; i++) {
-        if (paragraphs[i].id === updatedParagraph.id) {
-            paragraphs[i] = updatedParagraph;
-            break;
-        }
-    }
-}
-
 // 編集パラグラフのデータをJSONに保存
 /** @function saveParagraphData */
-async function saveParagraphData(paragraph) { // async を追加
+async function saveParagraphData(paragraph) {
     try {
-        const response = await fetch(`/api/update_paragraph/${encodeURIComponent(pdfName)}`, { // await を追加
+        const response = await fetch(`/api/update_paragraph/${encodeURIComponent(pdfName)}`, {
             method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -270,7 +276,6 @@ async function saveParagraphData(paragraph) { // async を追加
             } else {
                  console.warn(`saveParagraphData: Paragraph with ID ${paragraph.id} not found in bookData.paragraphs during update.`);
             }
-            // updateParagraphData(bookData.paragraphs, paragraph); // この関数は不要になるかも
             updateTransStatusCounts(data.trans_status_counts); // サーバーからの最新カウントを使用
         } else {
             console.error('Error:', data.message);
@@ -629,6 +634,33 @@ function toggleGroupSelectedParagraphs() {
 
 }
 
+/** @function toggleJoinForSelected
+ * 選択されたパラグラフに対して join クラスをトグルする
+ */
+function toggleJoinForSelected() {
+    const selectedParagraphs = getSelectedParagraphsInOrder(); // 選択されたパラグラフを取得
+    if (selectedParagraphs.length === 0) {
+        console.warn("選択されたパラグラフがありません。");
+        return;
+    }
+
+    selectedParagraphs.forEach(divP => {
+        const id = divP.id.replace('paragraph-', '');
+        const p = bookData.paragraphs[id];
+        const joinElement = divP.querySelector('.join');
+        if (!joinElement) {
+            console.warn(`パラグラフ ${divP.id} に join 要素が見つかりませんでした。`);
+            return;
+        }
+
+        const isVisible = joinElement.classList.toggle('visible');
+        p.join = isVisible ? 1 : 0; // データモデルを更新
+    });
+
+    isPageEdited = true; // ページが編集されたことを示すフラグを立てる
+}
+
+
 function toggleEditUI(divSrc) {
     const editUI = divSrc.querySelector('.edit-ui');
     if (!editUI) return;
@@ -676,174 +708,6 @@ function cancelEditUI(divSrc) {
     $("#srcParagraphs").sortable("enable");
     divSrc.style.cursor = 'move';
 }
-
-
-/**
- * paragraphs: JSON内のparagraphs配列（配列参照を保持）
- * prev_id: 接続元のパラグラフのID
- * next_id: 接続先のパラグラフのID (数値型と想定)
- */
-function linkParagraphs(paragraphsDict, prev_id, next_id) {
-    const prevIdStr = prev_id.toString();
-    const nextIdStr = next_id.toString();
-    const prev = paragraphsDict[prevIdStr]; // 辞書アクセス
-    const next = paragraphsDict[nextIdStr]; // 辞書アクセス
-  
-    if (!prev || !next) {
-      console.warn(`linkParagraphs: 片方のパラグラフが見つかりません: prev_id=${prev_id}, next_id=${next_id}`);
-      return;
-    }
-  
-    prev.next_id = next_id;
-    next.prev_id = prev_id;
-
-    isPageEdited = true; // ページが編集されたことを示すフラグを立てる
-}
-
-function connectToPrev(paragraph) {
-    // 全パラグラフをページと順序でソート (辞書の値から配列を作成)
-    const allSorted = Object.values(bookData.paragraphs).sort((a, b) => a.page === b.page ? a.order - b.order : a.page - b.page);
-    const srcContainer = document.getElementById("srcParagraphs");
-    // 現在表示されている（=現在のページ）パラグラフのDOMリスト
-    const containerList = Array.from(srcContainer.querySelectorAll(".paragraph-box"));
-    // DOMリスト内での現在のパラグラフのインデックス
-    const currentIndexInView = containerList.findIndex(div => div.id === `paragraph-${paragraph.id}`);
-
-    if (currentIndexInView === -1) {
-        console.warn(`connectToPrev: Current paragraph DOM element not found for ID ${paragraph.id}`);
-        return;
-    }
-
-    let prevParagraph = null;
-    if (currentIndexInView === 0) {
-        // 表示されている最初の要素の場合、ソート済み全リストから前の要素を探す
-        const indexInAll = allSorted.findIndex(p => p.id === paragraph.id);
-        if (indexInAll > 0) {
-            prevParagraph = allSorted[indexInAll - 1];
-        }
-    } else {
-        // 表示されているリスト内の前の要素のIDを取得
-        const prevDiv = containerList[currentIndexInView - 1];
-        const prevIdStr = prevDiv.id.replace("paragraph-", "");
-        prevParagraph = bookData.paragraphs[prevIdStr]; // 辞書アクセス
-    }
-
-    if (prevParagraph) {
-        console.log(`Connecting ${paragraph.id} to previous ${prevParagraph.id}`);
-        paragraph.prev_id = prevParagraph.id;
-        prevParagraph.next_id = paragraph.id;
-    }
-}
-
-function connectToNext(paragraph) {
-    // 全パラグラフをページと順序でソート (辞書の値から配列を作成)
-    const allSorted = Object.values(bookData.paragraphs).sort((a, b) => a.page === b.page ? a.order - b.order : a.page - b.page);
-    const srcContainer = document.getElementById("srcParagraphs");
-    // 現在表示されている（=現在のページ）パラグラフのDOMリスト
-    const containerList = Array.from(srcContainer.querySelectorAll(".paragraph-box"));
-    // DOMリスト内での現在のパラグラフのインデックス
-    const currentIndexInView = containerList.findIndex(div => div.id === `paragraph-${paragraph.id}`);
-
-    if (currentIndexInView === -1) {
-        console.warn(`connectToNext: Current paragraph DOM element not found for ID ${paragraph.id}`);
-        return;
-    }
-
-    let nextParagraph = null;
-    if (currentIndexInView === containerList.length - 1) {
-        // 表示されている最後の要素の場合、ソート済み全リストから次の要素を探す
-        const indexInAll = allSorted.findIndex(p => p.id === paragraph.id);
-        if (indexInAll >= 0 && indexInAll < allSorted.length - 1) {
-            nextParagraph = allSorted[indexInAll + 1];
-        }
-    } else {
-        // 表示されているリスト内の次の要素のIDを取得
-        const nextDiv = containerList[currentIndexInView + 1];
-        const nextIdStr = nextDiv.id.replace("paragraph-", "");
-        nextParagraph = bookData.paragraphs[nextIdStr]; // 辞書アクセス
-    }
-
-    if (nextParagraph) {
-        console.log(`Connecting ${paragraph.id} to next ${nextParagraph.id}`);
-        paragraph.next_id = nextParagraph.id;
-        nextParagraph.prev_id = paragraph.id;
-    }
-}
-  
-function togglePrevConnectionRange(fromIndex, toIndex) {
-    // 現在表示されているDOM要素のリストとそのID（文字列）のリストを取得
-    const srcDivs = Array.from(document.getElementById("srcParagraphs").querySelectorAll(".paragraph-box"));
-    const srcIdStrs = srcDivs.map(div => div.id.replace("paragraph-", ""));
-    const [start, end] = [fromIndex, toIndex].sort((a, b) => a - b); // from/toIndex はDOMリストのインデックス
-
-    // 全パラグラフをソートしたリスト（ページを跨いだ接続のため）
-    const allSorted = Object.values(bookData.paragraphs).sort((a, b) => a.page === b.page ? a.order - b.order : a.page - b.page);
-
-    for (let i = start; i <= end; i++) {
-        const currentDiv = srcDivs[i];
-        const currentIdStr = srcIdStrs[i];
-        if (!currentDiv || !currentIdStr) continue;
-
-        const paragraph = bookData.paragraphs[currentIdStr]; // 辞書アクセス
-        if (!paragraph) {
-            console.warn(`togglePrevConnectionRange: Paragraph data not found for ID ${currentIdStr}`);
-            continue;
-        }
-
-        let prevParagraph = null;
-
-        if (i > 0 && srcIdStrs[i - 1]) {
-            // 表示リスト内の前の要素
-            const prevIdStr = srcIdStrs[i - 1];
-            prevParagraph = bookData.paragraphs[prevIdStr]; // 辞書アクセス
-        } else {
-            // 表示リストの先頭の場合、全ソートリストから探す
-            const indexInAll = allSorted.findIndex(p => p.id.toString() === currentIdStr);
-            if (indexInAll > 0) {
-                prevParagraph = allSorted[indexInAll - 1]; // ソート済みリストから前の要素を取得
-            }
-        }
-
-        if (!prevParagraph) continue;
-
-        if (paragraph.prev_id === prevParagraph.id) {
-            paragraph.prev_id = undefined;
-            prevParagraph.next_id = undefined;
-        } else {
-            paragraph.prev_id = prevParagraph.id;
-            prevParagraph.next_id = paragraph.id;
-        }
-
-        // UI内のprev-id-inputを更新
-        const input = currentDiv.querySelector('.prev-id-input');
-        if (input) input.value = paragraph.prev_id ?? '';
-    }
-}
-
-function togglePrevConnectionRange(fromIndex, toIndex) {
-    const [start, end] = [fromIndex, toIndex].sort((a, b) => a - b);
-    for (let i = start; i <= end; i++) {
-        togglePrevConnectionByIndex(i);
-    }
-}
-
-function connectSelectedParagraphsByPrevId() {
-    const srcDivs = Array.from(document.getElementById("srcParagraphs").querySelectorAll('.paragraph-box'));
-    const selectedDivs = srcDivs.filter(div => div.classList.contains('selected'));
-
-    if (selectedDivs.length < 1) return;
-
-    const indexes = selectedDivs.map(div => srcDivs.indexOf(div));
-    const fromIndex = Math.min(...indexes);
-    const toIndex = Math.max(...indexes);
-
-    togglePrevConnectionRange(fromIndex, toIndex);
-}
-
-function togglePrevConnectionCurrent() {
-    togglePrevConnectionByIndex(currentParagraphIndex);
-}
-
 
 /** @function focusNearestHeading */
 function focusNearestHeading(direction) {
