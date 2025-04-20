@@ -17,33 +17,56 @@ def parapara_init(data_folder):
     # 2. 渡されたフォルダのpdfファイルのリストを取得。
     pdf_files = glob(os.path.join(data_folder, "*.pdf"))
 
-    # 3. リストをループしてpdfと同名のjsonをdataに読み込み
+    # 
+
+    # 3. リストをループしてpdfと同名のjsonをdataに読み込み、またはデフォルト値を設定
     for pdf_file in pdf_files:
-        json_file = os.path.splitext(pdf_file)[0] + ".json"
-        if not os.path.exists(json_file):
-            continue
-
-        with open(json_file, "r", encoding="utf-8") as f:
-            data = json.load(f)
-
-        # 4. data["version"]が1.0.0でなければ以降の処理はスキップ
-        if data.get("version") != "1.0.0":
-            continue
-
-        # 5. ファイル名をキーとするfiles要素に各jsonから項目をセット
         file_key = os.path.splitext(os.path.basename(pdf_file))[0]
+        json_file = os.path.splitext(pdf_file)[0] + ".json"
 
-        settings["files"][file_key] = {
-            "version": data.get("version", ""),
-            "src_filename": data.get("src_filename", ""),
-            "title": data.get("title", ""),
-            "page_count": data.get("page_count", 0),
-            "trans_status_counts": data.get("trans_status_counts", {}),
-        }
+        if os.path.exists(json_file):
+            try:
+                with open(json_file, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+
+                # 4. data["version"]が1.0.0でなければ以降の処理はスキップ
+                if data.get("version") != "1.0.0":
+                    # JSONファイルはあるがバージョンが異なる場合はスキップ
+                    continue
+
+                # 5. ファイル名をキーとするfiles要素に各jsonから項目をセット
+                settings["files"][file_key] = {
+                    "version": data.get("version", ""),
+                    "src_filename": data.get("src_filename", ""),
+                    "title": data.get("title", ""),
+                    "page_count": data.get("page_count", 0),
+                    "trans_status_counts": data.get("trans_status_counts", {}),
+                }
+            except json.JSONDecodeError:
+                # JSONファイルが破損している場合などはデフォルト値を設定
+                print(f"Warning: Could not decode JSON file: {json_file}. Using default values.")
+                settings["files"][file_key] = {
+                    "version": "",
+                    "src_filename": file_key,
+                    "title": file_key,
+                    "page_count": 0,
+                    "trans_status_counts": {},
+                }
+        else:
+            # JSONファイルが存在しない場合、デフォルト値を設定
+            settings["files"][file_key] = {
+                "version": "",
+                "src_filename": file_key,
+                "title": file_key,
+                "page_count": 0,
+                "trans_status_counts": {},
+            }
 
     # 6. paraparatrans.settings.jsonに出力
     with open(settings_path, "w", encoding="utf-8") as f:
         json.dump(settings, f, ensure_ascii=False, indent=4)
+    
+    return settings
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
@@ -52,4 +75,3 @@ if __name__ == "__main__":
 
     data_folder = sys.argv[1]
     parapara_init(data_folder)
-

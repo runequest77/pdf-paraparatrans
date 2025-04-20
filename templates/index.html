@@ -10,6 +10,7 @@
     <div style="display: flex; align-items: center;">
         <img src="{{ url_for('static', filename='paraparatrans.svg') }}" alt="Icon" style="height: 50px; margin-right: 10px;">
         <h1>PDF ParaParaTrans</h1>
+        <button onclick="refreshBookList()" >最新の状態に更新</button>
     </div>
     <form method="GET">
       <input type="text" name="filter" placeholder="タイトル/ファイル名でフィルタ" value="{{ filter_text|e }}">
@@ -20,17 +21,29 @@
             <tr><th>Id</th><th>タイトル</th><th>ファイル名</th><th>自動</th><th>確定</th><th>更新日</th></tr>
         </thead>
         <tbody>
-        {% for idx, item in enumerate(pdf_list) %}
+        {% for idx, (pdf_name, item) in enumerate(pdf_dict.items()) %}
             <tr>
               <td>{{ idx+1 }}</td>
               <td>{{ item['title'] }}</td>
-              <td><a href="{{ url_for('detail', pdf_name=item['pdf_name']) }}">{{ item['pdf_name'] }}</a></td>
-              <td>{{ item['auto_count'] }}</td>
-              <td>{{ item['fix_count'] }}</td>
+              <td><a href="{{ url_for('detail', pdf_name=pdf_name) }}">{{ pdf_name }}</a></td>
+              <td>{{ item.get('auto_count', 0) }}</td>
+              <td>{{ item.get('fix_count', 0) }}</td>
               <td>{{ item['updated'] }}</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
+    <script>
+        async function refreshBookList() {
+            fetch("/", { method: "POST" })
+            .then(response => {
+              if (response.ok) {
+                window.location.reload(); // ページをリロードして更新内容を反映
+              } else {
+                console.error("リストリフレッシュに失敗しました");
+              }
+            });    
+        }
+    </script>
 </body>
 </html>

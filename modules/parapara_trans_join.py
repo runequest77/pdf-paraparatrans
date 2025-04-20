@@ -6,25 +6,25 @@ def update_next_ids_from_prev(json_path):
     with open(json_path, encoding="utf-8") as f:
         data = json.load(f)
 
-    paragraphs = data.get("paragraphs", [])
-    id_map = {p["id"]: p for p in paragraphs}
+    paragraphs = data.get("paragraphs", {})
+    id_map = paragraphs  # paragraphsが辞書なのでそのまま利用
     changed = False
 
-    for p in paragraphs:
+    for para_id, p in paragraphs.items():  # 辞書としてループ
         prev_id = p.get("prev_id")
         if prev_id is not None and prev_id in id_map:
             prev_para = id_map[prev_id]
-            if prev_para.get("next_id") != p["id"]:
-                prev_para["next_id"] = p["id"]
+            if prev_para.get("next_id") != para_id:
+                prev_para["next_id"] = para_id
                 changed = True
 
-    for p in paragraphs:
+    for para_id, p in paragraphs.items():  # 辞書としてループ
         prev_id = p.get("prev_id")
         if prev_id is None:
             continue
         expected_next_id = id_map.get(prev_id, {}).get("next_id")
         if p.get("next_id") != expected_next_id:
-            p["next_id"] = expected_next_id if expected_next_id is not None else p["id"]
+            p["next_id"] = expected_next_id if expected_next_id is not None else para_id
             changed = True
 
     if changed:

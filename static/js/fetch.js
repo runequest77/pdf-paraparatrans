@@ -1,8 +1,11 @@
 async function fetchBookData() {
     try {
         let response = await fetch(`/api/book_data/${encodeURIComponent(pdfName)}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         bookData = await response.json();
-        
+
         document.getElementById("titleInput").value = bookData.title;
         document.getElementById("pageCount").innerText = bookData.page_count;
 
@@ -20,183 +23,181 @@ async function fetchBookData() {
         jumpToPage(currentPage);
     } catch (error) {
         console.error("Error fetching book data:", error);
+        alert("書籍データの取得中にエラーが発生しました。"); // ユーザーへの通知
     }
 }
 
 /** @function transPage */
-function transPage() {
-    saveOrder(); // 順序を保存してから翻訳
+async function transPage() {
+    await saveOrder(); // 順序を保存してから翻訳 (saveOrderもasyncにする必要あり)
     if (!confirm("現在のページを翻訳します。よろしいですか？")) return;
 
-    fetch(`/api/paraparatrans/${encodeURIComponent(pdfName)}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: '&start_page=' + encodeURIComponent(currentPage) +
-            '&end_page=' + encodeURIComponent(currentPage)
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === "ok") {
-                console.log('翻訳が成功しました。');
-            } else {
-                console.error('エラー:', data.message);
-                alert('翻訳エラー(response): ' + data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('翻訳中にエラー(catch)');
-        })
-        .finally(() => {
-            // 成功・失敗に関わらず必ず実行
-            fetchBookData();
+    try {
+        const response = await fetch(`/api/paraparatrans/${encodeURIComponent(pdfName)}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: '&start_page=' + encodeURIComponent(currentPage) +
+                '&end_page=' + encodeURIComponent(currentPage)
         });
+        const data = await response.json();
+        if (data.status === "ok") {
+            console.log('翻訳が成功しました。');
+        } else {
+            console.error('エラー:', data.message);
+            alert('翻訳エラー(response): ' + data.message);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('翻訳中にエラー(catch)');
+    } finally {
+        // 成功・失敗に関わらず必ず実行
+        await fetchBookData(); // fetchBookDataもasyncなのでawait
+    }
 }
 
-function transAllPages() {
+async function transAllPages() {
     const totalPages = bookData.page_count;
     if (!confirm(`全 ${totalPages} ページを翻訳します。よろしいですか？`)) return;
-    saveOrder();
+    await saveOrder(); // saveOrderもasyncにする必要あり
 
-    fetch(`/api/paraparatrans/${encodeURIComponent(pdfName)}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: '&start_page=' + encodeURIComponent(1) +
-            '&end_page=' + encodeURIComponent(totalPages)
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === "ok") {
-                console.log('翻訳が成功しました。');
-            } else {
-                console.error('エラー:', data.message);
-                alert('翻訳エラー(response): ' + data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('翻訳中にエラー(catch)');
-        })
-        .finally(() => {
-            // 成功・失敗に関わらず必ず実行
-            fetchBookData();
+    try {
+        const response = await fetch(`/api/paraparatrans/${encodeURIComponent(pdfName)}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: '&start_page=' + encodeURIComponent(1) +
+                '&end_page=' + encodeURIComponent(totalPages)
         });
+        const data = await response.json();
+        if (data.status === "ok") {
+            console.log('翻訳が成功しました。');
+        } else {
+            console.error('エラー:', data.message);
+            alert('翻訳エラー(response): ' + data.message);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('翻訳中にエラー(catch)');
+    } finally {
+        // 成功・失敗に関わらず必ず実行
+        await fetchBookData(); // fetchBookDataもasyncなのでawait
+    }
 }
 
-function extractParagraphs(){
+async function extractParagraphs(){
     if(!confirm("PDFを解析してJSONを新規生成します。よろしいですか？")) return;
     let form = new FormData();
-    fetch(`/api/extract_paragraphs/${encodeURIComponent(pdfName)}`, {
-        method: "POST",
-        body: form
-    }).then(r => r.json()).then(res => {
+    try {
+        const response = await fetch(`/api/extract_paragraphs/${encodeURIComponent(pdfName)}`, {
+            method: "POST",
+            body: form
+        });
+        const res = await response.json();
         if(res.status === "ok"){
             alert("パラグラフ抽出完了");
-            location.reload();
-            fetchBookData();
+            location.reload(); // リロード前にfetchBookDataを呼ぶ意味は薄い
+            // await fetchBookData(); // 必要ならリロード後に実行されるようにする
         } else {
             alert(res.message);
         }
-    });
-}  
+    } catch (error) {
+        console.error("extractParagraphs error:", error);
+        alert("パラグラフ抽出中にエラーが発生しました。");
+    }
+}
 
-function dictReplaceAll() {
-    fetch(`/api/dict_replace_all/${encodeURIComponent(pdfName)}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
+async function dictReplaceAll() {
+    try {
+        const response = await fetch(`/api/dict_replace_all/${encodeURIComponent(pdfName)}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        });
+        const data = await response.json();
         if (data.status === "ok") {
-            fetchBookData();
+            await fetchBookData(); // fetchBookDataもasyncなのでawait
             alert("全対訳置換が成功しました");
         } else {
             console.error("対訳置換エラー:", data.message);
             alert("対訳置換エラー: " + data.message);
         }
-    })
-    .catch(error => {
+    } catch (error) {
         console.error("dictReplaceAllエラー:", error);
         alert("dictReplaceAll エラー: " + error);
-    });
+    }
 }
 
-function autoTagging() {
-    fetch(`/api/auto_tagging/${encodeURIComponent(pdfName)}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
+async function autoTagging() {
+    try {
+        const response = await fetch(`/api/auto_tagging/${encodeURIComponent(pdfName)}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        });
+        const data = await response.json();
         if (data.status === "ok") {
             alert("自動タグ付けが成功しました");
-            // 必要に応じて、book_data の再取得などを実施
-            fetchBookData();
+            await fetchBookData(); // fetchBookDataもasyncなのでawait
         } else {
             alert("自動タグ付けエラー: " + data.message);
         }
-    })
-    .catch(error => {
+    } catch (error) {
         console.error("autoTagging error:", error);
         alert("自動タグ付け中にエラーが発生しました");
-    });
+    }
 }
 
-function dictCreate() {
-    fetch(`/api/dict_create/${encodeURIComponent(pdfName)}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
+async function dictCreate() {
+    try {
+        const response = await fetch(`/api/dict_create/${encodeURIComponent(pdfName)}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        });
+        const data = await response.json();
         if (data.status === "ok") {
             alert("辞書生成が成功しました");
         } else {
             alert("辞書生成エラー: " + data.message);
         }
-    })
-    .catch(error => {
-        console.error("autoTagging error:", error);
+    } catch (error) {
+        console.error("dictCreate error:", error); // エラーログのタイポ修正
         alert("辞書生成中にエラーが発生しました");
-    });
+    }
 }
 
-function dictTrans() {
-    fetch(`/api/dict_trans/${encodeURIComponent(pdfName)}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
+async function dictTrans() {
+    try {
+        const response = await fetch(`/api/dict_trans/${encodeURIComponent(pdfName)}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        });
+        const data = await response.json();
         if (data.status === "ok") {
             alert("辞書翻訳が成功しました");
         } else {
             alert("辞書翻訳エラー: " + data.message);
         }
-    })
-    .catch(error => {
-        console.error("autoTagging error:", error);
+    } catch (error) {
+        console.error("dictTrans error:", error); // エラーログのタイポ修正
         alert("辞書翻訳中にエラーが発生しました");
-    });
+    }
 }
 
 /** * @function updateTransStatusCounts
  * @param {Object} counts - 翻訳ステータスのカウントオブジェクト
  * ページ内順序再発行＆保存処理
  */
-function saveOrder() {
+// saveOrder は updateParagraphs を呼び出すので async にする
+async function saveOrder() {
     const container = document.getElementById('srcParagraphs');
     const children = container.children;
     const updatesDict = {}; // 配列ではなく辞書を作成
@@ -240,93 +241,90 @@ function saveOrder() {
     // updatesDict が空でない場合のみ送信
     if (Object.keys(updatesDict).length === 0) {
         console.log("saveOrder: No changes detected.");
-        return;
+        return; // Promise<void> を返す
     }
     console.log("saveOrder: Sending updates:", updatesDict);
-    updateParagraphs(updatesDict); // 辞書を渡す
+    await updateParagraphs(updatesDict); // updateParagraphsもasyncなのでawait
     isPageEdited = false; // 保存したので編集フラグをリセット
 }
 
-function exportHtml() {
-    saveOrder(); // 順序を保存してからHTMLをエクスポート
-    fetch(`/api/export_html/${encodeURIComponent(pdfName)}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: '' // 特に送信するデータがなければ空文字でOK
-    })
-    .then(response => response.json())
-    .then(data => {
+async function exportHtml() {
+    await saveOrder(); // saveOrderもasyncにする必要あり
+    try {
+        const response = await fetch(`/api/export_html/${encodeURIComponent(pdfName)}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: '' // 特に送信するデータがなければ空文字でOK
+        });
+        const data = await response.json();
         if (data.status === "ok") {
             alert("対訳HTMLが正常に出力されました。");
         } else {
             alert("エラー: " + data.message);
         }
-    })
-    .catch(error => {
+    } catch (error) {
         console.error("Error exporting HTML:", error);
         alert("対訳HTML出力中にエラーが発生しました");
-    });
+    }
 }
 
-function updateParagraphs(updates, title = null) {
+// updateParagraphs も fetch を使うので async にする
+async function updateParagraphs(updates, title = null) {
     const payload = {
         updates: updates,
         title: title || document.getElementById('titleInput').value
     };
 
-    fetch(`/api/update_paragraphs/${encodeURIComponent(pdfName)}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
-    })
-    .then(response => response.json())
-    .then(data => {
+    try {
+        const response = await fetch(`/api/update_paragraphs/${encodeURIComponent(pdfName)}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+        const data = await response.json();
         if (data.status === "ok") {
             console.log("パラグラフ更新が成功しました");
         } else {
             console.error("パラグラフ更新エラー:", data.message);
             alert("パラグラフ更新エラー: " + data.message);
         }
-    })
-    .catch(error => {
+    } catch (error) {
         console.error("パラグラフ更新中にエラーが発生しました:", error);
         alert("パラグラフ更新中にエラーが発生しました");
-    });
+    }
 }
 
-function transParagraph(paragraph, divSrc) {
-    fetch('/api/translate', {
-        method: 'POST',
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ text: paragraph.src_replaced })
-    })
-        .then(response => response.json())
-        .then(data => {
-            console.log("翻訳結果:", data.translated_text);
-            if (data.status === "ok") {
-                paragraph.trans_auto = data.translated_text;
-                paragraph.trans_text = data.translated_text;
-                paragraph.trans_status = "auto";
-                divSrc.querySelector('.trans-auto').innerHTML = paragraph.trans_auto;
-                divSrc.querySelector('.trans-text').innerHTML = paragraph.trans_text;
-                let autoRadio = divSrc.querySelector(`input[name='status-${paragraph.id}'][value='auto']`);
-                if (autoRadio) { autoRadio.checked = true; }
-            } else {
-                console.error("パラグラフ更新エラー:", data.message);
-                alert("パラグラフ更新エラー: " + data.message);
-            }
-        })
-        .catch(
-            // ユーザーにポップアップでエラーを通知
-            error => {
-                console.error('Error:', error);
-                alert('翻訳中にエラーが発生しました。詳細はコンソールを確認してください。');
-            }
-        );
+async function transParagraph(paragraph, divSrc) {
+    try {
+        const response = await fetch('/api/translate', {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ text: paragraph.src_replaced })
+        });
+        const data = await response.json();
+        console.log("翻訳結果:", data.translated_text);
+        if (data.status === "ok") {
+            paragraph.trans_auto = data.translated_text;
+            paragraph.trans_text = data.translated_text;
+            paragraph.trans_status = "auto";
+            divSrc.querySelector('.trans-auto').innerHTML = paragraph.trans_auto;
+            divSrc.querySelector('.trans-text').innerHTML = paragraph.trans_text;
+            let autoRadio = divSrc.querySelector(`input[name='status-${paragraph.id}'][value='auto']`);
+            if (autoRadio) { autoRadio.checked = true; }
+        } else {
+            console.error("パラグラフ更新エラー:", data.message);
+            alert("パラグラフ更新エラー: " + data.message);
+        }
+    } catch (error) {
+        // ユーザーにポップアップでエラーを通知
+        console.error('Error:', error);
+        alert('翻訳中にエラーが発生しました。詳細はコンソールを確認してください。');
+    }
 }
+

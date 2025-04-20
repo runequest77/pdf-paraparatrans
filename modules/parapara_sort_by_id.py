@@ -16,7 +16,9 @@ def sort_paragraphs_by_id(input_file, output_file=None):
 
         # paragraphsをidで昇順ソート
         if 'paragraphs' in data:
-            data['paragraphs'] = sorted(data['paragraphs'], key=lambda x: x.get('id', 0))
+            paragraphs = data['paragraphs']
+            sorted_paragraphs = {k: paragraphs[k] for k in sorted(paragraphs, key=lambda x: int(x))}
+            data['paragraphs'] = sorted_paragraphs
         else:
             raise KeyError("JSONデータに'paragraphs'キーが存在しません。")
 

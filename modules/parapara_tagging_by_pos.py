@@ -7,19 +7,16 @@ def update_block_tag_by_y_range(json_path, paragraph_id, new_block_tag):
         with open(json_path, 'r', encoding='utf-8') as file:
             data = json.load(file)
         
-        # パラグラフリストを取得
-        paragraphs = data.get("paragraphs", [])
+        # パラグラフ辞書を取得
+        paragraphs = data.get("paragraphs", {})
         
         # 指定したparagraph_idのbboxを取得
-        target_bbox = None
-        for para in paragraphs:
-            if para.get("id") == paragraph_id and "first_line_bbox" in para:
-                target_bbox = para["first_line_bbox"]
-                break
-        
-        if not target_bbox:
+        target_para = paragraphs.get(str(paragraph_id))  # 修正: 辞書から直接取得
+        if not target_para or "first_line_bbox" not in target_para:
             print(f"Paragraph ID {paragraph_id} の bbox が見つかりません。")
             return
+        
+        target_bbox = target_para["first_line_bbox"]
         
         # y0とy1の中間値を計算
         y0, y1 = target_bbox[1], target_bbox[3]
@@ -27,7 +24,7 @@ def update_block_tag_by_y_range(json_path, paragraph_id, new_block_tag):
         
         # 含まれるパラグラフのblock_tagを更新
         updated_count = 0
-        for para in paragraphs:
+        for para_id, para in paragraphs.items():  # 修正: 辞書をループ
             bbox = para.get("first_line_bbox", [])
             if len(bbox) == 4 and bbox[1] <= y_mid <= bbox[3]:
                 para["block_tag"] = new_block_tag

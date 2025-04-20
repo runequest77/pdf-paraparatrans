@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const style = document.createElement("style");
   style.textContent = `
 #logWindow {
-  display: flex;
+  display: none;
   flex-direction: column;
   position: fixed;
   bottom: 20px;

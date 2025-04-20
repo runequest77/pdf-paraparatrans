@@ -48,7 +48,7 @@ def dict_create(input_filename, output_filename="dict.txt", common_words_path="e
     candidate_keys = Counter()
 
     # 1. 全パラグラフから固有名詞候補抽出＋登場回数カウント
-    for p in data.get("paragraphs", []):
+    for key, p in data.get("paragraphs", {}).items():  # 修正: 配列から辞書に変更
         src_text = p.get("src_text", "")
         for word in word_pattern.findall(src_text):
             candidate_keys[word] += 1

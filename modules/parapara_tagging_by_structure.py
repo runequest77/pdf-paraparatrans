@@ -7,7 +7,7 @@ import re
 
 def set_analyzed_block_tags(book_data, symbol_fonts=None):
 
-    paragraphs = book_data.get("paragraphs", [])
+    paragraphs = book_data.get("paragraphs", {})
     head_styles = book_data.get("head_styles", {})
     
     stats = defaultdict(lambda: {
@@ -21,7 +21,7 @@ def set_analyzed_block_tags(book_data, symbol_fonts=None):
     prev_style = None
     current_count = 0
     
-    for para in paragraphs:
+    for para_id, para in paragraphs.items():  # 辞書としてループ
 
         block_tag = para.get("block_tag", "")
         style = para.get("paragraph_style")
@@ -86,11 +86,11 @@ def set_analyzed_block_tags(book_data, symbol_fonts=None):
     return book_data
 
 def set_analized_block_tag_to_paragraphs(book_data):
-    paragraphs = book_data.get("paragraphs", [])
+    paragraphs = book_data.get("paragraphs", {})
     analyzed_head_styles = book_data.get("analyzed_head_styles", {})
     
-    for para in paragraphs:
-        #block_tagがp以外はスキップ(header/footer/hidden)
+    for para_id, para in paragraphs.items():  # 辞書としてループ
+        # block_tagがp以外はスキップ(header/footer/hidden)
         if para.get("block_tag") != "p":
             continue
 
@@ -198,8 +198,9 @@ def get_dominant_class(src_html):
 
 # 最も文字数の多いspanのclassでパラグラフのスタイルを設定
 def set_paragraph_styles(book_data):
+    paragraphs = book_data.get("paragraphs", {})
     
-    for paragraph in book_data.get("paragraphs", []):
+    for para_id, paragraph in paragraphs.items():  # 辞書としてループ
         src_html = paragraph.get("src_html", "")
         if src_html:
             paragraph["paragraph_style"] = get_dominant_class(src_html)

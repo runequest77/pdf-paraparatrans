@@ -21,7 +21,7 @@ function onTransButtonClick(event, paragraph, divSrc) {
 
 
 // 編集ボックスの保存
-function onSaveButtonClick(event, paragraph, divSrc, srcText, transText, blockTagSelect, blockTagSpan) {
+async function onSaveButtonClick(event, paragraph, divSrc, srcText, transText, blockTagSelect, blockTagSpan) { // async を追加
     divSrc.classList.remove('editing');
     srcText.contentEditable = false;
     transText.contentEditable = false;
@@ -47,11 +47,12 @@ function onSaveButtonClick(event, paragraph, divSrc, srcText, transText, blockTa
 
     // パラグラフの背景をblock_tagに基づいて更新
     let blockTagClass = `block-tag-${paragraph.block_tag}`;
-    divSrc.className = `paragraph-box ${blockTagClass} status-${paragraph.trans_status}`;
-    
+    // statusクラスは edit-box に適用されるため、ここでは不要かも。ただし、既存のロジックを維持。
+    divSrc.className = divSrc.className.replace(/block-tag-\S+/g, '').trim() + ` ${blockTagClass}`; // block-tagクラスのみ更新
+
     // サーバー保存とクライアント更新を統合
-    saveParagraphData(paragraph);
-    updateEditUiBackground(divSrc, paragraph.trans_status);
+    await saveParagraphData(paragraph); // await を追加
+    updateEditUiBackground(divSrc, paragraph.trans_status); // saveParagraphData完了後に実行される
 }
 
 function onEditCancelClick(event, paragraph, divSrc, srcText, transText, blockTagSpan) {
@@ -241,38 +242,45 @@ function updateParagraphData(paragraphs, updatedParagraph) {
 
 // 編集パラグラフのデータをJSONに保存
 /** @function saveParagraphData */
-function saveParagraphData(paragraph) {
-    fetch(`/api/update_paragraph/${encodeURIComponent(pdfName)}`, {
-        method: 'POST',
+async function saveParagraphData(paragraph) { // async を追加
+    try {
+        const response = await fetch(`/api/update_paragraph/${encodeURIComponent(pdfName)}`, { // await を追加
+            method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-            paragraph_id: paragraph.id,
-            new_src_text: paragraph.src_text,
+            body: JSON.stringify({
+                paragraph_id: paragraph.id, // Ensure ID is sent correctly
+                new_src_text: paragraph.src_text,
             new_trans_text: paragraph.trans_text,
             trans_status: paragraph.trans_status,
-            block_tag: paragraph.block_tag
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
+                block_tag: paragraph.block_tag
+            })
+        });
+        const data = await response.json(); // await を追加
+
         console.log('Success:', data);
 
         if (data.status === "ok") {
             console.log('Success:', data);
             // サーバーへの保存が成功した場合のみクライアント側を更新
-            updateParagraphData(bookData.paragraphs, paragraph);
-            updateTransStatusCounts(bookData.trans_status_counts);
+            // bookData.paragraphs は辞書なので直接更新
+            if (bookData.paragraphs[paragraph.id.toString()]) {
+                 Object.assign(bookData.paragraphs[paragraph.id.toString()], paragraph); // Update existing entry
+            } else {
+                 console.warn(`saveParagraphData: Paragraph with ID ${paragraph.id} not found in bookData.paragraphs during update.`);
+            }
+            // updateParagraphData(bookData.paragraphs, paragraph); // この関数は不要になるかも
+            updateTransStatusCounts(data.trans_status_counts); // サーバーからの最新カウントを使用
         } else {
             console.error('Error:', data.message);
             alert('データ保存中にエラーが発生しました: ' + data.message);
+            // エラー時は元の状態に戻すなどの処理が必要な場合がある
         }
-    })
-    .catch((error) => {
+    } catch (error) { // catch ブロックを追加
         console.error('Error:', error);
         alert('データ保存中にエラーが発生しました。詳細はコンソールを確認してください。');
-    });
+    }
 }
 
 // ラジオボタンの切り替えでedit-uiの背景色を変更

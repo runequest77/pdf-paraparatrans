@@ -6,12 +6,12 @@ currentPage = 1;
 
 // let selectedParagraphRange = { start: null, end: null };
 
-window.onload = function() {
+window.onload = async function() { // async を追加
     initResizers();
     initTocPanel();
     initPdfPanel();
     initSrcPanel();
-    fetchBookData();
+    await fetchBookData(); // await を追加
 };
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -128,6 +128,10 @@ function updateHeadStyles() {
 
 // 翻訳進捗状況を更新
 function updateTransStatusCounts(counts) {
+    if (!counts) {
+        console.warn("counts が存在しません");
+        return;
+    }
     document.getElementById("countNone").innerText = counts.none;
     document.getElementById("countAuto").innerText = counts.auto;
     document.getElementById("countDraft").innerText = counts.draft;
@@ -180,22 +184,22 @@ function fitToWidth() {
     console.log("fitToWidth: set page-width");
 }
 
-function prevPage() {
+async function prevPage() { // async を追加
     console.log("prevPage");
     if (currentPage > 1) {
         currentPage--;
-        jumpToPage(currentPage);
+        await jumpToPage(currentPage); // await を追加
     }
 }
 
-function nextPage() {
+async function nextPage() { // async を追加
     if (currentPage < parseInt(bookData.page_count,10)) {
         currentPage++;
-        jumpToPage(currentPage);
+        await jumpToPage(currentPage); // await を追加
     }
 }
 
-function jumpToPage(pageNum) {
+async function jumpToPage(pageNum) { // async を追加
     console.log("jumpToPage:pageNum " + pageNum);
     console.log("currentPage " + currentPage);
     console.log("pageInput.value" + document.getElementById("pageInput").value);
@@ -203,7 +207,7 @@ function jumpToPage(pageNum) {
     currentPage = parseInt(pageNum,10);
 
     if (isPageEdited) {
-        saveOrder();
+        await saveOrder(); // await を追加
     }
     document.getElementById("pageInput").value = currentPage;
 

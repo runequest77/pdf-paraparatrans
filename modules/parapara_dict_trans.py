@@ -41,11 +41,12 @@ def dict_trans(dict_filename):
                 elif len(row) == 3:
                     key, value, state = row[0], row[1], row[2]
                 elif len(row) >= 4:
-                    key, value, state = row[0], row[1], row[2], row[3]
+                    key, value, state, count = row[0], row[1], row[2], row[3]
                 else:
                     continue
 
                 if state == "9":
+                    print (f"翻訳中: {key}")
                     translated_value = translate_text(key)
                     # 状態更新の条件
                     if translated_value == value:
@@ -54,9 +55,9 @@ def dict_trans(dict_filename):
                         new_state = "6"
                     else:
                         new_state = "8"
-                    updated_dict[key] = (translated_value, new_state)
+                    updated_dict[key] = (translated_value, new_state, count)
                 else:
-                    updated_dict[key] = (value, state)
+                    updated_dict[key] = (value, state, count)
     except Exception as e:
         print(f"Error reading {dict_filename}: {e}")
         return
@@ -68,8 +69,8 @@ def dict_trans(dict_filename):
         with open(dict_filename, "w", encoding="utf-8", newline="") as out_file:
             writer = csv.writer(out_file, delimiter='\t')
             for key in sorted_keys:
-                value, state = updated_dict[key]
-                writer.writerow([key, value, state])
+                value, state, count = updated_dict[key]
+                writer.writerow([key, value, state, count])
     except Exception as e:
         print(f"Error writing {dict_filename}: {e}")
         return

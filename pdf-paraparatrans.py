@@ -107,43 +107,43 @@ def utility_processor():
     return dict(enumerate=enumerate_filter)
 
 def get_pdf_files():
-    file_list = []
+    file_dict = {}
     if not os.path.isdir(BASE_FOLDER):
-        return file_list
+        return file_dict
     for fname in os.listdir(BASE_FOLDER):
         if fname.lower().endswith(".pdf"):
             pdf_name = os.path.splitext(fname)[0]
             pdf_path, json_path = get_paths(pdf_name)
-            auto_count = 0
-            fixed_count = 0
             title = os.path.splitext(fname)[0]
             updated_date = ""
             if os.path.exists(json_path):
-                with open(json_path, "r", encoding="utf-8") as f:
-                    data = json.load(f)
-                    title = data.get("title", title)
-                    counts = data.get("trans_status_counts", {})
-                    auto_count = counts.get("auto", 0)
-                    fixed_count  = counts.get("fixed", 0)
                 updated_date = datetime.datetime.fromtimestamp(os.path.getmtime(json_path)).strftime("%Y/%m/%d")
             else:
+                json_path = ""
                 updated_date = datetime.datetime.fromtimestamp(os.path.getmtime(pdf_path)).strftime("%Y/%m/%d")
-            file_list.append({
+            file_dict[pdf_name] = {
+                "json_path": json_path,
                 "pdf_name": pdf_name,
-                "json_name": os.path.splitext(fname)[0] + ".json",
                 "title": title,
-                "auto_count": auto_count,
-                "fixed_count": fixed_count,
                 "updated": updated_date
-            })
-    file_list.sort(key=lambda x: x["updated"], reverse=True)
-    return file_list
+            }
+    # 更新日の降順でソート
+    file_dict = dict(sorted(file_dict.items(), key=lambda x: x[1]["updated"], reverse=True))
+    return file_dict
 
-
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 def index():
     settings_path = os.path.join(BASE_FOLDER, "paraparatrans.settings.json")
     
+    # POSTリクエストの場合はリストをリフレッシュ
+    if request.method == "POST":
+        try:
+            parapara_init(BASE_FOLDER)
+            app.logger.info("リストがリフレッシュされました")
+        except Exception as e:
+            app.logger.error(f"リストリフレッシュ中にエラーが発生しました: {str(e)}")
+            return jsonify({"status": "error", "message": f"リストリフレッシュ中にエラーが発生しました: {str(e)}"}), 500
+
     # paraparatrans.settings.jsonが存在しない場合、parapara_initを実行
     if not os.path.exists(settings_path):
         parapara_init(BASE_FOLDER)
@@ -151,31 +151,27 @@ def index():
     # paraparatrans.settings.jsonを読み込む
     with open(settings_path, "r", encoding="utf-8") as f:
         settings = json.load(f)
-    
+
     # ファイルリストを取得
     files = settings.get("files", {})
-    pdf_list = []
+    pdf_dict = get_pdf_files()
     for pdf_name, file_data in files.items():
-        pdf_list.append({
-            "pdf_name": pdf_name,
-            "json_name": os.path.splitext(pdf_name)[0] + ".json",
-            "title": file_data.get("title", pdf_name),
-            "auto_count": file_data.get("trans_status_counts", {}).get("auto", 0),
-            "fixed_count": file_data.get("trans_status_counts", {}).get("fixed", 0),
-            "updated": datetime.datetime.fromtimestamp(
-                os.path.getmtime(file_data.get("src_filename", ""))
-            ).strftime("%Y/%m/%d") if os.path.exists(file_data.get("src_filename", "")) else ""
-        })
+        if pdf_dict[pdf_name]["json_path"] != "":
+            pdf_dict[pdf_name].update({
+                "title": file_data.get("title", pdf_name),
+                "auto_count": file_data.get("trans_status_counts", {}).get("auto", 0),
+                "fixed_count": file_data.get("trans_status_counts", {}).get("fixed", 0)
+            })
     
     # フィルタ処理
     filter_text = request.args.get("filter", "").lower().strip()
     if filter_text:
-        pdf_list = [
-            item for item in pdf_list
+        pdf_dict = [
+            item for item in pdf_dict
             if filter_text in item["title"].lower() or filter_text in item["pdf_name"].lower()
         ]
     
-    return render_template("index.html", pdf_list=pdf_list, filter_text=filter_text)
+    return render_template("index.html", pdf_dict=pdf_dict, filter_text=filter_text)
 
 @app.route("/detail/<pdf_name>")
 @app.route("/detail/<pdf_name>/<int:page_number>")  # page_number をオプションに
@@ -510,6 +506,7 @@ def dict_create_api(pdf_name):
     if not os.path.exists(json_path):
         return jsonify({"status": "error", "message": "JSONファイルが存在しません"}), 404
     try:
+        print("DICT_PATH" + DICT_PATH)
         dict_create(json_path, DICT_PATH, COMMON_WORDS_PATH)
     except Exception as e:
         return jsonify({"status": "error", "message": f"辞書生成エラー: {str(e)}"}), 500
@@ -647,4 +644,6 @@ if __name__ == "__main__":
     if not port.isdigit():
         raise ValueError(f"Invalid PORT: {port}")
     port = int(port)  
+    # ターミナルにリンクを出力
+    print(f"Flask server is running at: http://localhost:{port}/")
     app.run(host="0.0.0.0", port=port, debug=True, threaded=True)

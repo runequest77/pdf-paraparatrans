@@ -6,7 +6,7 @@ def extract_header_footer_candidates(paragraphs):
     headers = {}
     footers = {}
 
-    for para in paragraphs:
+    for para_id, para in paragraphs.items():  # 辞書としてループ
         page = para["page"]
         bbox = para.get("first_line_bbox", [])
 
@@ -21,7 +21,7 @@ def extract_header_footer_candidates(paragraphs):
 
 def find_most_common_y_center(paragraphs):
     # y座標の中央値を整数で取得し、最大出現回数のy座標を返す
-    y_centers = [int((para["first_line_bbox"][1] + para["first_line_bbox"][3]) / 2) for para in paragraphs] 
+    y_centers = [int((para["first_line_bbox"][1] + para["first_line_bbox"][3]) / 2) for para_id, para in paragraphs.items()] 
     y_center_counts = {y: y_centers.count(y) for y in y_centers}
     frequent_y_center = max(y_center_counts, key=y_center_counts.get)
     return frequent_y_center
@@ -40,7 +40,7 @@ def count_normalized_text_occurrences(paragraphs):
     """ パラグラフの正規化済みテキストの出現回数をカウント """
     text_counts = {}
     
-    for para in paragraphs:
+    for para_id, para in paragraphs.items():  # 辞書としてループ
         text = para.get("src_text", "").strip()
         if not text:
             continue
@@ -54,21 +54,21 @@ def headerfooter_tagging(file_path):
     with open(file_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
 
-    paragraphs = data.get("paragraphs", [])
+    paragraphs = data.get("paragraphs", {})
 
     # ヘッダ・フッタ候補の取得
     header_candidates, footer_candidates = extract_header_footer_candidates(paragraphs)
 
-    # ヘッダ領域・フッダ領域の特定
-    header_y = find_most_common_y_center(header_candidates)
-    footer_y = find_most_common_y_center(footer_candidates)
+    # ヘッダ領域・フッタ領域の特定
+    header_y = find_most_common_y_center({para_id: para for para_id, para in paragraphs.items() if para in header_candidates})
+    footer_y = find_most_common_y_center({para_id: para for para_id, para in paragraphs.items() if para in footer_candidates})
 
     # ヘッダ候補・フッタ候補の正規化テキスト出現回数をカウント
-    header_text_counts = count_normalized_text_occurrences(header_candidates)
-    footer_text_counts = count_normalized_text_occurrences(footer_candidates)
+    header_text_counts = count_normalized_text_occurrences({para_id: para for para_id, para in paragraphs.items() if para in header_candidates})
+    footer_text_counts = count_normalized_text_occurrences({para_id: para for para_id, para in paragraphs.items() if para in footer_candidates})
 
     # block_tag の更新（頻出回数が閾値（>=4）に達している場合のみタグを設定）
-    for para in paragraphs:
+    for para_id, para in paragraphs.items():  # 辞書としてループ
         bbox = para.get("first_line_bbox", [])
         if not bbox:
             continue
@@ -92,7 +92,7 @@ def headerfooter_tagging(file_path):
     # 3階層での並び替え
     # 1. page順
     # 2. block_tag順：header -> (header/footer/hidden以外) -> footer -> hidden
-    # 3. oorder順（各グループ内）
+    # 3. order順（各グループ内）
     def get_category_order(para):
         tag = para.get("block_tag", "")
         if tag == "header":
@@ -104,13 +104,17 @@ def headerfooter_tagging(file_path):
         else:
             return 1
 
-    paragraphs.sort(key=lambda para: (para.get("page", 0), get_category_order(para), para.get("order", 0)))
-    
+    sorted_paragraphs = sorted(paragraphs.items(), key=lambda item: (
+        item[1].get("page", 0), 
+        get_category_order(item[1]), 
+        item[1].get("order", 0)
+    ))
+
     # 並び替えに従ってorderを振り直す
-    for new_order, para in enumerate(paragraphs):
+    for new_order, (para_id, para) in enumerate(sorted_paragraphs):
         para["order"] = new_order
 
-    data["paragraphs"] = paragraphs
+    data["paragraphs"] = {para_id: para for para_id, para in sorted_paragraphs}
 
     # 更新後のJSONを保存
     with open(file_path, 'w', encoding='utf-8') as f:
