@@ -166,10 +166,10 @@ def index():
     # フィルタ処理
     filter_text = request.args.get("filter", "").lower().strip()
     if filter_text:
-        pdf_dict = [
-            item for item in pdf_dict
-            if filter_text in item["title"].lower() or filter_text in item["pdf_name"].lower()
-        ]
+        pdf_dict = {
+            key: value for key, value in pdf_dict.items()
+            if filter_text in value["title"].lower() or filter_text in value["pdf_name"].lower()
+        }
     
     return render_template("index.html", pdf_dict=pdf_dict, filter_text=filter_text)
 
@@ -584,22 +584,14 @@ def recalc_trans_status_counts(book_data):
 @app.route("/api/update_paragraphs/<pdf_name>", methods=["POST"])
 def update_paragraphs_api(pdf_name):
     pdf_path, json_path = get_paths(pdf_name)
-    print(f"Tset:1")
     if not os.path.exists(json_path):
         return jsonify({"status": "error", "message": "JSONファイルが存在しません"}), 404
 
     data = request.get_json()
-    print(f"Tset:2")
     if not data or "title" not in data:
         return jsonify({"status": "error", "message": "title がありません"}), 400
 
     title = data.get("title")
-    print(f"Tset:3:" + title)
-
-    # updates = data.get("updates")
-    # if not updates:
-    #     return jsonify({"status": "ok", "message": "パラグラフの更新はありません"}), 400
-    # print(f"Tset:4")
 
     try:
         # JSON読み込み
@@ -611,27 +603,18 @@ def update_paragraphs_api(pdf_name):
 
         paragraphs_dict = book_data.get("paragraphs", {}) # 辞書として取得
 
-        # 更新処理
-        # updates は辞書形式 { "1": { "src_text": ... }, "3": { ... } }
-        # JSONを介するので、明確に並び替えのある項目以外は文字で扱う
-
         import datetime
-
-        print(f"Tset:5")
 
         def apply_update(p, upd_value): # 第2引数は更新内容のオブジェクト
             p["modified_at"] = datetime.datetime.now().isoformat()
             p_id = p.get("id", "N/A") # ログ用
-            print(f"Tset:10 - Applying update for ID: {p_id}")
 
             p["src_text"] = upd_value.get("src_text", p.get("src_text"))
             p["trans_text"] = upd_value.get("trans_text", p.get("trans_text"))
             p["trans_status"] = upd_value.get("trans_status", p.get("trans_status"))
-            print(f"Tset:11 - Text/Status updated for ID: {p_id}")
 
             p["order"] = upd_value.get("order", p.get("order"))
             p["block_tag"] = upd_value.get("block_tag", p.get("block_tag"))
-            print(f"Tset:12 - Order/Tag updated for ID: {p_id}")
 
             group_id = upd_value.get("group_id")
             # group_idがparagraphs_dictに存在しない場合は、group_idを削除
@@ -639,19 +622,12 @@ def update_paragraphs_api(pdf_name):
                 p["group_id"] = group_id
             elif "group_id" in p:
                 del p["group_id"]  # group_idを削除
-            print(f"Tset:13 - Group ID updated/removed for ID: {p_id}")
 
             join = upd_value.get("join")
             if join is not None and join == 1:
-                print(f"Debug: Setting join to 1 for ID: {p_id}")
                 p["join"] = join
             elif "join" in p:
-                print(f"Debug: Deleting join for ID: {p_id}")
                 del p["join"]  # joinを削除
-            else:
-                print(f"Debug: No changes to join for ID: {p_id}")
-
-            print(f"Tset:14 - Join updated/removed for ID: {p_id}")
 
         updated_ids = set()
         updates_dict = data.get("updates", {}) # updates を辞書として取得
@@ -667,11 +643,8 @@ def update_paragraphs_api(pdf_name):
                 print(f"Warning: Update requested for non-existent paragraph ID {p_id_str}. Skipping.")
                 # または: raise ValueError(f"ID {p_id_str} は paragraphs に存在しません")
 
-        print(f"Tset:7 - Updates applied for {len(updated_ids)} paragraphs.")
-
         # 翻訳ステータスカウントを再計算
         recalc_trans_status_counts(book_data)
-        print(f"Tset:8 - Recalculated trans_status_counts.")
 
         # アトミックセーブ
         tmp_fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(json_path), suffix=".json", text=True)
