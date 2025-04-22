@@ -55,6 +55,8 @@ from modules.parapara_dict_replacer import file_replace_with_dict
 from modules.parapara_json2html import json2html
 from modules.parapara_tagging_headerfooter import headerfooter_tagging
 from modules.parapara_tagging_by_structure import structure_tagging
+from modules.parapara_join import join_replaced_paragraphs_in_file
+from modules.parapara_join_flags import join_flags_in_file
 from modules.parapara_dict_create import dict_create
 from modules.parapara_dict_trans import dict_trans
 from modules.parapara_init import parapara_init  # parapara_initをインポート
@@ -65,6 +67,7 @@ app = Flask(__name__, template_folder="templates", static_folder="static")
 # PDFとJSONの配置ディレクトリ（必要に応じて変更してください）
 BASE_FOLDER = "./data"  # Windows例。Linux等の場合はパスを変更してください
 DICT_PATH = os.path.join(BASE_FOLDER, "dict.txt")
+SIMBLE_DICT_PATH = os.path.join(BASE_FOLDER, "simplefonts.txt")
 
 # dict.txtのひな形
 DICT_TEMPLATE = """#英語\t#日本語\t#状態\t#出現回数
@@ -493,11 +496,24 @@ def auto_tagging_api(pdf_name):
         return jsonify({"status": "error", "message": "JSONファイルが存在しません"}), 404
     try:
         headerfooter_tagging(json_path)
-        structure_tagging(json_path, BASE_FOLDER + "/symbolfonts.txt")
+        structure_tagging(json_path, SIMBLE_DICT_PATH)
+        join_flags_in_file(json_path, SIMBLE_DICT_PATH)
 
     except Exception as e:
         return jsonify({"status": "error", "message": f"自動タグ付けエラー: {str(e)}"}), 500
     return jsonify({"status": "ok", "message": "自動タグ付け完了"}), 200
+
+@app.route("/api/join_replaced_paragraphs/<pdf_name>", methods=["POST"])
+def auto_join_replaced_paragraphs_api(pdf_name):
+    pdf_path, json_path = get_paths(pdf_name)
+    if not os.path.exists(json_path):
+        return jsonify({"status": "error", "message": "JSONファイルが存在しません"}), 404
+    try:
+        join_replaced_paragraphs_in_file(json_path)
+
+    except Exception as e:
+        return jsonify({"status": "error", "message": f"置換文結合エラー: {str(e)}"}), 500
+    return jsonify({"status": "ok", "message": "置換文結合完了"}), 200
 
 @app.route("/api/dict_create/<pdf_name>", methods=["POST"])
 def dict_create_api(pdf_name):

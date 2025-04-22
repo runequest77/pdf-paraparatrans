@@ -138,29 +138,6 @@ function updateTransStatusCounts(counts) {
     document.getElementById("countFixed").innerText = counts.fixed;
 }
 
-// function restoreCheckboxStates() {
-//     const checkboxes = document.querySelectorAll('.restoreCheckboxState');
-//     checkboxes.forEach(checkbox => {
-//         try {
-//             const storedValue = localStorage.getItem(checkbox.id);
-//             if (storedValue === null) {
-//                 localStorage.setItem(checkbox.id, checkbox.checked);
-//             } else {
-//                 checkbox.checked = storedValue === 'true';
-//             }
-//             const event = new Event('change');
-//             checkbox.dispatchEvent(event);
-//         } catch (error) {
-//             console.error("Error processing checkbox:", checkbox, error);
-//         }
-//     });
-// }
-
-// function saveCheckboxState(event) {
-//     const checkbox = event.target;
-//     localStorage.setItem(checkbox.id, checkbox.checked);
-// }
-
 /* ---------------------------------------
    PDFパネルに「ウインドウ幅に合わせる」を外部から適用
    - iframe.contentWindow.PDFViewerApplication を介して制御

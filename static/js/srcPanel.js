@@ -77,7 +77,12 @@ async function onSaveButtonClick(event, paragraph, divSrc, srcText, transText, b
     const blockTagClass = `block-tag-${blockTagSelect.value}`;
     divSrc.className = divSrc.className.replace(/block-tag-\S+/g, '').trim() + ` ${blockTagClass}`;
 
-    // サーバー保存
+    const editBox = divSrc.querySelector('.edit-box');
+    editBox.className = `edit-box status-${selectedStatus.value}`;
+
+    //edit-box
+
+// サーバー保存
     try {
         await saveParagraphData(bookData.paragraphs[id]);
         updateEditUiBackground(divSrc, bookData.paragraphs[id].trans_status);
@@ -155,7 +160,7 @@ function renderParagraphs() {
             <div class='trans-auto'>${p.trans_auto}</div>
             <div class='trans-text' data-original="${p.trans_text}">${p.trans_text}</div>
             <div class='edit-box ${statusClass}'>
-                <div class='join ${joinClass}'></div> <!-- 修正: visible クラスを適用 -->
+                <div class='join ${joinClass}'></div>
                 <button class='edit-button'>...</button>
                 <div class="drag-handle">
                     <span class='paragraph-id'>${p.id}</span>
@@ -205,6 +210,9 @@ function renderParagraphs() {
         editButton.addEventListener('click', () => toggleEditUI(divSrc));
         transButton.addEventListener('click', (e) => onTransButtonClick(e, p, divSrc));
         saveButton.addEventListener('click', (e) => onSaveButtonClick(e, p, divSrc, srcText, transText, blockTagSelect, blockTagSpan));
+
+        // ラジオボタンの変更イベントリスナーを追加
+        addRadioChangeListener(divSrc, p);
     }
 
     window.autoToggle.dispatchAll();
@@ -258,8 +266,8 @@ async function saveParagraphData(paragraph) {
             body: JSON.stringify({
                 paragraph_id: paragraph.id, // Ensure ID is sent correctly
                 new_src_text: paragraph.src_text,
-            new_trans_text: paragraph.trans_text,
-            trans_status: paragraph.trans_status,
+                new_trans_text: paragraph.trans_text,
+                trans_status: paragraph.trans_status,
                 block_tag: paragraph.block_tag
             })
         });

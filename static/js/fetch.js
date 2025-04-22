@@ -110,6 +110,12 @@ async function extractParagraphs(){
 }
 
 async function dictReplaceAll() {
+    let msg = "全ページに対して対訳辞書による置換を行います";
+    msg += "\nこの処理は時間がかかります。";
+    msg += "\n応答がなくてもページを閉じないでください。";
+    msg += "\n\nよろしいですか？";
+    if (!confirm(msg)) return;
+
     try {
         const response = await fetch(`/api/dict_replace_all/${encodeURIComponent(pdfName)}`, {
             method: 'POST',
@@ -149,6 +155,27 @@ async function autoTagging() {
     } catch (error) {
         console.error("autoTagging error:", error);
         alert("自動タグ付け中にエラーが発生しました");
+    }
+}
+
+async function joinReplacedParagraphs() {
+    try {
+        const response = await fetch(`/api/join_replaced_paragraphs/${encodeURIComponent(pdfName)}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        });
+        const data = await response.json();
+        if (data.status === "ok") {
+            alert("置換文結合成功しました\n再読み込みを行います");
+            await fetchBookData(); // fetchBookDataもasyncなのでawait
+        } else {
+            alert("置換文結合エラー: " + data.message);
+        }
+    } catch (error) {
+        console.error("autoTagging error:", error);
+        alert("置換文結合中にエラーが発生しました");
     }
 }
 

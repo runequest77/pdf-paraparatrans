@@ -27,16 +27,16 @@
     padding: 4px;
 }
 /* 翻訳状態に基づく edit-box の背景色 */
-.edit-box.status-none {
+.status-none {
     background-color: var(--dark-red); /* 未翻訳 */
 }
-.edit-box.status-auto {
+.status-auto {
     background-color: var(--dark-blue); /* 自動翻訳 */
 }
-.edit-box.status-draft {
+.status-draft {
     background-color: var(--dark-orange); /* 下訳 */
 }
-.edit-box.status-fixed {
+.status-fixed {
     background-color: var(--dark-green); /* 確定 */
 }
 
@@ -191,7 +191,6 @@
         color: #000; /* 編集時の文字色 */
     }
     .edit-ui {
-        background: #111; /* 編集時の背景色 */
         color: #fff; /* 編集時の文字色 */
     }
 }
@@ -203,7 +202,6 @@
         color: #e0e0e0; /* 編集時の文字色 */
     }
     .edit-ui {
-        background: #ccc; /* 編集時の背景色 */
         color: #000; /* 編集時の文字色 */
     }
 }
