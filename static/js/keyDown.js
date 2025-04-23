@@ -82,40 +82,6 @@ function moveSelectedByOffsetDown(event) {
     moveSelectedByOffset(1,event.shiftKey);
 }
 
-
-// キーボードイベントのリスナーを追加
-document.addEventListener('keydown', (event) => {
-
-    let key = event.key.toLowerCase();
-
-    // 高速編集モードがONの場合
-    if (window.autoToggle.getState("quickEditMode")) {
-
-        if (event.ctrlKey && !event.shiftKey && !event.altKey) {
-            event.preventDefault();
-            handleBlockTagShortcut(event.key);
-        }
-
-        if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === 'g') {
-            event.preventDefault();
-            toggleGroupSelectedParagraphs();
-        }
-    }
-
-    const paragraphs = document.querySelectorAll('.paragraph-box');
-    if (paragraphs.length === 0) return;
-
-    // 現在のパラグラフを取得
-    let currentParagraph = paragraphs[currentParagraphIndex];
-
-    // 現在のパラグラフをハイライト
-    paragraphs.forEach(p => p.classList.remove('highlight'));
-    currentParagraph = paragraphs[currentParagraphIndex];
-    currentParagraph.classList.add('highlight');
-
-});
-
-
 function onKeyDown(event, divSrc, paragraph, srcText, transText, blockTagSpan) {
     if (event.key === 'Escape' && divSrc.classList.contains('editing')) {
         divSrc.classList.remove('editing');

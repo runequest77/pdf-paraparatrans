@@ -199,6 +199,7 @@ async function jumpToPage(pageNum) { // async を追加
 
     renderParagraphs();
     document.getElementById("srcPanel").focus();
+    setCurrentParagraph(0);
 }
 
 function initResizers() {

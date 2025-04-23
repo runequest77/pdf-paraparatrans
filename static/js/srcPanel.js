@@ -19,37 +19,6 @@ function onTransButtonClick(event, paragraph, divSrc) {
     transParagraph(paragraph, divSrc);
 }
 
-// 編集ボックスの保存
-// async function onSaveButtonClick(event, paragraph, divSrc, srcText, transText, blockTagSelect, blockTagSpan) {
-//     divSrc.classList.remove('editing');
-//     srcText.contentEditable = false;
-//     transText.contentEditable = false;
-//     divSrc.querySelector('.edit-ui').style.display = 'none';
-//     // divSrc.querySelector('.edit-button').style.visibility = 'visible';
-//     $("#srcParagraphs").sortable("enable");
-//     divSrc.style.cursor = 'move';
-
-//     let selectedStatus = divSrc.querySelector(`input[name='status-${paragraph.id}']:checked`);
-//     if (selectedStatus) {
-//         paragraph.trans_status = selectedStatus.value;
-//     }
-//     const prevIdInput = divSrc.querySelector('.prev-id-input');
-
-//     paragraph.src_text = srcText.innerHTML;
-//     paragraph.trans_text = transText.innerHTML;
-//     paragraph.block_tag = blockTagSelect.value;
-//     blockTagSpan.innerText = paragraph.block_tag;
-
-//     // パラグラフの背景をblock_tagに基づいて更新
-//     let blockTagClass = `block-tag-${paragraph.block_tag}`;
-//     // statusクラスは edit-box に適用されるため、ここでは不要かも。ただし、既存のロジックを維持。
-//     // divSrc.className = divSrc.className.replace(/block-tag-\S+/g, '').trim() + ` ${blockTagClass}`; // block-tagクラスのみ更新
-
-//     // サーバー保存とクライアント更新を統合
-//     await saveParagraphData(paragraph); // await を追加
-//     updateEditUiBackground(divSrc, paragraph.trans_status);
-// }
-
 async function onSaveButtonClick(event, paragraph, divSrc, srcText, transText, blockTagSelect, blockTagSpan) {
     divSrc.classList.remove('editing');
     srcText.contentEditable = false;
@@ -556,6 +525,8 @@ function setCurrentParagraph(index, isShiftHeld = false) {
     currentParagraphIndex = index;
 
     const current = paragraphs[currentParagraphIndex];
+
+    if (!current) return; // インデックスが無効な場合は何もしない
     current.classList.add('current');
     current.classList.add('selected');
 

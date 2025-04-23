@@ -46,7 +46,6 @@
     position: relative;
     z-index: 1; /* 他のボックスより前面にくるように */
     overflow: hidden; /* ::after で角がはみ出さないように */
-    user-select: none;
 }
 /* 選択されたパラグラフに薄黄のマスクを重ねる */
 .paragraph-box.selected::after {
