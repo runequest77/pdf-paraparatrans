@@ -332,6 +332,15 @@
     left: 50%;
     transform: translate(-50%, -50%);
 }
+
+/* PDFハイライト用のスタイル */
+.pdf-highlight-rect {
+    position: absolute;
+    background-color: rgba(255, 255, 0, 0.5); /* 半透明の黄色 */
+    border: 3px solid orange; /* オレンジ色の枠線 */
+    mix-blend-mode: multiply; /* 背景と色が混ざるように */
+    box-sizing: border-box; /* borderを含めてサイズ計算 */
+}
 /* +の縦線 */
 .edit-box .join.visible::after {
     width: 10px;

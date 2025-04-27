@@ -531,6 +531,30 @@ function setCurrentParagraph(index, isShiftHeld = false) {
     current.classList.add('selected');
 
     current.scrollIntoView({ block: 'center', behavior: 'smooth' });
+
+    // --- ここから追加 ---
+    const paragraphIdStr = current.id.replace('paragraph-', '');
+    const paragraphData = bookData.paragraphs[paragraphIdStr];
+
+    // --- bbox を使うように修正 ---
+    if (paragraphData && paragraphData.first_line_bbox && Array.isArray(paragraphData.first_line_bbox) && paragraphData.first_line_bbox.length === 4) {
+        // pdfPanel.js の関数を呼び出してハイライト
+        // highlightRectsOnPage は矩形の配列を期待するため、bbox を配列でラップする
+        if (typeof highlightRectsOnPage === 'function') {
+            // --- PDFビューアは常に1ページなので、ページ番号 1 を渡す ---
+            highlightRectsOnPage(1, [paragraphData.first_line_bbox]);
+            // --- 修正ここまで ---
+        } else {
+            console.warn("highlightRectsOnPage function is not defined in pdfPanel.js");
+        }
+    } else {
+        // ハイライト情報がない場合は既存のハイライトをクリア
+        if (typeof clearHighlights === 'function') {
+            clearHighlights();
+        }
+        // console.warn(`Paragraph data or first_line_bbox not found for ID: ${paragraphIdStr}`);
+    }
+    // --- 修正ここまで ---
 }
 
 /*** @function toggleCurrentParagraphSelection */
