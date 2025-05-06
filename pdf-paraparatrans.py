@@ -205,7 +205,7 @@ def detail(pdf_name, page_number=1):
 def get_book_data(pdf_name):
     pdf_path, json_path = get_paths(pdf_name)
     if not os.path.exists(json_path):
-        return jsonify({"status": "error", "message": "JSONが存在しません"}), 400
+        return jsonify({"status": "ok", "message": "JSONが存在しません"}), 206
     with open(json_path, "r", encoding="utf-8") as f:
         book_data = json.load(f)
     return jsonify(book_data)
@@ -388,7 +388,7 @@ def save_order_api(pdf_name):
     last_processed_item = {} # 保存時のログ表示用
 
     for item in new_order:
-        page = str(item.get("page"))
+        page_number = str(item.get("page_number"))
         p_id_str = str(item.get("id"))
         new_order_val = item.get("order")
         new_block_tag = item.get("block_tag")
@@ -399,7 +399,7 @@ def save_order_api(pdf_name):
         print (f"  Found ID: {p_id_str}, Current Order: {p.get('order')}, Block Tag: {p.get('block_tag')}, Group ID: {p.get('group_id')}, Join: {p.get('join')}")
         print(f"Processing ID: {p_id_str}, Order: {new_order_val}, Block Tag: {new_block_tag}, Group ID: {new_group_id}, Join: {new_join}")
 
-        p = book_data["pages"][page]["paragraphs"][p_id_str]
+        p = book_data["pages"][page_number]["paragraphs"][p_id_str]
         updated = False
         if p.get("order") != new_order_val:
             p["order"] = new_order_val
@@ -559,7 +559,7 @@ def recalc_trans_status_counts(book_data):
 @app.route("/api/update_paragraph/<pdf_name>", methods=["POST"])
 def update_paragraph_api(pdf_name):
     data = request.get_json()
-    page = str(data.get("page"))
+    page_number = str(data.get("page_number"))
     id = str(data.get("id"))
     new_src_text = data.get("src_text")
     new_trans_text = data.get("trans_text")
@@ -575,7 +575,7 @@ def update_paragraph_api(pdf_name):
 
     book_data = load_json(json_path)
 
-    paragraph = book_data["pages"][page]["paragraphs"][id]
+    paragraph = book_data["pages"][page_number]["paragraphs"][id]
     # return jsonify({"status": "error", "message": "該当パラグラフが見つかりません"}), 404
     paragraph["src_text"] = new_src_text
     paragraph["trans_text"] = new_trans_text
@@ -609,19 +609,25 @@ def update_paragraphs_api(pdf_name):
         return jsonify({"status": "error", "message": "title がありません"}), 400
 
     try:
+        print("step1")
         book_data = load_json(json_path)  # JSONファイルを読み込む
 
         request_title = request_data.get("title")
         if request_title is not None:
             book_data["title"] = request_title
 
+        print("step2")
+
         def apply_update(p, upd_value): # 第2引数は更新内容のオブジェクト
+            print("step21")
+
             p["modified_at"] = datetime.datetime.now().isoformat()
             p["src_text"] = upd_value.get("src_text", p.get("src_text"))
             p["trans_text"] = upd_value.get("trans_text", p.get("trans_text"))
             p["trans_status"] = upd_value.get("trans_status", p.get("trans_status"))
             p["order"] = upd_value.get("order", p.get("order"))
             p["block_tag"] = upd_value.get("block_tag", p.get("block_tag"))
+            print("step22")
 
             group_id = upd_value.get("group_id")
             # group_idがparagraphs_dictに存在しない場合は、group_idを削除
@@ -629,6 +635,7 @@ def update_paragraphs_api(pdf_name):
                 p["group_id"] = group_id
             elif "group_id" in p:
                 del p["group_id"]  # group_idを削除
+            print("step23")
 
             join = upd_value.get("join")
             if join is not None and join == 1:
@@ -636,15 +643,24 @@ def update_paragraphs_api(pdf_name):
             elif "join" in p:
                 del p["join"]  # joinを削除
 
+        print("step3")
+
         request_paragraphs = request_data.get("paragraphs")
         for request_paragraph in request_paragraphs:
-            page = str(request_paragraph.get("page"))
+            print("step10")
+            page_number = str(request_paragraph.get("page_number"))
             id = str(request_paragraph.get("id"))
-            paragraph_dict = book_data["pages"][page]["paragraphs"][id]
+            print(f"page:{page_number} id:{id}")
+            paragraph_dict = book_data["pages"][page_number]["paragraphs"][id]
+            print("step11")
+
             apply_update(paragraph_dict, request_paragraph)
+
+        print("step4")
 
         # 翻訳ステータスカウントを再計算
         recalc_trans_status_counts(book_data)
+        print("step5")
 
         atomicsave_json(json_path, book_data)
         return jsonify({"status": "ok"}), 200

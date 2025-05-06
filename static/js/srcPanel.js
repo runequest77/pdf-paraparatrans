@@ -9,7 +9,7 @@ function initSrcPanel() {
     // ドラッグ用ハンドルのみ有効にするために handle オプションを指定
     handle: ".drag-handle",
         update: function (event, ui) {
-            saveOrder();
+            saveCurrentPageOrder();
         }
     });
 }
@@ -88,6 +88,12 @@ function renderParagraphs() {
 
 
     const paragraphsArray = Object.values(bookData["pages"][currentPage]["paragraphs"]);
+    // order順/column_order/y0順にソート
+    paragraphsArray.sort((a, b) => {
+        if (a.order !== b.order) return a.order - b.order;
+        if (a.column_order !== b.column_order) return a.column_order - b.column_order;
+        return a.bbox[1] - b.bbox[1]; // y0順にソート
+    });
 
     // 現在のページに表示するパラグラフのみをフィルタリング（ソート後に実施）
     const currentPageParagraphs = paragraphsArray;
@@ -226,7 +232,7 @@ function toggleTrans(event) {
 
 // 編集パラグラフのデータをJSONに保存
 /** @function saveParagraphData */
-async function saveParagraphData(paragraph) {
+async function saveParagraphData(paragraphDict) {
     try {
         const response = await fetch(`/api/update_paragraph/${encodeURIComponent(pdfName)}`, {
             method: 'POST',
@@ -234,12 +240,12 @@ async function saveParagraphData(paragraph) {
             'Content-Type': 'application/json'
         },
             body: JSON.stringify({
-                page_number: currentPage,
-                paragraph_id: paragraph.id,
-                new_src_text: paragraph.src_text,
-                new_trans_text: paragraph.trans_text,
-                trans_status: paragraph.trans_status,
-                block_tag: paragraph.block_tag
+                page_number: paragraphDict.page_number,
+                paragraph_id: paragraphDict.id,
+                new_src_text: paragraphDict.src_text,
+                new_trans_text: paragraphDict.trans_text,
+                trans_status: paragraphDict.trans_status,
+                block_tag: paragraphDict.block_tag
             })
         });
         const data = await response.json(); // await を追加
@@ -249,10 +255,10 @@ async function saveParagraphData(paragraph) {
         if (data.status === "ok") {
             console.log('Success:', data);
             // サーバーへの保存が成功した場合のみクライアント側を更新
-            if (bookData["pages"][currentPage]["paragraphs"][paragraph.id]) {
-                 Object.assign(bookData["pages"][currentPage]["paragraphs"][paragraph.id], paragraph);
+            if (bookData["pages"][currentPage]["paragraphs"][paragraphDict.id]) {
+                 Object.assign(bookData["pages"][currentPage]["paragraphs"][paragraphDict.id], paragraphDict);
             } else {
-                 console.warn(`saveParagraphData: Paragraph with ID ${paragraph.id} not found in paragraphs during update.`);
+                 console.warn(`saveParagraphData: Paragraph with ID ${paragraphDict.id} not found in paragraphs during update.`);
             }
             updateTransStatusCounts(data.trans_status_counts); // サーバーからの最新カウントを使用
         } else {

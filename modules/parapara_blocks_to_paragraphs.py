@@ -103,6 +103,15 @@ def create_paragraph(lines):
 
     return paragraph
 
+def same_style(span1, span2) -> bool:
+    style1 = get_span_style(span1)
+    style2 = get_span_style(span2)
+    return style1 == style2
+
+def start_with_lowercase(span) -> bool:
+    # 英語小文字で始まるか判定
+    return span["text"][0].islower()
+
 # ブロックをパラグラフのリストに変換(lineの連結はブロック内でのみ)
 # ラインの連結判定が一番複雑なので小さく切り出している
 def block_to_paragraphs(block) -> Dict[str, Any]:
@@ -152,13 +161,17 @@ def block_to_paragraphs(block) -> Dict[str, Any]:
             elif previous_span["text"].endswith("-"):
                 current_lines.append(line)
                 continue
+            # 文末がカンマの場合は結合
+            elif previous_span["text"].endswith(","):
+                current_lines.append(line)
+                continue
             # # 現在の文末が英語か数字で、lineのtextが英語小文字か数字で始まり、スタイルが同一なら結合
-            # あまり適切に動作しないのでコメントアウト
-            # elif current_paragraph["text"] and \
-            #         current_paragraph["text"][-1].isalnum() and \
-            #         line["spans"][0]["text"][0].isalnum() and \
-            #         (current_paragraph["currentSpanStyle"] == get_span_style(line["spans"][0])):
-            #     current_paragraph = join_line_text(line, current_paragraph)
+            # ここに来るということは、previous_spanの末尾が
+            # タブではない、終端文字ではない、スペースではない、ハイフンではない
+            # 従って小文字始まりの場合はスペースを補って結合する。
+            elif same_style(previous_span,line["spans"][0]) and start_with_lowercase(line["spans"][0]):
+                    line["spans"][0]["text"] = " " + line["spans"][0]["text"]
+                    current_lines.append(line)
             else:
                 # それ以外の場合はパラグラフをクローズして新しい段落を開始
                 paragraph = create_paragraph(current_lines)

@@ -161,15 +161,15 @@ function fitToWidth() {
 async function prevPage() { // async を追加
     console.log("prevPage");
     if (currentPage > 1) {
-        currentPage--;
-        await jumpToPage(currentPage); // await を追加
+        // ここでカレントぺーずを変えてはいけない
+        await jumpToPage(currentPage - 1);
     }
 }
 
 async function nextPage() { // async を追加
     if (currentPage < parseInt(bookData.page_count,10)) {
-        currentPage++;
-        await jumpToPage(currentPage); // await を追加
+        // ここでカレントぺーずを変えてはいけない
+        await jumpToPage(currentPage + 1);
     }
 }
 
@@ -178,11 +178,12 @@ async function jumpToPage(pageNum) { // async を追加
     console.log("currentPage " + currentPage);
     console.log("pageInput.value" + document.getElementById("pageInput").value);
 
-    currentPage = parseInt(pageNum,10);
-
     if (isPageEdited) {
-        await saveOrder(); // await を追加
+        await saveCurrentPageOrder(); // await を追加
     }
+
+    // 保存後にページを移動する
+    currentPage = parseInt(pageNum,10);
     document.getElementById("pageInput").value = currentPage;
 
     // 「PDFファイルのURL」を作成
@@ -259,7 +260,7 @@ function initResizers() {
 
 async function saveForce() {
     isPageEdited = true;
-    saveOrder();
+    saveCurrentPageOrder();
     updateBookInfo();
 }
 

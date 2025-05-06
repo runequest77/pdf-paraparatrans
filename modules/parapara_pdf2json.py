@@ -589,7 +589,7 @@ def extract_paragraphs(pdf_path: str, output_json_path: str,header_y1: float = 0
                 # style_chars_dictのKeysを元にスタイルを生成
                 for key, value in style_chars_dict.items():
                     font_name, font_size = key.rsplit("_", 1)
-                    font_size_px = f"{int(font_size) / 100:.1f}px"
+                    font_size_px = f"{int(font_size) / 10:.1f}px"
                     book["styles"][key] = f"font-family: {font_name}; font-size: {font_size_px};"
 
             # idをキーとする辞書block_paragraphs_dictの要素をpage_paragraphs_dictの要素として追加

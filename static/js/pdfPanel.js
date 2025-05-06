@@ -131,16 +131,20 @@ function drawHighlights(pageView, rects) {
 
         const [x0, y0, x1, y1] = pymupdfBbox;
 
+        console.log(`PyMuPDF bbox: x0 ${x0}, y0 ${y0}, x1 ${x1}, y1 ${y1}`);
+
         // --- PDF.js 標準座標系 [x0, y0, x1, y1] (Y=0が下) に変換 ---
         const pdfJsBbox = [
             x0,                      // x0 (left)
-            pageHeightInPoints - y1, // y0 (bottom)
+            pageHeightInPoints - y0,  // y1 (top)
             x1,                      // x1 (right)
-            pageHeightInPoints - y0  // y1 (top)
+            pageHeightInPoints - y1 // y0 (bottom)
         ];
+        console.log(`Converted PDF.js bbox: ${pdfJsBbox}`);
 
         // viewport.convertToViewportRectangle は PDF.js 標準座標系を受け取る
         const viewportRect = viewport.convertToViewportRectangle(pdfJsBbox);
+        console.log(`Converted viewport rect: ${viewportRect}`);
 
         const highlightDiv = document.createElement('div');
         // --- 親CSSからスタイルを取得して適用 ---
@@ -152,11 +156,15 @@ function drawHighlights(pageView, rects) {
         }
         // --- スタイル適用ここまで ---
 
+        height = viewportRect[3] - viewportRect[1]
+        console.log(`Highlight height: ${height}`);
+
         // ビューポート座標で位置とサイズを設定 (viewportRect は [x1, y1, x2, y2])
         highlightDiv.style.left = `${viewportRect[0]}px`;
         highlightDiv.style.top = `${viewportRect[1]}px`;
         highlightDiv.style.width = `${viewportRect[2] - viewportRect[0]}px`;
         highlightDiv.style.height = `${viewportRect[3] - viewportRect[1]}px`;
+        console.log(`Highlight rect: ${highlightDiv.style.left}, ${highlightDiv.style.top}, ${highlightDiv.style.width}, ${highlightDiv.style.height}`);
 
         highlightContainer.appendChild(highlightDiv);
     });

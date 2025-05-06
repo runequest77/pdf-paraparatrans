@@ -41,7 +41,7 @@ HotkeyMapper.map("Alt+ArrowDown", () => moveSelectedByOffset(1), { description: 
 //
 
 HotkeyMapper.map("Escape", resetSelection, { description: "選択解除" });
-HotkeyMapper.map("Ctrl+S", saveOrder, { description: "構造保存" });
+HotkeyMapper.map("Ctrl+S", saveCurrentPageOrder, { description: "構造保存" });
 HotkeyMapper.map("RollUp", rollUp, { description: "スクロールアップ" });
 HotkeyMapper.map("RollDown", rollDown, { description: "スクロールダウン" });
 

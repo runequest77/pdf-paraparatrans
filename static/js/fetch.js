@@ -1,6 +1,10 @@
 async function fetchBookData() {
     try {
         let response = await fetch(`/api/book_data/${encodeURIComponent(pdfName)}`);
+        if (response.status === 206) {
+            confirm("まだパラグラフ抽出がされていません。"); // ユーザーへの通知
+            return;
+        }
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -21,7 +25,7 @@ async function fetchBookData() {
 
 /** @function transPage */
 async function transPage() {
-    await saveOrder(); // 順序を保存してから翻訳 (saveOrderもasyncにする必要あり)
+    await saveCurrentPageOrder(); // 順序を保存してから翻訳 (saveOrderもasyncにする必要あり)
     if (!confirm("現在のページを翻訳します。よろしいですか？")) return;
 
     try {
@@ -52,7 +56,7 @@ async function transPage() {
 async function transAllPages() {
     const totalPages = bookData.page_count;
     if (!confirm(`全 ${totalPages} ページを翻訳します。よろしいですか？`)) return;
-    await saveOrder(); // saveOrderもasyncにする必要あり
+    await saveCurrentPageOrder(); // saveOrderもasyncにする必要あり
 
     try {
         const response = await fetch(`/api/paraparatrans/${encodeURIComponent(pdfName)}`, {
@@ -215,11 +219,10 @@ async function dictTrans() {
  * @param {Object} counts - 翻訳ステータスのカウントオブジェクト
  * ページ内順序再発行＆保存処理
  */
-// saveOrder は updateParagraphs を呼び出すので async にする
-async function saveOrder() {
+async function saveCurrentPageOrder() {
     const container = document.getElementById('srcParagraphs');
     const children = container.children;
-    const updatesDict = {}; // 配列ではなく辞書を作成
+    sendParagraphs = [];
 
     // ページ内のパラグラフをループして、順序を取得
     for (let i = 0; i < children.length; i++) {
@@ -239,30 +242,28 @@ async function saveOrder() {
             // bookData["pages"][currentPage]["paragraphs"][id].block_tag = blockTag;
             paragraphDict.group_id = groupId;
         } else {
-            console.warn(`saveOrder: Paragraph data not found for ID ${id} in paragraphs`);
+            throw new Error(`saveOrder: Paragraph data not found for ID ${currentPage} ${id} in paragraphs`);
         }
 
-        // 送信用辞書にデータを追加
-        updatesDict[id] = {
-            page_number: currentPage,
-            order: paragraphDict.order,
-            block_tag: paragraphDict.block_tag,
-            group_id: paragraphDict.group_id,
-            join: paragraphDict.join
-        };
+        // 送信用配列にデータを追加
+        sendParagraphs.push(
+            {
+                id: id,
+                page_number: paragraphDict.page_number,
+                order: paragraphDict.order,
+                block_tag: paragraphDict.block_tag,
+                group_id: paragraphDict?.group_id,
+                join: paragraphDict?.join
+            }
+        );
     }
 
-    // updatesDict が空でない場合のみ送信
-    // if (Object.keys(updatesDict).length === 0) {
-    //     console.log("saveOrder: No changes detected.");
-    //     return; // Promise<void> を返す
-    // }
-    console.log("saveOrder: Sending updates:", Object.keys(updatesDict).length);
-    await updateParagraphs(updatesDict); // updateParagraphsもasyncなのでawait
+    console.log("saveOrder: Sending updates:", sendParagraphs.length);
+    await updateParagraphs(sendParagraphs); // updateParagraphsもasyncなのでawait
 }
 
 async function exportHtml() {
-    await saveOrder(); // saveOrderもasyncにする必要あり
+    await saveCurrentPageOrder(); // saveOrderもasyncにする必要あり
     try {
         const response = await fetch(`/api/export_html/${encodeURIComponent(pdfName)}`, {
             method: 'POST',
@@ -284,9 +285,9 @@ async function exportHtml() {
 }
 
 // updateParagraphs も fetch を使うので async にする
-async function updateParagraphs(updates, title = null) {
+async function updateParagraphs(sendParagraphs, title = null) {
     const payload = {
-        updates: updates,
+        paragraphs: sendParagraphs,
         title: title || document.getElementById('titleInput').value
     };
 
