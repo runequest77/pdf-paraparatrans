@@ -1,10 +1,7 @@
 // detail.htmlのグローバル変数は3つ
 pdfName = document.body.dataset.pdfName;
-bookData = {}; // paragraphs プロパティは辞書形式になる
-// paragraphMap は不要になったため削除
+bookData = {};
 currentPage = 1;
-
-// let selectedParagraphRange = { start: null, end: null };
 
 window.onload = async function() { // async を追加
     initResizers();
@@ -104,22 +101,22 @@ function autoToggleChanged(event) {
 
 
 // boookDataから「見出しスタイル一覧」を読み込み
-function updateHeadStyles() {
-    if (!bookData.head_styles) {
-        console.warn("head_styles が存在しません");
+function updateBookStyles() {
+    if (!bookData.styles) {
+        console.warn("styles が存在しません");
         return;
     }
 
-    const styleElement = document.querySelector("style.book-data-head-styles");
+    const styleElement = document.querySelector("style.book-data-styles");
     if (!styleElement) {
-        console.error("スタイルタグが見つかりません: .book-data-head-styles");
+        console.error("スタイルタグが見つかりません: .book-data-styles");
         return;
     }
 
     let newStyles = "";
-    for (let className in bookData.head_styles) {
-        if (bookData.head_styles.hasOwnProperty(className)) {
-            newStyles += `.${className} { ${bookData.head_styles[className]} }\n`;
+    for (let className in bookData.styles) {
+        if (bookData.styles.hasOwnProperty(className)) {
+            newStyles += `.${className} { ${bookData.styles[className]} }\n`;
         }
     }
 

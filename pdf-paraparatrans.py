@@ -188,11 +188,9 @@ def detail(pdf_name, page_number=1):
         book_data = {
             "src_filename": pdf_name,
             "title": pdf_name,
-            "width": 600,
-            "height": 800,
-            "head_styles": {},
+            "styles": {},
             "trans_status_counts": {"pending": 0, "auto": 0, "manual": 0, "fixed": 0},
-            "paragraphs": []
+            "pages": []
         }
 
     updated_date = datetime.datetime.fromtimestamp(os.path.getmtime(pdf_path)).strftime("%Y/%m/%d")
@@ -200,6 +198,7 @@ def detail(pdf_name, page_number=1):
         updated_date = datetime.datetime.fromtimestamp(os.path.getmtime(json_path)).strftime("%Y/%m/%d")
 
     return render_template("detail.html", pdf_name=pdf_name, page_number=page_number, book_data=book_data, updated_date=updated_date)
+
 
 # API:book_dataデータ取得
 @app.route("/api/book_data/<pdf_name>")
@@ -217,17 +216,13 @@ def create_book_data_api(pdf_name):
     pdf_path, json_path = get_paths(pdf_name)
     if os.path.exists(json_path):
         return jsonify({"status": "ok", "message": "既に抽出済みです"}), 200
-    # extract_paragraphs は paragraphs を辞書形式で返すように修正されている必要がある
-    book_data = extract_paragraphs(pdf_path)
-    # 必要であればここで book_data["paragraphs"] が辞書であることを確認するバリデーションを追加
-    if not isinstance(book_data.get("paragraphs"), dict):
-        app.logger.error(f"extract_paragraphs did not return a dictionary for paragraphs in {pdf_name}")
-        # エラーレスポンスを返すか、配列から辞書に変換する処理を入れるか検討
-        # return jsonify({"status": "error", "message": "Paragraphs format error after extraction."}), 500
-        # ここではログ出力のみに留める
-    with open(json_path, "w", encoding="utf-8") as f:
-        json.dump(book_data, f, ensure_ascii=False, indent=2)
-    return jsonify({"status": "ok"}), 200
+
+    try:
+        book_data = extract_paragraphs(pdf_path,json_path)
+        return jsonify({"status": "ok"}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": f"パラグラフ抽出エラー: {str(e)}"}), 500
+
 
 # API:ファイル全翻訳
 @app.route("/api/translate_all/<pdf_name>", methods=["POST"])
@@ -262,36 +257,36 @@ def translate_api():
         app.logger.error(f"Translation error: {str(e)}")
         return jsonify({"status": "error", "message": str(e)}), 500
 
-# API:構造ファイル保存
-@app.route("/api/save_structure/<pdf_name>", methods=["POST"])
-def save_structure_api(pdf_name):
-    pdf_path, json_path = get_paths(pdf_name)
-    if not os.path.exists(json_path):
-        return jsonify({"status": "error", "message": "JSONが存在しません"}), 400
-    paragraphs_json = request.form.get("paragraphs_json")
-    title = request.form.get("title")
-    if not paragraphs_json:
-        return jsonify({"status": "error", "message": "paragraphs がありません"}), 400
-    with open(json_path, "r", encoding="utf-8") as f:
-        book_data = json.load(f)
-    try:
-        new_paragraphs_dict = json.loads(paragraphs_json)
-        if not isinstance(new_paragraphs_dict, dict):
-            return jsonify({"status": "error", "message": "送信された paragraphs は辞書形式ではありません"}), 400
-        # TODO: 必要であれば、辞書のキーが文字列のIDであるか、値がパラグラフオブジェクトの形式かなどの詳細なバリデーションを追加
-        book_data["paragraphs"] = new_paragraphs_dict
-    except json.JSONDecodeError:
-        return jsonify({"status": "error", "message": "paragraphs_json の形式が不正です"}), 400
+# # API:構造ファイル保存
+# @app.route("/api/save_structure/<pdf_name>", methods=["POST"])
+# def save_structure_api(pdf_name):
+#     pdf_path, json_path = get_paths(pdf_name)
+#     if not os.path.exists(json_path):
+#         return jsonify({"status": "error", "message": "JSONが存在しません"}), 400
+#     paragraphs_json = request.form.get("paragraphs_json")
+#     title = request.form.get("title")
+#     if not paragraphs_json:
+#         return jsonify({"status": "error", "message": "paragraphs がありません"}), 400
+#     with open(json_path, "r", encoding="utf-8") as f:
+#         book_data = json.load(f)
+#     try:
+#         new_paragraphs_dict = json.loads(paragraphs_json)
+#         if not isinstance(new_paragraphs_dict, dict):
+#             return jsonify({"status": "error", "message": "送信された paragraphs は辞書形式ではありません"}), 400
+#         # TODO: 必要であれば、辞書のキーが文字列のIDであるか、値がパラグラフオブジェクトの形式かなどの詳細なバリデーションを追加
+#         book_data["paragraphs"] = new_paragraphs_dict
+#     except json.JSONDecodeError:
+#         return jsonify({"status": "error", "message": "paragraphs_json の形式が不正です"}), 400
 
-    if title is not None:
-        book_data["title"] = title
+#     if title is not None:
+#         book_data["title"] = title
 
-    # 翻訳ステータスカウントを再計算
-    recalc_trans_status_counts(book_data)
+#     # 翻訳ステータスカウントを再計算
+#     recalc_trans_status_counts(book_data)
 
-    with open(json_path, "w", encoding="utf-8") as f:
-        json.dump(book_data, f, ensure_ascii=False, indent=2)
-    return jsonify({"status": "ok"}), 200
+#     with open(json_path, "w", encoding="utf-8") as f:
+#         json.dump(book_data, f, ensure_ascii=False, indent=2)
+#     return jsonify({"status": "ok"}), 200
 
 # パラグラフの翻訳を保存するAPI
 @app.route("/api/export_html/<pdf_name>", methods=["POST"])
@@ -305,43 +300,6 @@ def export_html_api(pdf_name):
         return jsonify({"status": "error", "message": f"HTML生成エラー: {str(e)}"}), 500
     return jsonify({"status": "ok"}), 200
 
-# 単パラグラフの翻訳を保存するAPI
-@app.route("/api/update_paragraph/<pdf_name>", methods=["POST"])
-def update_paragraph_api(pdf_name):
-    data = request.get_json()
-    paragraph_id = data.get("paragraph_id")
-    new_src_text = data.get("new_src_text")
-    new_trans_text = data.get("new_trans_text")
-    new_status = data.get("trans_status", "draft")
-    new_block_tag = data.get("block_tag", "p")
-    new_join = data.get("join", 0)
-
-    print(json.dumps(data, indent=2, ensure_ascii=False))
-
-    pdf_path, json_path = get_paths(pdf_name)
-    if not os.path.exists(json_path):
-        return jsonify({"status": "error", "message": "JSONが存在しません"}), 400
-    with open(json_path, "r", encoding="utf-8") as f:
-        book_data = json.load(f)
-
-    paragraphs_dict = book_data.get("paragraphs", {}) # 辞書として取得
-    paragraph_id_str = str(paragraph_id) # 比較用に文字列化
-
-    if paragraph_id_str not in paragraphs_dict:
-        return jsonify({"status": "error", "message": "該当パラグラフが見つかりません"}), 404
-
-    found = paragraphs_dict[paragraph_id_str] # キーで直接アクセス
-
-    found["src_text"] = new_src_text
-    found["trans_text"] = new_trans_text
-    found["trans_status"] = new_status
-    found["block_tag"] = new_block_tag
-    found["join"] = new_join
-    found["modified_at"] = datetime.datetime.now().isoformat()
-    recalc_trans_status_counts(book_data) # recalc_trans_status_counts も辞書対応が必要
-    with open(json_path, "w", encoding="utf-8") as f:
-        json.dump(book_data, f, ensure_ascii=False, indent=2)
-    return jsonify({"status": "ok"}), 200
 
 # API:ファイルへの辞書全置換
 @app.route("/api/dict_replace_all/<pdf_name>", methods=["POST"])
@@ -430,6 +388,7 @@ def save_order_api(pdf_name):
     last_processed_item = {} # 保存時のログ表示用
 
     for item in new_order:
+        page = str(item.get("page"))
         p_id_str = str(item.get("id"))
         new_order_val = item.get("order")
         new_block_tag = item.get("block_tag")
@@ -437,30 +396,26 @@ def save_order_api(pdf_name):
         new_join = item.get("join", 0)
         last_processed_item = item # ログ用に保持
 
+        print (f"  Found ID: {p_id_str}, Current Order: {p.get('order')}, Block Tag: {p.get('block_tag')}, Group ID: {p.get('group_id')}, Join: {p.get('join')}")
         print(f"Processing ID: {p_id_str}, Order: {new_order_val}, Block Tag: {new_block_tag}, Group ID: {new_group_id}, Join: {new_join}")
 
-        if p_id_str in paragraphs_dict:
-            p = paragraphs_dict[p_id_str]
-            updated = False
-            print (f"  Found ID: {p_id_str}, Current Order: {p.get('order')}, Block Tag: {p.get('block_tag')}, Group ID: {p.get('group_id')}, Join: {p.get('join')}")
-            if p.get("order") != new_order_val:
-                p["order"] = new_order_val
-                updated = True
-            if new_block_tag is not None and p.get("block_tag") != new_block_tag:
-                p["block_tag"] = new_block_tag
-                updated = True
-            if new_group_id is not None and p.get("group_id") != new_group_id:
-                p["group_id"] = new_group_id
-                updated = True
-            if new_join is not None and p.get("join") != new_join:
-                p["join"] = new_join
-                updated = True
-            if updated:
-                changed_count += 1
-                print(f"  Updated ID: {p_id_str}")
-        else:
-            print(f"  Warning: Paragraph ID {p_id_str} not found in book_data['paragraphs']")
-
+        p = book_data["pages"][page]["paragraphs"][p_id_str]
+        updated = False
+        if p.get("order") != new_order_val:
+            p["order"] = new_order_val
+            updated = True
+        if new_block_tag is not None and p.get("block_tag") != new_block_tag:
+            p["block_tag"] = new_block_tag
+            updated = True
+        if new_group_id is not None and p.get("group_id") != new_group_id:
+            p["group_id"] = new_group_id
+            updated = True
+        if new_join is not None and p.get("join") != new_join:
+            p["join"] = new_join
+            updated = True
+        if updated:
+            changed_count += 1
+            print(f"  Updated ID: {p_id_str}")
 
     if title is not None and book_data.get("title") != title:
         book_data["title"] = title
@@ -585,56 +540,92 @@ def update_book_info_api(pdf_name):
 
     except Exception as e:
         return jsonify({"status": "error", "message": f"文書情報更新中にエラーが発生しました: {str(e)}"}), 500
+
 def recalc_trans_status_counts(book_data):
     counts = {"none": 0, "auto": 0, "draft": 0, "fixed": 0}
-    paragraphs_dict = book_data.get("paragraphs", {}) # 辞書として取得
-    for p in paragraphs_dict.values(): # 辞書の値 (パラグラフオブジェクト) をイテレート
-        st = p.get("trans_status", "none") # trans_status がない場合も考慮
-        if st in counts:
-            counts[st] += 1
-        else:
-            counts["none"] += 1 # 未定義のステータスは none としてカウント (あるいはエラーログ)
-            print(f"Warning: Unknown trans_status '{st}' found in paragraph ID {p.get('id', 'N/A')}. Counted as 'none'.")
+    pages_dict = book_data.get("pages", {})  # ページ辞書を取得
+    for page_id, page in pages_dict.items():
+        paragraphs_dict = page.get("paragraphs", {})
+        for p in paragraphs_dict.values():
+            st = p.get("trans_status", "none")
+            if st in counts:
+                counts[st] += 1
+            else:
+                counts["none"] += 1
+                print(f"Warning: Unknown trans_status '{st}' found in paragraph ID {p.get('id', 'N/A')} on page {page_id}. Counted as 'none'.")
     book_data["trans_status_counts"] = counts
 
+# 単パラグラフの翻訳を保存するAPI
+@app.route("/api/update_paragraph/<pdf_name>", methods=["POST"])
+def update_paragraph_api(pdf_name):
+    data = request.get_json()
+    page = str(data.get("page"))
+    id = str(data.get("id"))
+    new_src_text = data.get("src_text")
+    new_trans_text = data.get("trans_text")
+    new_status = data.get("trans_status", "draft")
+    new_block_tag = data.get("block_tag", "p")
+    new_join = data.get("join", 0)
+
+    print(json.dumps(data, indent=2, ensure_ascii=False))
+
+    pdf_path, json_path = get_paths(pdf_name)
+    if not os.path.exists(json_path):
+        return jsonify({"status": "error", "message": "JSONが存在しません"}), 400
+
+    book_data = load_json(json_path)
+
+    paragraph = book_data["pages"][page]["paragraphs"][id]
+    # return jsonify({"status": "error", "message": "該当パラグラフが見つかりません"}), 404
+    paragraph["src_text"] = new_src_text
+    paragraph["trans_text"] = new_trans_text
+    paragraph["trans_status"] = new_status
+    paragraph["block_tag"] = new_block_tag
+    paragraph["join"] = new_join
+    paragraph["modified_at"] = datetime.datetime.now().isoformat()
+    recalc_trans_status_counts(book_data) # recalc_trans_status_counts も辞書対応が必要
+
+    try:
+        atomicsave_json(json_path, book_data)  # アトミックセーブ
+        return jsonify({"status": "ok"}), 200
+    except ValueError as ve:
+        return jsonify({"status": "error", "message": str(ve)}), 400
+    except Exception as e:
+        return jsonify({"status": "error", "message": f"更新中にエラーが発生しました: {str(e)}"}), 500
+
+
+# 複数パラグラフを更新するAPI
 @app.route("/api/update_paragraphs/<pdf_name>", methods=["POST"])
 def update_paragraphs_api(pdf_name):
     pdf_path, json_path = get_paths(pdf_name)
     if not os.path.exists(json_path):
         return jsonify({"status": "error", "message": "JSONファイルが存在しません"}), 404
 
-    data = request.get_json()
-    if not data or "title" not in data:
+    # requestはpage,idを付加されたparagraphs
+    # request-title
+    #         paragraphs[]
+    request_data = request.get_json()
+    if not request_data or "title" not in request_data:
         return jsonify({"status": "error", "message": "title がありません"}), 400
 
-    title = data.get("title")
-
     try:
-        # JSON読み込み
-        with open(json_path, "r", encoding="utf-8") as f:
-            book_data = json.load(f)
+        book_data = load_json(json_path)  # JSONファイルを読み込む
 
-        if title is not None:
-            book_data["title"] = title
-
-        paragraphs_dict = book_data.get("paragraphs", {}) # 辞書として取得
-
-        import datetime
+        request_title = request_data.get("title")
+        if request_title is not None:
+            book_data["title"] = request_title
 
         def apply_update(p, upd_value): # 第2引数は更新内容のオブジェクト
             p["modified_at"] = datetime.datetime.now().isoformat()
-            p_id = p.get("id", "N/A") # ログ用
-
             p["src_text"] = upd_value.get("src_text", p.get("src_text"))
             p["trans_text"] = upd_value.get("trans_text", p.get("trans_text"))
             p["trans_status"] = upd_value.get("trans_status", p.get("trans_status"))
-
             p["order"] = upd_value.get("order", p.get("order"))
             p["block_tag"] = upd_value.get("block_tag", p.get("block_tag"))
 
             group_id = upd_value.get("group_id")
             # group_idがparagraphs_dictに存在しない場合は、group_idを削除
-            if group_id is not None and group_id in paragraphs_dict:
+            if group_id is not None and group_id in p:
                 p["group_id"] = group_id
             elif "group_id" in p:
                 del p["group_id"]  # group_idを削除
@@ -645,29 +636,17 @@ def update_paragraphs_api(pdf_name):
             elif "join" in p:
                 del p["join"]  # joinを削除
 
-        updated_ids = set()
-        updates_dict = data.get("updates", {}) # updates を辞書として取得
-        if not isinstance(updates_dict, dict):
-             return jsonify({"status": "error", "message": "updates は辞書形式である必要があります"}), 400
-
-        for p_id_str, upd_value in updates_dict.items():
-            if p_id_str in paragraphs_dict:
-                apply_update(paragraphs_dict[p_id_str], upd_value)
-                updated_ids.add(p_id_str)
-            else:
-                # 存在しないIDが指定された場合のエラーハンドリング
-                print(f"Warning: Update requested for non-existent paragraph ID {p_id_str}. Skipping.")
-                # または: raise ValueError(f"ID {p_id_str} は paragraphs に存在しません")
+        request_paragraphs = request_data.get("paragraphs")
+        for request_paragraph in request_paragraphs:
+            page = str(request_paragraph.get("page"))
+            id = str(request_paragraph.get("id"))
+            paragraph_dict = book_data["pages"][page]["paragraphs"][id]
+            apply_update(paragraph_dict, request_paragraph)
 
         # 翻訳ステータスカウントを再計算
         recalc_trans_status_counts(book_data)
 
-        # アトミックセーブ
-        tmp_fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(json_path), suffix=".json", text=True)
-        with os.fdopen(tmp_fd, "w", encoding="utf-8") as tmp_file:
-            json.dump(book_data, tmp_file, ensure_ascii=False, indent=2)
-        os.replace(tmp_path, json_path)
-
+        atomicsave_json(json_path, book_data)
         return jsonify({"status": "ok"}), 200
 
     except ValueError as ve:
@@ -675,6 +654,21 @@ def update_paragraphs_api(pdf_name):
     except Exception as e:
         return jsonify({"status": "error", "message": f"更新中にエラーが発生しました: {str(e)}"}), 500
 
+
+# json を読み込んでオブジェクトを戻す
+def load_json(json_path: str):
+    if not os.path.isfile(json_path):
+        raise FileNotFoundError(f"{json_path} not found")
+    with open(json_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    return data
+
+# アトミックセーブ
+def atomicsave_json(json_path, data):
+    tmp_fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(json_path), suffix=".json", text=True)
+    with os.fdopen(tmp_fd, "w", encoding="utf-8") as tmp_file:
+        json.dump(data, tmp_file, ensure_ascii=False, indent=2)
+    os.replace(tmp_path, json_path)
 
 if __name__ == "__main__":
     # portはenvファイルの設定に従う。未指定の場合は5077

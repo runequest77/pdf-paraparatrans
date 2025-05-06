@@ -9,16 +9,8 @@ async function fetchBookData() {
         document.getElementById("titleInput").value = bookData.title;
         document.getElementById("pageCount").innerText = bookData.page_count;
 
-        // bookData.paragraphs は既に辞書形式で取得されるため、paragraphMap の作成は不要
-        // if (bookData.paragraphs && typeof bookData.paragraphs === 'object' && !Array.isArray(bookData.paragraphs)) {
-        //     console.log("bookData.paragraphs is a dictionary.");
-        // } else {
-        //     console.warn("bookData.paragraphs is not a dictionary or is missing.");
-        //     // 必要であればエラーハンドリングやデータ形式変換を行う
-        // }
-
         updateTransStatusCounts(bookData.trans_status_counts); // この関数も辞書対応が必要か確認
-        updateHeadStyles();
+        updateBookStyles();
         showToc();
         jumpToPage(currentPage);
     } catch (error) {
@@ -240,21 +232,23 @@ async function saveOrder() {
         // group_id は文字列として扱う（数値にパースしない）
         const groupId = groupClass ? groupClass.replace('group-id-', '') : undefined;
 
+        paragraphDict = bookData["pages"][currentPage]["paragraphs"][id];
         // 本当はpを更新してるのでorder以外の更新は不要
-        if (bookData.paragraphs[id]) {
-            bookData.paragraphs[id].order = i + 1; // 1-based index
-            // bookData.paragraphs[id].block_tag = blockTag;
-            bookData.paragraphs[id].group_id = groupId;
+        if (paragraphDict) {
+            paragraphDict.order = i + 1; // 1-based index
+            // bookData["pages"][currentPage]["paragraphs"][id].block_tag = blockTag;
+            paragraphDict.group_id = groupId;
         } else {
-            console.warn(`saveOrder: Paragraph data not found for ID ${id} in bookData.paragraphs`);
+            console.warn(`saveOrder: Paragraph data not found for ID ${id} in paragraphs`);
         }
 
         // 送信用辞書にデータを追加
         updatesDict[id] = {
-            order: bookData.paragraphs[id].order,
-            block_tag: bookData.paragraphs[id].block_tag,
-            group_id: bookData.paragraphs[id].group_id,
-            join: bookData.paragraphs[id].join
+            page_number: currentPage,
+            order: paragraphDict.order,
+            block_tag: paragraphDict.block_tag,
+            group_id: paragraphDict.group_id,
+            join: paragraphDict.join
         };
     }
 

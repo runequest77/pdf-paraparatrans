@@ -2,6 +2,36 @@ function initTocPanel() {
   console.log("Initializing TOC Panel");
 }
 
+function headlineParagraphs() {
+  // bookData.pages{}をループして、各ページの段落を取得
+  // その中から、block_tagがh1〜h6のものを抽出して、数値化したページ番号、order順で配列に格納する
+  const headlines = [];
+  for (const page in bookData["pages"]) {
+    for (const paragraphDict of page["paragraphs"]) {
+      if (/^h[1-6]$/.test(paragraphDict["block_tag"])) {
+        headlines.push({
+          page_number: paragraphDict["page_number"],
+          id: paragraphDict["id"],
+          order: paragraphDict["order"],
+          block_tag: paragraphDict["block_tag"],
+          src_text:paragraphDict["src_text"],
+          trans_text:paragraphDict["trans_text"]
+        });
+      }
+    }
+  }
+
+  // ページ番号とorder順でソート
+  headlines.sort((a, b) => {
+    if (a.page_number !== b.page_number) {
+      return a.page_number - b.page_number; // ページ番号でソート
+    }
+    return (a.order || 0) - (b.order || 0); // orderでソート（orderがない場合は0扱い）
+  });
+
+  return headlines;
+}
+
 function showToc(isTrans) {
   const paragraphsDict = bookData.paragraphs; // 辞書として取得
   const tbody = document.querySelector(".tocTable tbody");
@@ -11,7 +41,7 @@ function showToc(isTrans) {
     tbody.innerHTML = "";
   } else {
     // 辞書の値を配列にして buildTocTree に渡す
-    const paragraphsArray = Object.values(paragraphsDict);
+    const paragraphsArray = headlineParagraphs();
     const tocTree = buildTocTree(paragraphsArray);
     tbody.innerHTML = renderTocTableRows(tocTree);
     expandUpToLimit(30);
@@ -59,8 +89,8 @@ function buildTocTree(paragraphsArray) { // 引数を配列として受け取る
   const headlines = paragraphsArray.filter(p => /^h[1-6]$/.test(p.block_tag));
 
   const root = {
-    id: -1, // ルートノードのIDは特別扱い
-    page: -1,
+    id: "-1", // ルートノードのIDは特別扱い
+    page_number: "-1",
     block_tag: "h0",
     src_text: "src_root",
     trans_text: "trans_root",
@@ -75,7 +105,7 @@ function buildTocTree(paragraphsArray) { // 引数を配列として受け取る
     const level = parseInt(headline.block_tag.slice(1));
     const node = {
       id: headline.id,
-      page: headline.page,
+      page_number: headline.page_number,
       block_tag: headline.block_tag,
       src_text: headline.src_text,
       trans_text: headline.trans_text,
@@ -179,16 +209,16 @@ document.addEventListener("click", function (event) {
   if (!link) return;
 
   event.preventDefault();
-  const id = parseInt(link.dataset.id);
-  const page = parseInt(link.dataset.page);
+  const id = link.dataset.id;
+  const page_number = parseInt(link.dataset.page_number);
 
   const scrollTo = () => {
     const el = document.getElementById(`paragraph-${id}`);
     if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
   };
 
-  if (page !== currentPage) {
-    jumpToPage(page);
+  if (page_number !== currentPage) {
+    jumpToPage(page_number);
     setTimeout(scrollTo, 500); // ページ描画完了後にスクロール
   } else {
     scrollTo();
