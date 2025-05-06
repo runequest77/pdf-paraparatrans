@@ -1,5 +1,6 @@
 import json
 import sys
+import tempfile
 from collections import defaultdict, Counter
 import numpy as np
 import os
@@ -7,8 +8,7 @@ import re
 
 def set_analyzed_block_tags(book_data, symbol_fonts=None):
 
-    paragraphs = book_data.get("paragraphs", {})
-    head_styles = book_data.get("head_styles", {})
+    head_styles = book_data.get("styles", {})
     
     stats = defaultdict(lambda: {
         "total_chars": 0,
@@ -20,35 +20,34 @@ def set_analyzed_block_tags(book_data, symbol_fonts=None):
     })
     prev_style = None
     current_count = 0
-    
-    for para_id, para in paragraphs.items():  # 辞書としてループ
 
-        block_tag = para.get("block_tag", "")
-        style = para.get("paragraph_style")
-        src_text = para.get("src_text", "")
-        page = para.get("page", -1)  # ページ番号を取得
+    # book_dataの形式が変わったのでpageループ→paragraphループに変更
+    # paragraphsは辞書形式で、keyが段落ID、valueが段落情報
+    for page_number, page_data in book_data.get("pages", {}).items():
+        for paragraph in page_data.get("paragraphs", {}):
+            block_tag = paragraph.get("block_tag", "")
+            style = paragraph.get("base_style")
+            src_text = paragraph.get("src_text", "")
 
-        # block_tagがp以外はスキップ(header/footer/hidden)
-        if block_tag != "p":
-            continue
+            if block_tag == "header" or block_tag == "footer":
+                continue
 
-        if style:
-            stats[style]["total_chars"] += len(src_text)
-            stats[style]["char_lengths"].append(len(src_text))
-            stats[style]["count"] += 1  # パラグラフ数をカウント
+            if style:
+                stats[style]["total_chars"] += len(src_text)
+                stats[style]["char_lengths"].append(len(src_text))
+                stats[style]["count"] += 1  # パラグラフ数をカウント
+                
+                # ページごとの出現数を記録
+                stats[style]["pages"][page_number] += 1
+                
+                # スタイルの連続出現数をカウント
+                if style == prev_style:
+                    current_count += 1
+                else:
+                    current_count = 1
+                stats[style]["max_consecutive"] = max(stats[style]["max_consecutive"], current_count)
             
-            # ページごとの出現数を記録
-            if page != -1:
-                stats[style]["pages"][page] += 1
-            
-            # Check consecutive counts
-            if style == prev_style:
-                current_count += 1
-            else:
-                current_count = 1
-            stats[style]["max_consecutive"] = max(stats[style]["max_consecutive"], current_count)
-        
-        prev_style = style
+            prev_style = style
     
     analyzed_head_styles = {}
     # Final aggregation and assignment to head_styles
@@ -79,24 +78,23 @@ def set_analyzed_block_tags(book_data, symbol_fonts=None):
     # block_tag の設定
     set_block_tag_to_analized_head_styles(analyzed_head_styles, symbol_fonts)
 
-    book_data["analyzed_head_styles"] = analyzed_head_styles
+    book_data["analyzed_styles"] = analyzed_head_styles
 
     set_analized_block_tag_to_paragraphs(book_data)
     
     return book_data
 
 def set_analized_block_tag_to_paragraphs(book_data):
-    paragraphs = book_data.get("paragraphs", {})
-    analyzed_head_styles = book_data.get("analyzed_head_styles", {})
-    
-    for para_id, para in paragraphs.items():  # 辞書としてループ
-        # block_tagがp以外はスキップ(header/footer/hidden)
-        if para.get("block_tag") != "p":
-            continue
+    analyzed_head_styles = book_data.get("analyzed_styles", {})
+    for page_number, page_data in book_data.get("pages", {}).items():
+        for paragraph in page_data.get("paragraphs", {}):
 
-        style = para.get("paragraph_style")
-        block_tag = analyzed_head_styles.get(style, {}).get("block_tag", "p")
-        para["block_tag"] = block_tag
+            if paragraph.get("block_tag") != "p":
+                continue
+
+            style = paragraph.get("base_style","")
+            block_tag = analyzed_head_styles.get(style, {}).get("block_tag", "p")
+            paragraph["block_tag"] = block_tag
 
 def set_block_tag_to_analized_head_styles(analyzed_head_styles, symbol_fonts):
     """
@@ -118,22 +116,31 @@ def set_block_tag_to_analized_head_styles(analyzed_head_styles, symbol_fonts):
     for style_key, style_value in analyzed_head_styles.items():
         font_name = style_value.get("font_name", "")
         font_size = style_value.get("font_size", 0)
+        # 最大連続出現数
         max_consecutive = style_value.get("max_consecutive", 0)
+        # 最大連続文字数
         max_char_length = style_value.get("max_char_length", 0)
+        # ページ内の最大出現数
         max_per_page = style_value.get("max_per_page", 0)
 
         # ルールに基づいて block_tag を設定
         if any(font_name.startswith(symbol_font) for symbol_font in symbol_fonts):
+            # ベーススタイルがシンボルフォントのパラグラフは見出しではないはず
             style_value["block_tag"] = "p"
         elif max_consecutive >= 4:
+            # 連続出現数が4以上のスタイルは見出しではないはず
             style_value["block_tag"] = "p"
         elif max_char_length >= 100:
+            # 最大連続文字数が100以上のスタイルは見出しではないはず
             style_value["block_tag"] = "p"
         elif max_consecutive > 0 and max_per_page / max_consecutive == 1 and font_size > body_font_size:
+            # 1ページに現れた最大の数が1で、かつフォントサイズが本文フォントサイズより大きい場合
             style_value["block_tag"] = "h1"
         elif 1 <= max_per_page <= 3:
+            # 1ページに現れた最大の数が1から3の間で、かつフォントサイズが本文フォントサイズより大きい場合
             style_value["block_tag"] = "h3"
-        elif max_per_page > 3:
+        elif max_per_page >= 4:
+            # 1ページに現れた最大の数が4以上で、かつフォントサイズが本文フォントサイズより大きい場合
             style_value["block_tag"] = "h5"
         else:
             style_value["block_tag"] = "p"  # デフォルトは p
@@ -196,39 +203,37 @@ def get_dominant_class(src_html):
     # Find the class with the maximum character count
     return max(class_counts, key=class_counts.get, default=None) if class_counts else None
 
-# 最も文字数の多いspanのclassでパラグラフのスタイルを設定
-def set_paragraph_styles(book_data):
-    paragraphs = book_data.get("paragraphs", {})
-    
-    for para_id, paragraph in paragraphs.items():  # 辞書としてループ
-        src_html = paragraph.get("src_html", "")
-        if src_html:
-            paragraph["paragraph_style"] = get_dominant_class(src_html)
-
-    return book_data
-
 def structure_tagging(file_path, symbol_font_path):
     try:
-        with open(file_path, 'r', encoding='utf-8') as f:
-            book_data = json.load(f)
+        book_data = load_json(file_path)
 
         # シンボルフォント名のリストを読み込む
         symbol_fonts = load_symbol_fonts(symbol_font_path)
 
-        # パラグラフスタイルのセット
-        set_paragraph_styles(book_data)
-
         # パラグラフスタイルの解析と block_tag の設定
         set_analyzed_block_tags(book_data, symbol_fonts)
 
-        with open(file_path, 'w', encoding='utf-8') as f:
-            json.dump(book_data, f, indent=4, ensure_ascii=False)
-
+        atomicsave_json(file_path, book_data)
         print(f"Processed JSON saved to {file_path}")
     except Exception as e:
         print("ERROR: An exception occurred in process_json:", str(e))
         sys.stdout.flush()
         return None
+
+# json を読み込んでobjectを戻す(テスト用)
+def load_json(json_path: str):
+    if not os.path.isfile(json_path):
+        raise FileNotFoundError(f"{json_path} not found")
+    with open(json_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    return data
+
+# アトミックセーブ
+def atomicsave_json(json_path, data):
+    tmp_fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(json_path), suffix=".json", text=True)
+    with os.fdopen(tmp_fd, "w", encoding="utf-8") as tmp_file:
+        json.dump(data, tmp_file, ensure_ascii=False, indent=2)
+    os.replace(tmp_path, json_path)
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:

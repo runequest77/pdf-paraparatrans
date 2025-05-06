@@ -28,6 +28,7 @@ import fitz  # PyMuPDF
 from fitz import TOOLS  # TOOLS をインポート
 from typing import Union
 from parapara_blocks_to_paragraphs import block_to_paragraphs
+from header_footer import get_header_y1_footer_y0
 
 Block = Dict[str, Any] # ブロックを辞書形式で定義
 
@@ -249,7 +250,7 @@ def create_new_column(box, open_cols: List["Column"], closed_cols: List["Column"
          open_cols.append(new_col)
     return new_col
 
-def group_blocks_by_column(blocks: List[Block], header_y1: float = 0.0, footer_y0: float = float('inf')) -> List[Column]:
+def group_blocks_by_column(blocks: List[Block], header_y1, footer_y0) -> List[Column]:
     """
     ブロックのリストを受け取り、それらを列 (Column) に仕分けする。
     各列は X 範囲が重なるブロックをまとめたもの。
@@ -501,7 +502,7 @@ def sort_and_number_columns(columns: List[Column]) -> List[Column]:
     return sorted_cols
 
 
-def set_column_order_to_blocks(blocks: List[Block], header_y1: float = 0.0, footer_y0: float = float('inf')) -> List[Dict[str, Any]]:
+def set_column_order_to_blocks(blocks: List[Block], header_y1, footer_y0) -> List[Dict[str, Any]]:
     # ブロックをカラムに仕分け
     columns = group_blocks_by_column(blocks, header_y1=header_y1, footer_y0=footer_y0)
     # カラムを読み順に並べ替えて番号を付与
@@ -515,7 +516,7 @@ def set_column_order_to_blocks(blocks: List[Block], header_y1: float = 0.0, foot
     return columned_blocks
 
 # pagesを元にカラム付与
-def blocks_into_columns(pages_blocks: Dict[str, Any], header_y1: float = 0.0, footer_y0: float = float('inf')) -> Dict[str, Any]:
+def blocks_into_columns(pages_blocks: Dict[str, Any], header_y1, footer_y0) -> Dict[str, Any]:
     # 入力はpage-blockの辞書形式
     # 出力はpage-column-blockの辞書形式
     pages_columns_blocks = {}
@@ -527,27 +528,12 @@ def blocks_into_columns(pages_blocks: Dict[str, Any], header_y1: float = 0.0, fo
         }
     return pages_columns_blocks
 
-# PDF読む
-# pages抽出
-# paragraphsに変換
-# bookとして書き出し
-# styles生成
-# book_info title
-#   "version": "1.0.0",
-#   "src_filename": "./data\\69135-The_Company_of_the_Dragon_1.1.pdf",
-#   "title": "龍の結社",
-#   "width": 612.0,
-#   "height": 792.0,
-#   "page_count": 270,
-#   "trans_status_counts": {
-#     "none": 4117,
-#     "auto": 1181,
-#     "draft": 50,
-#     "fixed": 490
-#   },
+def extract_paragraphs(pdf_path: str, output_json_path: str, header_y1:float = None, footer_y0: float = None ) -> None:
 
+    # header_y1 と footeter_y0 が省略されたら、get_header_y1_footer_y0()を実行
+    if header_y1 is None or footer_y0 is None:
+        header_y1, footer_y0 = get_header_y1_footer_y0(pdf_path)
 
-def extract_paragraphs(pdf_path: str, output_json_path: str,header_y1: float = 0.0, footer_y0: float = float('inf')) -> None:
     # PDFを読み込み、ページごとにブロックを抽出してJSON形式で保存する関数
     if not pathlib.Path(pdf_path).is_file():
         raise FileNotFoundError(f"{pdf_path} not found")
@@ -567,6 +553,8 @@ def extract_paragraphs(pdf_path: str, output_json_path: str,header_y1: float = 0
         "src_filename": pdf_path,
         "title": title,
         "page_count": len(doc),
+        "header_y1": header_y1,
+        "footer_y0": footer_y0,
         "styles": {},
         "pages": {}
     }
@@ -575,6 +563,8 @@ def extract_paragraphs(pdf_path: str, output_json_path: str,header_y1: float = 0
         page = doc[page_number]
         page_dict = page.get_text("dict", flags=0)  # 辞書形式で取得
         blocks = page_dict.get("blocks", []) # 'blocks' キーが存在しない場合も考慮
+
+        # 解析して列順まで行ったブロック配列を返す
         columned_blocks = set_column_order_to_blocks(blocks, header_y1=header_y1, footer_y0=footer_y0)
 
         book["pages"][page_number + 1] = {"paragraphs": {}}
@@ -594,7 +584,7 @@ def extract_paragraphs(pdf_path: str, output_json_path: str,header_y1: float = 0
 
             # idをキーとする辞書block_paragraphs_dictの要素をpage_paragraphs_dictの要素として追加
             book["pages"][page_number + 1]["paragraphs"].update(block_paragraphs_dict) 
-
+        
     doc.close()
     atomicsave_json(output_json_path, book)
     print(f"Converted columns saved to: {output_json_path}")
@@ -629,13 +619,10 @@ def rect_json_test(input_json_path: str, output_json_path: str):
 
     grouped_columns = set_column_order_to_blocks(page["blocks"])
 
-    with open(output_path, "w", encoding="utf-8") as f:
-        json.dump(grouped_columns, f, ensure_ascii=False, indent=4)
-
-
+    atomicsave_json(output_path, grouped_columns)
 
 # pages.json を読み込んで.paragraphs.jsonとして保存する(テスト用)
-def pages_convert_to_paragraphs(pages_json_path: str, header_y1: float = 0.0, footer_y0: float = float('inf')):
+def pages_convert_to_paragraphs(pages_json_path: str, header_y1, footer_y0):
     # ファイル名の末尾が.pages.jsonでなければエラー
     if not pages_json_path.endswith(".pages.json"):
         raise ValueError(f"{pages_json_path} is not a .pages.json file")
@@ -656,7 +643,7 @@ def pages_convert_to_paragraphs(pages_json_path: str, header_y1: float = 0.0, fo
     print(f"Converted columns saved to: {columned_json_path}")
 
 # pages.json を読み込んで.columned.jsonとして保存する(テスト用)
-def pages_convert_to_columned(pages_json_path: str, header_y1: float = 0.0, footer_y0: float = float('inf')):
+def pages_convert_to_columned(pages_json_path: str, header_y1, footer_y0):
     # ファイル名の末尾が.pages.jsonでなければエラー
     if not pages_json_path.endswith(".pages.json"):
         raise ValueError(f"{pages_json_path} is not a .pages.json file")
