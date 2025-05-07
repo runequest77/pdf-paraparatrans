@@ -33,12 +33,16 @@ def join_replaced_paragraphs(book_data):
             if para.get('block_tag') not in ['header', 'footer']:
                 all_paragraphs.append(para)
 
-    # 全段落を page_number, order , column_order , bbox[1] 順にソート
-    all_paragraphs.sort(key=lambda p: (p.get('page', 0), p.get('order', 0), p.get('column_order', 0), p.get('bbox', [0, 0])[1]))
-
+    # 全段落を page_number, order , column_order , bbox[1] を数値化して順にソート
+    all_paragraphs.sort(key=lambda p: (
+        int(p['page_number']),
+        int(p.get('order',0)),
+        int(p['column_order']),
+        float(p['bbox'][1])
+    ))
     # block_tag ごとに buffer と prev を保持
     buffers = {}   # block_tag -> 連結テキスト
-    prevs = {}     # block_tag -> 直前の段落オブジェクト
+    prevs = {}     # block_tag -> 直前のblock_tagのパラグラフ
     for p in all_paragraphs:
         tag = p.get('block_tag')
         # 初回アクセス時に初期化
@@ -63,10 +67,10 @@ def join_replaced_paragraphs(book_data):
                 orig = prevs[tag].get('src_replaced', '')
                 merged = (orig + " " + buf).strip()
                 if merged != orig:
-                    prevs[tag]['src_replaced'] = merged
-                    prevs[tag]['trans_auto'] = merged
-                    prevs[tag]['trans_text'] = merged
                     prevs[tag]['trans_state'] = None
+                prevs[tag]['src_replaced'] = merged
+                prevs[tag]['trans_auto'] = merged
+                prevs[tag]['trans_text'] = merged
             buffers[tag] = ""
             prevs[tag] = p
 
