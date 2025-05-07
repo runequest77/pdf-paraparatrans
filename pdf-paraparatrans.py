@@ -47,19 +47,26 @@ if log_level not in ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]:
     raise ValueError(f"Invalid LOG_LEVEL: {log_level}")
 logging.getLogger('werkzeug').setLevel(log_level)
 
-
+# PDFからパラグラフJSON生成(header/footerは自動判定でセット)
 from modules.parapara_pdf2json import extract_paragraphs
+# block_tagをセット
+from modules.parapara_tagging_by_structure import structure_tagging
+# 先頭小文字にjoinをセット
+from modules.parapara_join_flags import join_flags_in_file
+# 対訳辞書に単語を抽出
+from modules.parapara_dict_create import dict_create
+# 対訳辞書の単語を翻訳
+from modules.parapara_dict_trans import dict_trans
+# 対訳辞書で置換
+from modules.parapara_dict_replacer import file_replace_with_dict
+# 対訳置換後にjoinに従ってsrc_replacedを結合
+from modules.parapara_join import join_replaced_paragraphs_in_file
+
 from modules.api_translate import translate_text
 from modules.parapara_trans import paraparatrans_json_file
-from modules.parapara_dict_replacer import file_replace_with_dict
-from modules.parapara_json2html import json2html
-from modules.parapara_tagging_headerfooter import headerfooter_tagging
-from modules.parapara_tagging_by_structure import structure_tagging
-from modules.parapara_join import join_replaced_paragraphs_in_file
-from modules.parapara_join_flags import join_flags_in_file
-from modules.parapara_dict_create import dict_create
-from modules.parapara_dict_trans import dict_trans
 from modules.parapara_init import parapara_init  # parapara_initをインポート
+# 対訳HTMLの出力
+from modules.parapara_json2html import json2html
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
 
@@ -67,7 +74,7 @@ app = Flask(__name__, template_folder="templates", static_folder="static")
 # PDFとJSONの配置ディレクトリ（必要に応じて変更してください）
 BASE_FOLDER = "./data"  # Windows例。Linux等の場合はパスを変更してください
 DICT_PATH = os.path.join(BASE_FOLDER, "dict.txt")
-SIMBLE_DICT_PATH = os.path.join(BASE_FOLDER, "simplefonts.txt")
+SIMBLE_DICT_PATH = os.path.join(BASE_FOLDER, "symbolfonts.txt")
 
 # dict.txtのひな形
 DICT_TEMPLATE = """#英語\t#日本語\t#状態\t#出現回数
@@ -450,7 +457,6 @@ def auto_tagging_api(pdf_name):
     if not os.path.exists(json_path):
         return jsonify({"status": "error", "message": "JSONファイルが存在しません"}), 404
     try:
-        headerfooter_tagging(json_path)
         structure_tagging(json_path, SIMBLE_DICT_PATH)
         join_flags_in_file(json_path, SIMBLE_DICT_PATH)
 

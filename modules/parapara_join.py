@@ -17,28 +17,29 @@ import json
 import tempfile
 import argparse
 
-
-def save_json(book_data, json_path):
-    """アトミックに JSON を保存"""
-    tmp_fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(json_path), suffix=".json", text=True)
-    with os.fdopen(tmp_fd, 'w', encoding='utf-8') as tmp_file:
-        json.dump(book_data, tmp_file, ensure_ascii=False, indent=2)
-    os.replace(tmp_path, json_path)
-
-
-def join_replaced_paragraphs(data):
+def join_replaced_paragraphs(book_data):
     """
     ドキュメント全体の段落を page, order 順にソートし、
     join=1 の段落の src_replaced を直前の非結合段落にスペース付きで結合、
     結合された段落自身は空文字にする。
     join フィールドが存在しない場合は結合しないものとみなす。
     """
-    paras = list(data.get('paragraphs', {}).values())
-    paras.sort(key=lambda p: (p.get('page', 0), p.get('order', 0)))
+
+    # page順にparagraphを取得して配列にする
+    all_paragraphs = []
+    for page in book_data["pages"].values():
+        for para in page["paragraphs"].values():
+            # block_tagがheaderかfooterは除外。それ以外はall_paragraphsに追加
+            if para.get('block_tag') not in ['header', 'footer']:
+                all_paragraphs.append(para)
+
+    # 全段落を page_number, order , column_order , bbox[1] 順にソート
+    all_paragraphs.sort(key=lambda p: (p.get('page', 0), p.get('order', 0), p.get('column_order', 0), p.get('bbox', [0, 0])[1]))
+
     # block_tag ごとに buffer と prev を保持
     buffers = {}   # block_tag -> 連結テキスト
     prevs = {}     # block_tag -> 直前の段落オブジェクト
-    for p in paras:
+    for p in all_paragraphs:
         tag = p.get('block_tag')
         # 初回アクセス時に初期化
         if tag not in buffers:
@@ -80,7 +81,7 @@ def join_replaced_paragraphs(data):
                 prevs[tag]['trans_text'] = merged
                 prevs[tag]['trans_state'] = None
 
-    return data
+    return book_data
 
 def join_replaced_paragraphs_in_file(json_file):
     """
@@ -89,13 +90,27 @@ def join_replaced_paragraphs_in_file(json_file):
     Returns:
         data (dict): 更新後の JSON データ
     """
-    with open(json_file, 'r', encoding='utf-8') as f:
-        data = json.load(f)
+    data = load_json(json_file)
 
     join_replaced_paragraphs(data)
-    save_json(data, json_file)
+    atomicsave_json(json_file, data)
     return data
 
+
+# json を読み込んでobjectを戻す
+def load_json(json_path: str):
+    if not os.path.isfile(json_path):
+        raise FileNotFoundError(f"{json_path} not found")
+    with open(json_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    return data
+
+# アトミックセーブ
+def atomicsave_json(json_path, data):
+    tmp_fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(json_path), suffix=".json", text=True)
+    with os.fdopen(tmp_fd, "w", encoding="utf-8") as tmp_file:
+        json.dump(data, tmp_file, ensure_ascii=False, indent=2)
+    os.replace(tmp_path, json_path)
 
 def main():
     parser = argparse.ArgumentParser(description='join フラグに基づいて src_replaced をマージする')

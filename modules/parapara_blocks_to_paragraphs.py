@@ -101,6 +101,11 @@ def create_paragraph(lines):
     max_style = max(paragraph["style_chars_dict"], key=paragraph["style_chars_dict"].get)    
     paragraph["base_style"] = max_style
 
+    # print (f"paragraph: {paragraph["src_text"]}")
+    # print (f"start_with_lowercase: {start_with_lowercase(paragraph["src_text"])}")
+    # if paragraph["src_text"][0].islower():
+    #     paragraph["join"] = 1
+
     return paragraph
 
 def same_style(span1, span2) -> bool:
@@ -210,7 +215,7 @@ def pages_to_paragraphs(pages_dict: Dict[int, Any]) -> Dict[int, Dict[str, Any]]
 
     return paragraphs_dict
 
-# json を読み込んでobjectを戻す(テスト用)
+# json を読み込んでobjectを戻す
 def load_json(json_path: str):
     if not os.path.isfile(json_path):
         raise FileNotFoundError(f"{json_path} not found")

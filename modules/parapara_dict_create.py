@@ -36,22 +36,18 @@ def dict_create(input_filename, output_filename="dict.txt", common_words_path="e
     seen_keys_lower = {k.lower() for k in dict.keys()}
 
     # 翻訳対象のJSONファイルを読み込む
-    try:
-        with open(input_filename, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-    except Exception as e:
-        print(f"Error reading {input_filename}: {e}")
-        sys.exit(1)
+    book_data = load_json(input_filename)
 
     # 大文字1文字で始まる単語を固有名詞候補として正規表現で定義
     word_pattern = re.compile(r'\b[A-Z][a-z]+\b')
     candidate_keys = Counter()
 
     # 1. 全パラグラフから固有名詞候補抽出＋登場回数カウント
-    for key, p in data.get("paragraphs", {}).items():  # 修正: 配列から辞書に変更
-        src_text = p.get("src_text", "")
-        for word in word_pattern.findall(src_text):
-            candidate_keys[word] += 1
+    for page in book_data["pages"].values():
+        for p in page["paragraphs"].values():
+            src_text = p.get("src_text", "")
+            for word in word_pattern.findall(src_text):
+                candidate_keys[word] += 1
 
     # 2. 一般英単語を除去
     non_common_words = set()
@@ -96,6 +92,14 @@ def remove_common_words(key: str) -> str:
     if key.lower() in COMMON_WORDS:
         return None
     return key
+
+# json を読み込んでobjectを戻す
+def load_json(json_path: str):
+    if not os.path.isfile(json_path):
+        raise FileNotFoundError(f"{json_path} not found")
+    with open(json_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    return data
 
 def main():
     if len(sys.argv) < 2:

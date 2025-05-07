@@ -23,8 +23,8 @@ def set_analyzed_block_tags(book_data, symbol_fonts=None):
 
     # book_dataの形式が変わったのでpageループ→paragraphループに変更
     # paragraphsは辞書形式で、keyが段落ID、valueが段落情報
-    for page_number, page_data in book_data.get("pages", {}).items():
-        for paragraph in page_data.get("paragraphs", {}):
+    for page_number, page in book_data["pages"].items():
+        for paragraph in page["paragraphs"].values():
             block_tag = paragraph.get("block_tag", "")
             style = paragraph.get("base_style")
             src_text = paragraph.get("src_text", "")
@@ -86,8 +86,8 @@ def set_analyzed_block_tags(book_data, symbol_fonts=None):
 
 def set_analized_block_tag_to_paragraphs(book_data):
     analyzed_head_styles = book_data.get("analyzed_styles", {})
-    for page_number, page_data in book_data.get("pages", {}).items():
-        for paragraph in page_data.get("paragraphs", {}):
+    for page_number, page_data in book_data["pages"].items():
+        for paragraph in page_data["paragraphs"].values():
 
             if paragraph.get("block_tag") != "p":
                 continue
