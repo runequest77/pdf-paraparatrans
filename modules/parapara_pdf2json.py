@@ -250,7 +250,7 @@ def create_new_column(box, open_cols: List["Column"], closed_cols: List["Column"
          open_cols.append(new_col)
     return new_col
 
-def group_blocks_by_column(blocks: List[Block], header_y1, footer_y0) -> List[Column]:
+def group_blocks_by_column(blocks: List[Block]) -> List[Column]:
     """
     ブロックのリストを受け取り、それらを列 (Column) に仕分けする。
     各列は X 範囲が重なるブロックをまとめたもの。
@@ -260,32 +260,8 @@ def group_blocks_by_column(blocks: List[Block], header_y1, footer_y0) -> List[Co
     open_cols: List[Column] = []
     closed_cols: List[Column] = []
 
-    # ヘッダーとフッターのカラムブロックを初期化
-    header_col_blocks: List[Block] = []
-    footer_col_blocks: List[Block] = []
-
     # 未処理ブロックを初期化（リストを使用）
     unprocessed_blocks = list(blocks)  # 辞書はハッシュ可能ではないため、リストを使用
-
-    # ヘッダー領域に含まれるブロックをヘッダーカラムブロックに追加し未処理ブロックから除外
-    header_blocks_in_range = sorted([blk for blk in unprocessed_blocks if "bbox" in blk and blk["bbox"][3] < header_y1], key=lambda b: (b["bbox"][1], b["bbox"][0]))
-    for blk in header_blocks_in_range:
-        header_col_blocks.append(blk)
-        unprocessed_blocks.remove(blk)
-
-    # フッター領域に含まれるブロックをフッターカラムブロックに追加し未処理ブロックから除外
-    footer_blocks_in_range = sorted([blk for blk in unprocessed_blocks if "bbox" in blk and blk["bbox"][1] > footer_y0], key=lambda b: (b["bbox"][1], b["bbox"][0]))
-    for blk in footer_blocks_in_range:
-        footer_col_blocks.append(blk)
-        unprocessed_blocks.remove(blk)
-
-    # 未処理ブロックを Y 座標 (bbox[1]) の昇順でソートしたリストを作成（処理順序のため）
-    # bbox が存在しないブロックはソート対象から除外する
-    sortable_blocks = [blk for blk in list(unprocessed_blocks) if "bbox" in blk]
-    sorted_blocks = sorted(sortable_blocks, key=lambda b: b["bbox"][1])
-
-    # 未処理ブロック数を出力 (ソート可能なブロック数)
-    print(f"Processing {len(sorted_blocks)} sortable blocks.")
 
     boxes = create_boxes_from_blocks(unprocessed_blocks)  # blocksからboxesを作成
     y0_sorted_boxes = sorted(boxes, key=lambda b: (b["y0"], b["x0"]))  # boxesをy0昇順、x0昇順でソート
@@ -387,21 +363,6 @@ def group_blocks_by_column(blocks: List[Block], header_y1, footer_y0) -> List[Co
     # 4. ループ終了後、残った open 列もクローズ
     closed_cols.extend(open_cols)
 
-    # ヘッダーカラムとフッターカラムをclosed_colsに追加
-    # if header_col_blocks:
-    #     # ヘッダーブロックからカラムを作成し、closed_colsに追加
-    #     # ヘッダーブロックは単一のカラムとして扱う
-    #     header_col = Column.from_box(header_col_blocks)
-    #     if header_col:
-    #          closed_cols.append(header_col)
-
-    # if footer_col_blocks:
-    #     # フッターブロックからカラムを作成し、closed_colsに追加
-    #     # フッターブロックは単一のカラムとして扱う
-    #     footer_col = Column.from_box(footer_col_blocks)
-    #     if footer_col:
-    #          closed_cols.append(footer_col)
-
     return closed_cols
 
 def sort_and_number_columns(columns: List[Column]) -> List[Column]:
@@ -502,9 +463,9 @@ def sort_and_number_columns(columns: List[Column]) -> List[Column]:
     return sorted_cols
 
 
-def set_column_order_to_blocks(blocks: List[Block], header_y1, footer_y0) -> List[Dict[str, Any]]:
+def set_column_order_to_blocks(blocks: List[Block]) -> List[Dict[str, Any]]:
     # ブロックをカラムに仕分け
-    columns = group_blocks_by_column(blocks, header_y1=header_y1, footer_y0=footer_y0)
+    columns = group_blocks_by_column(blocks)
     # カラムを読み順に並べ替えて番号を付与
     sorted_columns = sort_and_number_columns(columns)
 
@@ -516,13 +477,13 @@ def set_column_order_to_blocks(blocks: List[Block], header_y1, footer_y0) -> Lis
     return columned_blocks
 
 # pagesを元にカラム付与
-def blocks_into_columns(pages_blocks: Dict[str, Any], header_y1, footer_y0) -> Dict[str, Any]:
+def blocks_into_columns(pages_blocks: Dict[str, Any]) -> Dict[str, Any]:
     # 入力はpage-blockの辞書形式
     # 出力はpage-column-blockの辞書形式
     pages_columns_blocks = {}
     for page_number, page in pages_blocks.items():
         blocks = page.get("blocks", [])
-        columns = set_column_order_to_blocks(blocks, header_y1=header_y1, footer_y0=footer_y0)
+        columns = set_column_order_to_blocks(blocks)
         pages_columns_blocks[page_number] = {
             "columns": columns
         }
@@ -564,8 +525,24 @@ def extract_paragraphs(pdf_path: str, output_json_path: str, header_y1:float = N
         page_dict = page.get_text("dict", flags=0)  # 辞書形式で取得
         blocks = page_dict.get("blocks", []) # 'blocks' キーが存在しない場合も考慮
 
+         # header_y1より上にあるブロックをheader_blokcsとして取り出す
+        header_blocks = sorted([blk for blk in blocks if "bbox" in blk and blk["bbox"][3] < header_y1], key=lambda b: (b["bbox"][1], b["bbox"][0]))
+        # footer_y0より下にあるブロックをfooter_blokcsとして取り出す
+        footer_blocks = sorted([blk for blk in blocks if "bbox" in blk and blk["bbox"][1] > footer_y0], key=lambda b: (b["bbox"][1], b["bbox"][0]))
+        # header_blocksとfooter_blocksを除外
+        body_blocks = [blk for blk in blocks if blk not in header_blocks and blk not in footer_blocks]
+
         # 解析して列順まで行ったブロック配列を返す
-        columned_blocks = set_column_order_to_blocks(blocks, header_y1=header_y1, footer_y0=footer_y0)
+        columned_blocks = set_column_order_to_blocks(body_blocks)
+
+        #header_blocksにcolumn_orderを付与
+        for blk in header_blocks:
+            blk["column_order"] = 0
+        #footer_blocksにcolumn_orderを付与
+        for blk in footer_blocks:
+            blk["column_order"] = 999
+
+        columned_blocks = header_blocks + columned_blocks + footer_blocks
 
         book["pages"][page_number + 1] = {"paragraphs": {}}
         for blk in columned_blocks:
@@ -575,6 +552,11 @@ def extract_paragraphs(pdf_path: str, output_json_path: str, header_y1:float = N
             # style_dictはstylesに追加する
             for id,paragraph in block_paragraphs_dict.items():
                 paragraph["page_number"] = page_number + 1
+                if paragraph.get("column_order") == 0:
+                    paragraph["block_tag"] = "header"
+                if paragraph.get("column_order") == 999:
+                    paragraph["block_tag"] = "footer"
+
                 style_chars_dict = paragraph.pop("style_chars_dict",{})
                 # style_chars_dictのKeysを元にスタイルを生成
                 for key, value in style_chars_dict.items():
@@ -622,7 +604,7 @@ def rect_json_test(input_json_path: str, output_json_path: str):
     atomicsave_json(output_path, grouped_columns)
 
 # pages.json を読み込んで.paragraphs.jsonとして保存する(テスト用)
-def pages_convert_to_paragraphs(pages_json_path: str, header_y1, footer_y0):
+def pages_convert_to_paragraphs(pages_json_path: str):
     # ファイル名の末尾が.pages.jsonでなければエラー
     if not pages_json_path.endswith(".pages.json"):
         raise ValueError(f"{pages_json_path} is not a .pages.json file")
@@ -632,7 +614,7 @@ def pages_convert_to_paragraphs(pages_json_path: str, header_y1, footer_y0):
     book = { "pages": {} }  # ページを格納する辞書
     for page_number, page in pages_dict.items():
         blocks = page.get("blocks", []) # 'blocks' キーが存在しない場合も考慮
-        columned_blocks = set_column_order_to_blocks(blocks, header_y1=header_y1, footer_y0=footer_y0)
+        columned_blocks = set_column_order_to_blocks(blocks)
         book["pages"][page_number] = {"paragraphs": {}}
         for blk in columned_blocks:
             block_paragraphs_dict = block_to_paragraphs(blk)
@@ -653,7 +635,7 @@ def pages_convert_to_columned(pages_json_path: str, header_y1, footer_y0):
     book = { "pages": {} }  # ページを格納する辞書
     for page_number, page in pages_dict.items():
         blocks = page.get("blocks", []) # 'blocks' キーが存在しない場合も考慮
-        columned_blocks = set_column_order_to_blocks(blocks, header_y1=header_y1, footer_y0=footer_y0)
+        columned_blocks = set_column_order_to_blocks(blocks)
         page["Blocks"] = columned_blocks
         book["pages"][page_number] = page
 
