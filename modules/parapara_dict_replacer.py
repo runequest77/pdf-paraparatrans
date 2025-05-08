@@ -95,8 +95,8 @@ def file_replace_with_dict(json_path: str, dict_file: str):
     for page in book_data["pages"].values():
         for paragraph in page["paragraphs"].values():
             progress(f"{paragraph.get('page', 'N/A')} Page") # page がない場合も考慮
-            if "src_text" in paragraph:
-                replaced_text = replace_with_dict(paragraph["src_text"], dict_cs, dict_ci)
+            if "src_joined" in paragraph:
+                replaced_text = replace_with_dict(paragraph["src_joined"], dict_cs, dict_ci)
                 # 対訳辞書の変更により、置換結果が以前と異なる場合は翻訳状態を "none" に変更
                 if replaced_text != paragraph.get("src_replaced") and paragraph.get("trans_status") == "auto":
                     paragraph["trans_status"] = "none"

@@ -576,6 +576,7 @@ def extract_paragraphs(pdf_path: str, output_json_path: str, header_y1:float = N
         # ソートされたリストを使って処理
         for i, paragraph in enumerate(sorted_paragraphs):
             paragraph["order"] = i + 1
+            paragraph["src_joined"] = paragraph["src_text"]
             paragraph["src_replaced"] = paragraph["src_text"]
             paragraph["trans_auto"] = paragraph["src_text"]
             paragraph["trans_text"] = paragraph["src_text"]
@@ -690,5 +691,5 @@ if __name__ == "__main__":
 
     output_json_path = pathlib.Path(input_path).with_stem(pathlib.Path(input_path).stem).with_suffix(".json")
 
-    parapara_pdf2json_v2(input_path, output_json_path, header_y1=header_y1, footer_y0=footer_y0)
+    extract_paragraphs(input_path, output_json_path, header_y1=header_y1, footer_y0=footer_y0)
     print(f"Bookdata saved to: {output_json_path}")

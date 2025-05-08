@@ -85,7 +85,7 @@ def atomicsave_json(json_path, data):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="段落に join=0 をセットする")
+    parser = argparse.ArgumentParser(description="段落に join=1 をセットする")
     parser.add_argument("json_file", help="対象 JSON ファイル")
     parser.add_argument("symbol_font_file", nargs="?", help="シンボルフォント名リスト（省略可）")
     args = parser.parse_args()

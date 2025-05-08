@@ -3,7 +3,7 @@
 """
 parapara_join.py
 
-JSON ファイル内の全段落を対象に、join フラグに基づいて src_replaced を前の段落にマージします。
+JSON ファイル内の全段落を対象に、join フラグに基づいて src_joined を前の段落にマージします。
 ターミナルと関数呼び出しの両方で利用可能。
 Usage:
     python parapara_join.py path/to/data.json
@@ -20,8 +20,8 @@ import argparse
 def join_replaced_paragraphs(book_data):
     """
     ドキュメント全体の段落を page, order 順にソートし、
-    join=1 の段落の src_replaced を直前の非結合段落にスペース付きで結合、
-    結合された段落自身は空文字にする。
+    join=1 の段落の src_text を直前の非結合段落にスペース付きで結合してsrc_joinedにセット。
+    結合された段落のsrc_joinedは空文字にする。
     join フィールドが存在しない場合は結合しないものとみなす。
     """
 
@@ -52,10 +52,11 @@ def join_replaced_paragraphs(book_data):
 
         if p.get('join', 0) == 1 and prevs[tag]:
             # join=1 の間はバッファに蓄積し、段落は空文字+draft
-            curr = p.get('src_replaced', '')
+            curr = p.get('src_text', '')
             if curr:
                 b = buffers[tag]
                 buffers[tag] = b + " " + curr if b else curr
+            p['src_joined'] = ''
             p['src_replaced'] = ''
             p['trans_auto'] = ''
             p['trans_text'] = ''
@@ -64,10 +65,11 @@ def join_replaced_paragraphs(book_data):
             # バッファがあればまとめて prev にフラッシュ
             buf = buffers[tag]
             if prevs[tag] and buf:
-                orig = prevs[tag].get('src_replaced', '')
+                orig = prevs[tag].get('src_joined', '')
                 merged = (orig + " " + buf).strip()
                 if merged != orig:
                     prevs[tag]['trans_status'] = "none"
+                prevs[tag]['src_joined'] = merged
                 prevs[tag]['src_replaced'] = merged
                 prevs[tag]['trans_auto'] = merged
                 prevs[tag]['trans_text'] = merged
@@ -77,9 +79,10 @@ def join_replaced_paragraphs(book_data):
     # ドキュメント末尾で各 block_tag のバッファをフラッシュ
     for tag, buf in buffers.items():
         if prevs[tag] and buf:
-            orig = prevs[tag].get('src_replaced', '')
+            orig = prevs[tag].get('src_joined', '')
             merged = (orig + " " + buf).strip()
             if merged != orig:
+                prevs[tag]['src_joined'] = merged
                 prevs[tag]['src_replaced'] = merged
                 prevs[tag]['trans_auto'] = merged
                 prevs[tag]['trans_text'] = merged
@@ -117,12 +120,12 @@ def atomicsave_json(json_path, data):
     os.replace(tmp_path, json_path)
 
 def main():
-    parser = argparse.ArgumentParser(description='join フラグに基づいて src_replaced をマージする')
+    parser = argparse.ArgumentParser(description='join フラグに基づいて src_joined をマージする')
     parser.add_argument('json_file', help='入力・出力共通の JSON ファイルパス')
     args = parser.parse_args()
 
     data = join_replaced_paragraphs_in_file(args.json_file)
-    print(f"Joined src_replaced for entire document in {args.json_file}")
+    print(f"Joined src_joined for entire document in {args.json_file}")
 
 
 if __name__ == '__main__':

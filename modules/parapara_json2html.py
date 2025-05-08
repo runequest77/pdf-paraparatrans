@@ -42,7 +42,7 @@ def json2html(json_file_path: str):
         <div class="paragraph-container">
             <div class="paragraph-id">{paragraph.get("id")}</div>
             <div class="trans-text"><{paragraph.get("block_tag", "div")}>{paragraph.get("trans_text", "")}</{paragraph.get("block_tag", "div")}></div>
-            <div class="src-text"><{paragraph.get("block_tag", "div")}>{paragraph.get("src_text", "")}</{paragraph.get("block_tag", "div")}></div>
+            <div class="src-text"><{paragraph.get("block_tag", "div")}>{paragraph.get("src_joined", "")}</{paragraph.get("block_tag", "div")}></div>
         </div>
         '''
 
