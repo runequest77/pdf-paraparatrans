@@ -570,7 +570,7 @@ def extract_paragraphs(pdf_path: str, output_json_path: str, header_y1:float = N
         # page_paragraphsをpage/column_order/y0/start_line_number順でソートして初期順序を付与
         sorted_paragraphs = sorted(
             book["pages"][page_number + 1]["paragraphs"].values(),
-            key=lambda x: (int(x["page_number"]), int(x["column_order"]), float(x["bbox"][1]), x["id"])
+            key=lambda x: (int(x["page_number"]), int(x["column_order"]), int(x["column_order"]), float(x["bbox"][1]), x["id"])
         )
 
         # ソートされたリストを使って処理

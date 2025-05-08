@@ -36,7 +36,7 @@ def join_replaced_paragraphs(book_data):
     # 全段落を page_number, order , column_order , bbox[1] を数値化して順にソート
     all_paragraphs.sort(key=lambda p: (
         int(p['page_number']),
-        int(p.get('order',0)),
+        int(p['order']),
         int(p['column_order']),
         float(p['bbox'][1])
     ))
@@ -62,6 +62,14 @@ def join_replaced_paragraphs(book_data):
             p['trans_text'] = ''
             p['trans_status'] = "draft"
         else:
+            # joinが解除された場合翻訳状態をリセット
+            if p['src_joined'] != p['src_text']:
+                p['src_joined'] = p['src_text']
+                p['src_replaced'] = p['src_text']
+                p['trans_auto'] = p['src_text']
+                p['trans_text'] = p['src_text']
+                p['trans_status'] = "none"
+
             # バッファがあればまとめて prev にフラッシュ
             buf = buffers[tag]
             if prevs[tag] and buf:
@@ -82,11 +90,11 @@ def join_replaced_paragraphs(book_data):
             orig = prevs[tag].get('src_joined', '')
             merged = (orig + " " + buf).strip()
             if merged != orig:
-                prevs[tag]['src_joined'] = merged
-                prevs[tag]['src_replaced'] = merged
-                prevs[tag]['trans_auto'] = merged
-                prevs[tag]['trans_text'] = merged
                 prevs[tag]['trans_status'] = "none"
+            prevs[tag]['src_joined'] = merged
+            prevs[tag]['src_replaced'] = merged
+            prevs[tag]['trans_auto'] = merged
+            prevs[tag]['trans_text'] = merged
 
     return book_data
 

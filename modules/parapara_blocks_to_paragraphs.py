@@ -48,6 +48,7 @@ def create_paragraph(lines):
         "id": f"{lines[0]['block_number']}_{lines[0]['line_number']}",
         "src_text": "",
         "src_html": "",
+        "src_joined": "",
         "src_replaced": "",
         "trans_auto": "",
         "trans_text": "",
