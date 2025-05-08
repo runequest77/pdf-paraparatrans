@@ -241,9 +241,9 @@ async function saveParagraphData(paragraphDict) {
         },
             body: JSON.stringify({
                 page_number: paragraphDict.page_number,
-                paragraph_id: paragraphDict.id,
-                new_src_text: paragraphDict.src_text,
-                new_trans_text: paragraphDict.trans_text,
+                id: paragraphDict.id,
+                src_text: paragraphDict.src_text,
+                trans_text: paragraphDict.trans_text,
                 trans_status: paragraphDict.trans_status,
                 block_tag: paragraphDict.block_tag
             })

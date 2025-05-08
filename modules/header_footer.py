@@ -12,6 +12,9 @@ def get_header_y1_footer_y0(pdf_path):
     page_heights = []
 
     for page in doc:
+        print(f"Processing page {page.number + 1}...")
+
+        # ページのテキストブロックを取得
         blocks = page.get_text("dict")["blocks"]
         if not blocks:
             continue
@@ -62,11 +65,20 @@ def normalize_text(text):
 
 
 def select_common_y(text_map, page_count, is_header=True, default=0.0):
+    selected_y = None
     for norm_text, y_list in text_map.items():
-        if len(y_list) >= 3:
-            y_counter = Counter(y_list)
-            return y_counter.most_common(1)[0][0]
-    return default
+        if len(y_list) >= 3:  # 3回以上出現したテキスト
+            if is_header:
+                # ヘッダの場合、最小のy1を選択
+                candidate_y = min(y_list)
+            else:
+                # フッタの場合、最大のy0を選択
+                candidate_y = max(y_list)
+
+            if selected_y is None or (is_header and candidate_y < selected_y) or (not is_header and candidate_y > selected_y):
+                selected_y = candidate_y
+
+    return selected_y if selected_y is not None else default
 
 
 if __name__ == "__main__":

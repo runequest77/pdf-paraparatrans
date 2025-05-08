@@ -13,9 +13,18 @@ def json2html(json_file_path: str):
     content_entries = ""
     current_page = -1
 
-    paragraphs_dict = data.get('paragraphs', {}) # 辞書として取得
-    # HTML出力順序のため、ページ番号と順序でソート
-    paragraphs_list = sorted(paragraphs_dict.values(), key=lambda p: (p.get("page", 0), p.get("order", 0)))
+    paragraphs_list = []
+    for page in data["pages"].values():
+        for para in page["paragraphs"].values():
+            paragraphs_list.append(para)
+
+    # 全段落を page_number, order , column_order , bbox[1] を数値化して順にソート
+    paragraphs_list.sort(key=lambda p: (
+        int(p['page_number']),
+        int(p.get('order',0)),
+        int(p['column_order']),
+        float(p['bbox'][1])
+    ))
 
     for paragraph in paragraphs_list: # ソートされたリストをイテレート
         block_tag = paragraph.get("block_tag", "div").lower()
@@ -233,7 +242,7 @@ def json2html(json_file_path: str):
 
 def main():
     if len(sys.argv) != 2:
-        print("使い方: python parapara_html.py 翻訳データ.json")
+        print("使い方: python parapara_json2html.py 翻訳データ.json")
         return
     
     json_file_path = sys.argv[1]
@@ -242,8 +251,3 @@ def main():
 if __name__ == "__main__":
     main()
 
-# <!-- 
-# <rect x="10" y="10" width="430" height="100" rx="15" ry="15" fill="#e74c3c" />
-# <rect x="10" y="120" width="430" height="100" rx="15" ry="15" fill="#3498db" />
-# <rect x="10" y="230" width="430" height="100" rx="15" ry="15" fill="#f39c12" />
-# <rect x="10" y="340" width="430" height="100" rx="15" ry="15" fill="#2ecc71" /> -->

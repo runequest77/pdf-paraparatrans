@@ -14,7 +14,9 @@ function headlineParagraphs() {
           rowId: paragraphDict["page_number"] + "_" + paragraphDict["id"],
           page_number: paragraphDict["page_number"],
           id: paragraphDict["id"],
-          order: paragraphDict["order"],
+          order: paragraphDict["order"] || 0,
+          column_order: paragraphDict["column_order"] || 0,
+          y0: paragraphDict["bbox"][1],
           block_tag: paragraphDict["block_tag"],
           src_text:paragraphDict["src_text"],
           trans_text:paragraphDict["trans_text"]
@@ -28,7 +30,9 @@ function headlineParagraphs() {
     if (a.page_number !== b.page_number) {
       return a.page_number - b.page_number; // ページ番号でソート
     }
-    return (a.order || 0) - (b.order || 0); // orderでソート（orderがない場合は0扱い）
+    if (a.order !== b.order) return a.order - b.order;
+    if (a.column_order !== b.column_order) return a.column_order - b.column_order;
+    return a.y0 - b.y0;
   });
 
   return headlines;
@@ -65,7 +69,7 @@ function renderTocTableRows(tocNode) {
 
       rows.push(`
         <tr id="${rowId}" class="${rowClass}" data-row-id="${node.rowId}" data-id="${node.id}" data-parent="${parentId || ""}" data-nest-level="${node.nestLevel}" data-open="true">
-          <td class="toc-page-number">${node.page_number}</td>
+          <td class="toc-page">${node.page_number}</td>
           <td class="toc-src toc-${node.block_tag}">
             ${toggleMarker}<a href="#" data-id="${node.id}" data-page-number="${node.page_number}">${node.src_text}</a>
           <td class="toc-trans toc-${node.block_tag}">

@@ -59,7 +59,7 @@ def join_replaced_paragraphs(book_data):
             p['src_replaced'] = ''
             p['trans_auto'] = ''
             p['trans_text'] = ''
-            p['trans_state'] = "draft"
+            p['trans_status'] = "draft"
         else:
             # バッファがあればまとめて prev にフラッシュ
             buf = buffers[tag]
@@ -67,7 +67,7 @@ def join_replaced_paragraphs(book_data):
                 orig = prevs[tag].get('src_replaced', '')
                 merged = (orig + " " + buf).strip()
                 if merged != orig:
-                    prevs[tag]['trans_state'] = None
+                    prevs[tag]['trans_status'] = "none"
                 prevs[tag]['src_replaced'] = merged
                 prevs[tag]['trans_auto'] = merged
                 prevs[tag]['trans_text'] = merged
@@ -83,7 +83,7 @@ def join_replaced_paragraphs(book_data):
                 prevs[tag]['src_replaced'] = merged
                 prevs[tag]['trans_auto'] = merged
                 prevs[tag]['trans_text'] = merged
-                prevs[tag]['trans_state'] = None
+                prevs[tag]['trans_status'] = "none"
 
     return book_data
 

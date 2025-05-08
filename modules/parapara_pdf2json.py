@@ -566,7 +566,20 @@ def extract_paragraphs(pdf_path: str, output_json_path: str, header_y1:float = N
 
             # idをキーとする辞書block_paragraphs_dictの要素をpage_paragraphs_dictの要素として追加
             book["pages"][page_number + 1]["paragraphs"].update(block_paragraphs_dict) 
-        
+
+        # page_paragraphsをpage/column_order/y0/start_line_number順でソートして初期順序を付与
+        sorted_paragraphs = sorted(
+            book["pages"][page_number + 1]["paragraphs"].values(),
+            key=lambda x: (int(x["page_number"]), int(x["column_order"]), float(x["bbox"][1]), x["id"])
+        )
+
+        # ソートされたリストを使って処理
+        for i, paragraph in enumerate(sorted_paragraphs):
+            paragraph["order"] = i + 1
+            paragraph["src_replaced"] = paragraph["src_text"]
+            paragraph["trans_auto"] = paragraph["src_text"]
+            paragraph["trans_text"] = paragraph["src_text"]
+
     doc.close()
     atomicsave_json(output_json_path, book)
     print(f"Converted columns saved to: {output_json_path}")

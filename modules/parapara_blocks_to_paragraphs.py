@@ -209,9 +209,12 @@ def pages_to_paragraphs(pages_dict: Dict[int, Any]) -> Dict[int, Dict[str, Any]]
                 page_paragraphs.append(paragraph)
 
         # page_paragraphsをpage/column_order/y0/start_line_number順でソートして初期順序を付与
-        page_paragraphs.sort(key=lambda x: (x["page"], x["column_order"], x["bbox"][1], x["first_line_number"]))
+        page_paragraphs.sort(key=lambda x: (int(x["page"]), int(x["column_order"]), float(x["bbox"][1]), int(x["first_line_number"])))
         for i, paragraph in enumerate(page_paragraphs):
             paragraph["order"] = i + 1
+            paragraph["src_replaced"] = paragraph["src_text"]
+            paragraph["trans_auto"] = paragraph["src_text"]
+            paragraph["trans_text"] = paragraph["src_text"]
 
     return paragraphs_dict
 
