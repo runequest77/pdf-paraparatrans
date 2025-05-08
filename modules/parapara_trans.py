@@ -16,14 +16,7 @@ import tempfile
 from api_translate import translate_text  # 翻訳関数は別ファイルで定義済み
 import stream_logger
 
-def save_json(book_data, json_path):
-    # アトミックセーブ
-    tmp_fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(json_path), suffix=".json", text=True)
-    with os.fdopen(tmp_fd, "w", encoding="utf-8") as tmp_file:
-        json.dump(book_data, tmp_file, ensure_ascii=False, indent=2)
-    os.replace(tmp_path, json_path)
-
-def process_group(paragraphs_group, data, filepath):
+def process_group(paragraphs_group):
     """
     1. 指定グループの各段落の src_replaced の先頭に【id】を付与して連結し、5000文字以内となる翻訳前テキストを作成
     2. 翻訳関数 translate_text を呼び出し、翻訳結果を取得
@@ -43,8 +36,8 @@ def process_group(paragraphs_group, data, filepath):
     except Exception as e:
         raise Exception(f"翻訳APIの呼び出しに失敗しました: {e}")
     
-    # 翻訳結果を【id】のパターンで分割
-    parts = re.split(r'(?=【\d+】)', translated_text)
+    # 翻訳結果を【0_0】のパターンで分割
+    parts = re.split(r'(?=【\d+_\d+】)', translated_text)
     # 空白を除去
     parts = [part.strip() for part in parts if part.strip()]
 
@@ -56,7 +49,7 @@ def process_group(paragraphs_group, data, filepath):
     # 翻訳結果をパターンマッチで抽出し、対応するパラグラフにセットする
     for part in parts:
         print(f"FOR DEBUG:{part}")
-        m = re.match(r'【(\d+)】(.*)', part, re.DOTALL)
+        m = re.match(r'【(\d+_\d+)】(.*)', part, re.DOTALL)
         if m:
             para_id, translated_content = m.group(1), m.group(2)
             # q_ と _q が前後に区切り文字（英数字以外、または行頭・行末）の場合にのみ除去する
@@ -77,70 +70,77 @@ def process_group(paragraphs_group, data, filepath):
         else:
             print("Warning: 翻訳結果の形式が不正です。")
 
-def recalc_trans_status_counts(data):
+def recalc_trans_status_counts(book_data):
     """
     段落の翻訳ステータスを集計し、trans_status_countsに書き込む。
     """
     counts = {"none": 0, "auto": 0, "draft": 0, "fixed": 0}
-    paragraphs_dict = data.get("paragraphs", {}) # 辞書として取得
-    for p in paragraphs_dict.values(): # 辞書の値 (パラグラフオブジェクト) をイテレート
-        status = p.get("trans_status", "none") # ステータスがない場合も考慮
-        if status in counts:
-            counts[status] += 1
-        else:
-            counts["none"] += 1 # 未定義のステータスは none としてカウント
-            print(f"Warning: Unknown trans_status '{status}' found in paragraph ID {p.get('id', 'N/A')} during recalc. Counted as 'none'.")
-    data["trans_status_counts"] = counts
+    for page in book_data["pages"].values(): # ページをイテレート
+        for p in page.get("paragraphs", {}).values(): # ページ内の段落をイテレート
+            status = p.get("trans_status", "none") # ステータスがない場合も考慮
+            if status in counts:
+                counts[status] += 1
+            else:
+                counts["none"] += 1 # 未定義のステータスは none としてカウント
+                print(f"Warning: Unknown trans_status '{status}' found in paragraph ID {p.get('id', 'N/A')} during recalc. Counted as 'none'.")
 
-def paraparatrans_json_file(filepath, start_page, end_page):
+    book_data["trans_status_counts"] = counts
+
+def paraparatrans_json_file(json_path, start_page, end_page):
     """
     JSONファイルを読み込み、指定したページ範囲内の段落について翻訳処理を行い、結果をファイルへ保存する。
     ・filepath: JSONファイルのパス
     ・start_page, end_page: ページ範囲（両端を含む）
     各グループは5000文字以内に収まるように連結して翻訳される。
     """
-    print(f"翻訳処理を開始します: {filepath} ({start_page} 〜 {end_page} ページ)")
+    print(f"翻訳処理を開始します: {json_path} ({start_page} 〜 {end_page} ページ)")
 
     # JSONファイル読み込み
-    with open(filepath, 'r', encoding='utf-8') as f:
-        book_data = json.load(f)
+    book_data = load_json(json_path)
 
     # start_pageからend_pageをループしてpagetransを実行
     for page in range(start_page, end_page + 1):
-        pagetrans(filepath, book_data, page)
+        pagetrans(json_path, book_data, page)
 
     # 翻訳ステータスの集計を更新
     recalc_trans_status_counts(book_data)
-    save_json(book_data, filepath)
+    atomicsave_json(json_path, book_data)
     
     return book_data
 
-def pagetrans(filepath, book_data, page):
+def pagetrans(filepath, book_data, page_number):
     """
     各グループは5000文字以内に収まるように連結して翻訳され、各グループ処理後に必ずファイルへ保存する。
     """
-    print(f"ページ {page} の翻訳を開始します...")
-    paragraphs_dict = book_data.get("paragraphs", {}) # 辞書として取得
+    print(f"ページ {page_number} の翻訳を開始します...")
+
+    paragraphs_dict = book_data["pages"][str(page_number)].get("paragraphs", {}) # 辞書として取得
     
     # 指定されたページ範囲と未翻訳パラグラフで抽出し、page と order でソート
     filtered_paragraphs = [
         p for p in paragraphs_dict.values() # 辞書の値 (パラグラフオブジェクト) をイテレート
-        if page == p.get("page", 0) 
-        and p.get("trans_status") == "none" 
+        if p.get("trans_status") == "none" 
         and p.get("block_tag") not in ("header", "footer")
     ]
 
-    # 抽出されたリストをソート
-    filtered_paragraphs.sort(key=lambda p: (p.get("page", 0), p.get("order", 0)))
+    # 全段落を page_number, order , column_order , bbox[1] を数値化して順にソート
+    # 段落ごとに翻訳するならソートは不要に思えるが、なるべく多くの段落を一度に翻訳したほうが
+    # 自動翻訳が文意を理解しやすいので、ページ内での順序は保持する。
+    filtered_paragraphs.sort(key=lambda p: (
+        int(p['page_number']),
+        int(p.get('order',0)),
+        int(p['column_order']),
+        float(p['bbox'][1])
+    ))
 
     current_group = []
     current_length = 0
     # 4000文字を上限にグループ化して翻訳処理を実施
     for para in filtered_paragraphs:
         text_to_add = f"【{para['id']}】{para['src_replaced']}"
-        if current_length + len(text_to_add) > 5000:
+        if current_length + len(text_to_add) > 4000:
             if current_group:
-                process_group(current_group, book_data, filepath)
+                process_group(current_group)
                 current_group = []
                 current_length = 0
         current_group.append(para)
@@ -148,10 +148,25 @@ def pagetrans(filepath, book_data, page):
     
     # 残ったグループがあれば処理
     if current_group:
-        process_group(current_group, book_data, filepath)
+        process_group(current_group)
 
-    save_json(book_data, filepath)    
-    print(f"ページ {page} の翻訳が完了しました。")
+    atomicsave_json(filepath, book_data)  # 最後にアトミックセーブ
+    print(f"ページ {page_number} の翻訳が完了しました。")
+
+# json を読み込んでobjectを戻す
+def load_json(json_path: str):
+    if not os.path.isfile(json_path):
+        raise FileNotFoundError(f"{json_path} not found")
+    with open(json_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    return data
+
+# アトミックセーブ
+def atomicsave_json(json_path, data):
+    tmp_fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(json_path), suffix=".json", text=True)
+    with os.fdopen(tmp_fd, "w", encoding="utf-8") as tmp_file:
+        json.dump(data, tmp_file, ensure_ascii=False, indent=2)
+    os.replace(tmp_path, json_path)
 
 if __name__ == '__main__':
     import argparse

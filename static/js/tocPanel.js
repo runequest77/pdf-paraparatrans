@@ -6,10 +6,12 @@ function headlineParagraphs() {
   // bookData.pages{}をループして、各ページの段落を取得
   // その中から、block_tagがh1〜h6のものを抽出して、数値化したページ番号、order順で配列に格納する
   const headlines = [];
-  for (const page in bookData["pages"]) {
-    for (const paragraphDict of page["paragraphs"]) {
+
+  for (const [page_number, page] of Object.entries(bookData["pages"])) {
+    for (const [id, paragraphDict] of Object.entries(page["paragraphs"])) {
       if (/^h[1-6]$/.test(paragraphDict["block_tag"])) {
         headlines.push({
+          rowId: paragraphDict["page_number"] + "_" + paragraphDict["id"],
           page_number: paragraphDict["page_number"],
           id: paragraphDict["id"],
           order: paragraphDict["order"],
@@ -33,15 +35,14 @@ function headlineParagraphs() {
 }
 
 function showToc(isTrans) {
-  const paragraphsDict = bookData.paragraphs; // 辞書として取得
   const tbody = document.querySelector(".tocTable tbody");
 
-  // 辞書が空かどうかのチェック
-  if (!paragraphsDict || Object.keys(paragraphsDict).length === 0) {
+  const paragraphsArray = headlineParagraphs();
+  
+  if (paragraphsArray.length === 0) {
     tbody.innerHTML = "";
   } else {
     // 辞書の値を配列にして buildTocTree に渡す
-    const paragraphsArray = headlineParagraphs();
     const tocTree = buildTocTree(paragraphsArray);
     tbody.innerHTML = renderTocTableRows(tocTree);
     expandUpToLimit(30);
@@ -54,28 +55,28 @@ function renderTocTableRows(tocNode) {
   function walk(node, parentId = null) {
     if (node.block_tag !== "h0") {
       const hasChildren = node.children && node.children.length > 0;
-      const rowId = `toc-row-${node.id}`;
+      const rowId = `toc-row-${node.rowId}`;
       const nestLevelClass = `nest-level-${node.nestLevel}`;
       const rowClass = parentId ? `child-of-${parentId}` : "";
 
       const toggleMarker = hasChildren
-        ? `<span class="toc-toggle ${nestLevelClass}" data-target="${node.id}"></span>`
+        ? `<span class="toc-toggle ${nestLevelClass}" data-target="${node.rowId}"></span>`
         : `<span class="toc-toggle-blank ${nestLevelClass}"></span>`;
 
       rows.push(`
-        <tr id="${rowId}" class="${rowClass}" data-id="${node.id}" data-parent="${parentId || ""}" data-nest-level="${node.nestLevel}" data-open="true">
-          <td class="toc-page">${node.page}</td>
+        <tr id="${rowId}" class="${rowClass}" data-row-id="${node.rowId}" data-id="${node.id}" data-parent="${parentId || ""}" data-nest-level="${node.nestLevel}" data-open="true">
+          <td class="toc-page-number">${node.page_number}</td>
           <td class="toc-src toc-${node.block_tag}">
-            ${toggleMarker}<a href="#" data-id="${node.id}" data-page="${node.page}">${node.src_text}</a>
+            ${toggleMarker}<a href="#" data-id="${node.id}" data-page-number="${node.page_number}">${node.src_text}</a>
           <td class="toc-trans toc-${node.block_tag}">
-            ${toggleMarker}<a href="#" data-id="${node.id}" data-page="${node.page}">${node.trans_text}</a>
+            ${toggleMarker}<a href="#" data-id="${node.id}" data-page-number="${node.page_number}">${node.trans_text}</a>
           </td>
         </tr>
       `);
     }
 
     for (const child of node.children || []) {
-      walk(child, node.id);
+      walk(child, node.rowId);
     }
   }
 
@@ -89,6 +90,7 @@ function buildTocTree(paragraphsArray) { // 引数を配列として受け取る
   const headlines = paragraphsArray.filter(p => /^h[1-6]$/.test(p.block_tag));
 
   const root = {
+    rowId: "-1_-1", // ルートノードのIDは特別扱い
     id: "-1", // ルートノードのIDは特別扱い
     page_number: "-1",
     block_tag: "h0",
@@ -104,6 +106,7 @@ function buildTocTree(paragraphsArray) { // 引数を配列として受け取る
   for (const headline of headlines) {
     const level = parseInt(headline.block_tag.slice(1));
     const node = {
+      rowId: headline.rowId,
       id: headline.id,
       page_number: headline.page_number,
       block_tag: headline.block_tag,
@@ -133,6 +136,7 @@ document.addEventListener("click", function (e) {
   if (e.target.classList.contains("toc-toggle")) {
     const toggleEl = e.target;
     const targetId = toggleEl.dataset.target;
+    console.log("Toggle clicked:", targetId);
     const parentRow = document.querySelector(`#toc-row-${targetId}`);
 
     const wasOpen = parentRow.getAttribute("data-open") === "true";
@@ -162,7 +166,7 @@ function updateDescendantVisibility(parentId) {
     row.setAttribute("data-open", "false");
 
     // 再帰的に孫以下の表示状態を更新
-    updateDescendantVisibility(row.dataset.id);
+    updateDescendantVisibility(row.dataset.rowId);
   });
 }
 
@@ -210,7 +214,7 @@ document.addEventListener("click", function (event) {
 
   event.preventDefault();
   const id = link.dataset.id;
-  const page_number = parseInt(link.dataset.page_number);
+  const page_number = parseInt(link.dataset.pageNumber);
 
   const scrollTo = () => {
     const el = document.getElementById(`paragraph-${id}`);

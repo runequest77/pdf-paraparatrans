@@ -175,7 +175,7 @@ def block_to_paragraphs(block) -> Dict[str, Any]:
             # タブではない、終端文字ではない、スペースではない、ハイフンではない
             # 従って小文字始まりの場合はスペースを補って結合する。
             elif same_style(previous_span,line["spans"][0]) and start_with_lowercase(line["spans"][0]):
-                    line["spans"][0]["text"] = " ★ " + line["spans"][0]["text"]
+                    line["spans"][0]["text"] = " " + line["spans"][0]["text"]
                     current_lines.append(line)
             else:
                 # それ以外の場合はパラグラフをクローズして新しい段落を開始
