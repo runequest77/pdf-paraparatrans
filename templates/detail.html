@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/tocPanel.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/srcPanel.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/help-tooltip.css') }}">
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/auto-toggle.css') }}">
     <script src="{{ url_for('static', filename='js/auto-toggle.js') }}"></script>    
@@ -26,43 +27,43 @@
         <div class="left" style="display:flex; flex-direction:column; justify-content:space-between; overflow:hidden; white-space: normal;">
           <div class="basic-info" style="flex-shrink:0;">
             <span style="display:inline-block; margin: 2px;">
-              <button onclick="window.location='{{ url_for('index') }}'">戻る</button>
+              <button onclick="window.location='{{ url_for('index') }}'" data-help-id="back-to-index">戻る</button>
               Title: <input type="text" id="titleInput" value="{{ book_data.title|e }}" style="width:200px">
               FileName: {{ pdf_name }} / Update: {{ updated_date }}
             </span>
             <span style="display:inline-block; margin: 2px;">
-              <button onclick="extractParagraphs()" style="border: 2px solid #e74c3c">1.パラグラフ抽出</button>
-              <button onclick="autoTagging()">(自動タグ付け)</button>
-              <button onclick="joinParagraphs()">(連結)</button>
-              <button onclick="dictCreate()">(辞書抽出)</button>
-              <button onclick="dictTrans()" hidden>(辞書翻訳)</button>
-              <button onclick="dictReplaceAll()" style="border: 2px solid #3498db">2.全対訳置換</button>
-              <button onclick="transAllPages()" style="border: 2px solid #ff9800; font-weight: bold;">3.全翻訳</button>
-              <button onclick="saveStructure()" hidden>4.構成ファイル出力</button>
-              <button onclick="exportHtml()" style="border: 2px solid #2ecc71;">5.対訳HTML出力</button>
-              <button onclick="fetchBookData()" hidden>リロード</button>
-              <button id="renderButton" hidden>レンダリング</button>
+              <button onclick="extractParagraphs()" style="border: 2px solid #e74c3c" data-help-id="extract-paragraphs">1.パラグラフ抽出</button>
+              <button onclick="autoTagging()" data-help-id="auto-tagging">(自動タグ付け)</button>
+              <button onclick="joinParagraphs()" data-help-id="join-paragraphs">(連結)</button>
+              <button onclick="dictCreate()" data-help-id="create-dictionary">(辞書抽出)</button>
+              <button onclick="dictTrans()" hidden data-help-id="translate-dictionary">(辞書翻訳)</button>
+              <button onclick="dictReplaceAll()" style="border: 2px solid #3498db" data-help-id="replace-all-translations">2.全対訳置換</button>
+              <button onclick="transAllPages()" style="border: 2px solid #ff9800; font-weight: bold;" data-help-id="translate-all-pages">3.全翻訳</button>
+              <button onclick="saveStructure()" hidden data-help-id="save-structure">4.構成ファイル出力</button>
+              <button onclick="exportHtml()" style="border: 2px solid #2ecc71;" data-help-id="export-html">5.対訳HTML出力</button>
+              <button onclick="fetchBookData()" hidden data-help-id="reload-book-data">リロード</button>
+              <button id="renderButton" hidden data-help-id="render-html">レンダリング</button>
             </span>
           </div>
           <div class="controls" style="flex-shrink:0;">
             <span style="display:inline-block; margin: 2px;">
-              <span id="toggleTocPanel" class="auto-toggle" data-auto-toggle="appearance:checkbox;storage:local">目次</span>
-              <span id="togglePdfPanel" class="auto-toggle" data-auto-toggle="appearance:checkbox;storage:local">PDF</span>
-              <button onclick="prevPage()">◀</button>
+              <span id="toggleTocPanel" class="auto-toggle" data-auto-toggle="appearance:checkbox;storage:local" data-help-id="toggle-toc-panel">目次</span>
+              <span id="togglePdfPanel" class="auto-toggle" data-auto-toggle="appearance:checkbox;storage:local" data-help-id="toggle-pdf-panel">PDF</span>
+              <button onclick="prevPage()" data-help-id="prev-page">◀</button>
               <input type="number" id="pageInput" value="1" min="1" max="1" 
                     style=" vertical-align:middle; font-size:120%; width: 60px; text-align: center; border: 2px solid; " onchange="jumpToPage(this.value)">
               <span>/</span>
               <span id="pageCount">1</span>
-              <button onclick="nextPage()">▶</button>
+              <button onclick="nextPage()" data-help-id="next-page">▶</button>
             </span>
             <span style="display:inline-block; margin: 2px;">
-              <button id="pageTransButton" style="border: 2px solid #ff9800; font-weight: bold;">ページ翻訳</button>
-              <span id="toggleSrcHtml" class="auto-toggle" data-auto-toggle="appearance:checkbox;storage:local">Html</span>
-              <span id="toggleSrcText" class="auto-toggle" data-auto-toggle="appearance:checkbox;storage:local;default:true">原文</span>
-              <span id="toggleSrcJoined" class="auto-toggle" data-auto-toggle="appearance:checkbox;storage:local">連結文</span>
-              <span id="toggleSrcReplaced" class="auto-toggle" data-auto-toggle="appearance:checkbox;storage:local">置換文</span>
-              <span id="toggleTransAuto" class="auto-toggle" data-auto-toggle="appearance:checkbox;storage:local">Auto</span>
-              <span id="toggleTransText" class="auto-toggle" data-auto-toggle="appearance:checkbox;storage:local;default:true">訳文</span>
+              <button id="pageTransButton" style="border: 2px solid #ff9800; font-weight: bold;" data-help-id="translate-page">ページ翻訳</button>
+              <span id="toggleSrcHtml" class="auto-toggle" data-auto-toggle="appearance:checkbox;storage:local" data-help-id="toggle-src-html">Html</span>
+              <span id="toggleSrcText" class="auto-toggle" data-auto-toggle="appearance:checkbox;storage:local;default:true" data-help-id="toggle-src-text">原文</span>
+              <span id="toggleSrcJoined" class="auto-toggle" data-auto-toggle="appearance:checkbox;storage:local" data-help-id="toggle-src-joined">連結文</span>
+              <span id="toggleSrcReplaced" class="auto-toggle" data-auto-toggle="appearance:checkbox;storage:local" data-help-id="toggle-src-replaced">置換文</span>
+              <span id="toggleTransAuto" class="auto-toggle" data-auto-toggle="appearance:checkbox;storage:local" data-help-id="toggle-trans-auto">Auto</span>
+              <span id="toggleTransText" class="auto-toggle" data-auto-toggle="appearance:checkbox;storage:local;default:true" data-help-id="toggle-trans-text">訳文</span>
             </span>
             <table class="trans_status_counts" style="display:inline-block; vertical-align:middle; border:1px solid #000; border-collapse:collapse; font-size:80%; margin: 2px;">
               <tr>
@@ -76,10 +77,11 @@
                 <td style="padding:0 5px;" id="countFixed">0</td>
               </tr>
             </table>
-            <button id="openLogButton" onclick="showLog()">Log</button>
-            <button id="openHotKeyButton" onclick="HotkeyMapper.showHelpWindow()">HotKey</button>
-            <span id="quickEditMode" class="auto-toggle" data-auto-toggle="storage:session;shortcut:ctrl+q">高速編集</span>
-            <button id="saveOrderButton">構造保存</button>
+            <button id="openLogButton" onclick="showLog()" data-help-id="open-log">Log</button>
+            <button id="openHotKeyButton" onclick="HotkeyMapper.showHelpWindow()" data-help-id="open-hotkey-mapper">HotKey</button>
+            <span id="quickEditMode" class="auto-toggle" data-auto-toggle="storage:session;shortcut:ctrl+q" data-help-id="quick-edit-mode">高速編集</span>
+            <button id="saveOrderButton" data-help-id="save-structure-order">構造保存</button>
+            <button id="show-full-help">Help</button>
           </div>
         </div>
       </div>
@@ -118,6 +120,7 @@
   <script src="{{ url_for('static', filename='js/fetch.js') }}"></script>    
   <script src="{{ url_for('static', filename='js/hotkey-mapper.js') }}" defer></script>    
   <script src="{{ url_for('static', filename='js/keyDown.js') }}" defer></script>    
+  <script src="{{ url_for('static', filename='js/help.js') }}"></script>
 </body>
 
 </html>

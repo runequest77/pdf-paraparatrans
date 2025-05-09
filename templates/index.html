@@ -5,16 +5,18 @@
     <title>PDF ParaParaTrans - 初期画面</title>
     <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='paraparatrans.svg') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/help-tooltip.css') }}">
 </head>
 <body>
     <div style="display: flex; align-items: center;">
         <img src="{{ url_for('static', filename='paraparatrans.svg') }}" alt="Icon" style="height: 50px; margin-right: 10px;">
         <h1>PDF ParaParaTrans</h1>
-        <button onclick="refreshBookList()" >最新の状態に更新</button>
+        <button onclick="refreshBookList()" data-help-id="refresh-book-list">最新の状態に更新</button>
+        <button id="show-full-help">Help</button>
     </div>
     <form method="GET">
       <input type="text" name="filter" placeholder="タイトル/ファイル名でフィルタ" value="{{ filter_text|e }}">
-      <button type="submit">フィルタ</button>
+      <button type="submit" data-help-id="filter-books">フィルタ</button>
     </form>
     <table border="1" cellpadding="4" cellspacing="0">
         <thead>
@@ -45,5 +47,6 @@
             });    
         }
     </script>
+    <script src="{{ url_for('static', filename='js/help.js') }}"></script>
 </body>
 </html>

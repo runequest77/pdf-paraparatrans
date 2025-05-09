@@ -1,0 +1,91 @@
+/* static/css/help-tooltip.css */
+/* Styles for the help tooltips */
+
+.tippy-box {
+  border: 4px solid #888;
+  border-radius: 8px;
+  width: auto; /* コンテンツに合わせて幅を自動調整する場合 */
+  max-width: 60%; /* ツールチップの最大幅を60%に設定 */
+}
+
+/* Dark mode styles using prefers-color-scheme */
+@media (prefers-color-scheme: dark) {
+  .tippy-box {
+    background-color: #2c2c2c;
+    color: #f5f5f5;
+    border-color: #555; /* Adjust border color for dark mode if needed */
+  }
+
+  .tippy-arrow {
+      border-color: #555 !important; /* Ensure arrow color matches border in dark mode */
+  }
+}
+
+/* Style for the arrow in light mode */
+.tippy-arrow {
+  border-color: #888 !important; /* Ensure arrow color matches border in light mode */
+}
+
+/* Styles for the full help modal */
+.help-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.help-modal-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 80%;
+  max-height: 80%;
+  overflow-y: auto;
+  position: relative;
+}
+
+.help-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+.help-modal-header h2 {
+  margin: 0;
+}
+
+.help-modal-close {
+  background: none;
+  border: none;
+  font-size: 1.5em;
+  cursor: pointer;
+}
+
+.help-modal-body {
+  /* Add any specific styles for the markdown content here if needed */
+}
+
+/* Dark mode styles for the modal */
+@media (prefers-color-scheme: dark) {
+  .help-modal-content {
+    background-color: #2c2c2c;
+    color: #f5f5f5;
+  }
+
+  .help-modal-header {
+    border-bottom-color: #555;
+  }
+
+  .help-modal-close {
+    color: #f5f5f5;
+  }
+}
