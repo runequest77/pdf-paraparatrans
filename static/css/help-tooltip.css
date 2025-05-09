@@ -96,6 +96,15 @@
   margin-bottom: 5px;
 }
 
+/* Styles for hierarchical TOC */
+.help-toc li.level-1 { margin-left: 0em; }
+.help-toc li.level-2 { margin-left: 1em; }
+.help-toc li.level-3 { margin-left: 2em; }
+.help-toc li.level-4 { margin-left: 3em; }
+.help-toc li.level-5 { margin-left: 4em; }
+.help-toc li.level-6 { margin-left: 5em; }
+
+
 .help-toc a {
   text-decoration: none;
   color: #007bff; /* Link color */

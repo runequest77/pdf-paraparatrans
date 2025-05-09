@@ -92,14 +92,89 @@ const showFullHelp = async () => {
 
     const htmlContent = marked.parse(markdownText);
 
-    // Extract headings for the table of contents
+    // Extract headings and build a hierarchical structure
+    const lines = markdownText.trim().split('\n');
     const headings = [];
-    const headingRegex = /^##\s*(.+)$/gm;
-    let match;
-    while ((match = headingRegex.exec(markdownText)) !== null) {
-      const id = match[1].trim().toLowerCase().replace(/\s+/g, '-'); // Generate ID similar to marked.js
-      headings.push({ id: id, text: match[1].trim() });
-    }
+    const headingRegex = /^(#+)\s*(.+)$/;
+    let currentLevel = 0;
+    let currentHierarchy = headings;
+
+    console.log('Starting heading extraction and hierarchy building...');
+
+    lines.forEach((line, index) => {
+      const trimmedLine = line.trim(); // Trim each line before matching
+      console.log(`Processing line ${index + 1}: "${trimmedLine}"`);
+      const match = trimmedLine.match(headingRegex);
+      if (match) {
+        const level = match[1].length;
+        const text = match[2].trim();
+        const id = text.toLowerCase().replace(/\s+/g, '-');
+
+        const heading = { id: id, text: text, level: level, children: [] };
+        console.log(`Matched heading: Level ${level}, Text: "${text}", ID: "${id}"`);
+
+        if (level > currentLevel) {
+          // Deeper level
+          console.log(`Moving to deeper level from ${currentLevel} to ${level}`);
+          if (currentHierarchy.length > 0) {
+            const lastSibling = currentHierarchy[currentHierarchy.length - 1];
+            lastSibling.children.push(heading);
+            currentHierarchy = lastSibling.children;
+            console.log('Added as child:', heading);
+          } else {
+             // Should not happen with valid markdown starting from #
+             console.warn('Unexpected hierarchy structure: Deeper level with empty currentHierarchy.');
+             headings.push(heading);
+             currentHierarchy = headings;
+             console.log('Added to root as deeper level:', heading);
+          }
+        } else if (level < currentLevel) {
+          // Higher level
+          console.log(`Moving to higher level from ${currentLevel} to ${level}`);
+          let parentHierarchy = headings;
+          // Navigate up the hierarchy
+          for (let i = 1; i < level; i++) { // Corrected loop condition
+             if (parentHierarchy.length > 0 && parentHierarchy[parentHierarchy.length - 1].children.length > 0) {
+                parentHierarchy = parentHierarchy[parentHierarchy.length - 1].children;
+             } else {
+                console.warn(`Unexpected hierarchy structure: Cannot find parent for level ${level}.`);
+                break; // Should not happen with valid markdown
+             }
+          }
+          parentHierarchy.push(heading);
+          currentHierarchy = parentHierarchy;
+          console.log('Added to higher level:', heading);
+
+        } else {
+          // Same level
+          console.log(`Staying at same level ${level}`);
+          currentHierarchy.push(heading);
+          console.log('Added to current level:', heading);
+        }
+        currentLevel = level;
+        console.log('Current hierarchy:', currentHierarchy);
+      } else {
+        console.log('No heading match.');
+      }
+    });
+
+    console.log('Heading extraction and hierarchy building complete. Resulting headings:', headings);
+
+
+    // Function to build nested TOC HTML
+    const buildTocHtml = (items) => {
+      let html = '<ul>';
+      items.forEach(item => {
+        html += `<li class="level-${item.level}"><a href="#${item.id}">${item.text}</a>`;
+        if (item.children.length > 0) {
+          html += buildTocHtml(item.children);
+        }
+        html += '</li>';
+      });
+      html += '</ul>';
+      return html;
+    };
+
 
     // Create modal elements
     const modalOverlay = document.createElement('div');
@@ -127,24 +202,7 @@ const showFullHelp = async () => {
     // Create table of contents
     const tocNav = document.createElement('nav');
     tocNav.classList.add('help-toc');
-    const tocList = document.createElement('ul');
-    headings.forEach(heading => {
-      const listItem = document.createElement('li');
-      const link = document.createElement('a');
-      link.href = `#${heading.id}`;
-      link.textContent = heading.text;
-      link.onclick = (e) => {
-        e.preventDefault();
-        const targetId = link.getAttribute('href').substring(1);
-        const targetElement = modalBody.querySelector(`#${targetId}`);
-        if (targetElement) {
-          targetElement.scrollIntoView({ behavior: 'smooth' });
-        }
-      };
-      listItem.appendChild(link);
-      tocList.appendChild(listItem);
-    });
-    tocNav.appendChild(tocList);
+    tocNav.innerHTML = buildTocHtml(headings);
 
     const contentDiv = document.createElement('div');
     contentDiv.classList.add('help-content');
@@ -159,6 +217,19 @@ const showFullHelp = async () => {
     modalOverlay.appendChild(modalContent);
 
     document.body.appendChild(modalOverlay);
+
+    // Add click event listeners to TOC links for smooth scrolling
+    tocNav.querySelectorAll('a').forEach(link => {
+      link.onclick = (e) => {
+        e.preventDefault();
+        const targetId = link.getAttribute('href').substring(1);
+        const targetElement = contentDiv.querySelector(`#${targetId}`);
+        if (targetElement) {
+          targetElement.scrollIntoView({ behavior: 'smooth' });
+        }
+      };
+    });
+
 
   } catch (error) {
     console.error('Failed to show full help:', error);
