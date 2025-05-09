@@ -132,6 +132,7 @@ function renderParagraphs() {
         divSrc.innerHTML = `
             <div class='src-html'>${p.src_html}</div>
             <div class='src-text' data-original="${p.src_text}">${p.src_text}</div>
+            <div class='src-joined'>${p.src_joined}</div>
             <div class='src-replaced'>${p.src_replaced}</div>
             <div class='trans-auto'>${p.trans_auto}</div>
             <div class='trans-text' data-original="${p.trans_text}">${p.trans_text}</div>
@@ -226,6 +227,13 @@ function toggleTransAuto(event) {
 function toggleTrans(event) {
     const checked = event.target.checked;
     document.querySelectorAll('.trans-text').forEach(el => {
+        el.style.display = checked ? 'block' : 'none';
+    });
+}
+
+function toggleSrcJoined(event) {
+    const checked = event.target.checked;
+    document.querySelectorAll('.src-joined').forEach(el => {
         el.style.display = checked ? 'block' : 'none';
     });
 }

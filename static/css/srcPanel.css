@@ -84,10 +84,13 @@
     padding: 0; /* パディングをなくす */        
 }
 
-.src-html, .src-text, .src-replaced, .trans-auto, .trans-text {
+.src-html, .src-text, .src-joined, .src-replaced, .trans-auto, .trans-text {
     flex: 1 1 50%;
     word-wrap: break-word;
     padding: 5px;
+}
+.src-joined {
+    border-left: 4px solid #ffeb3b; /* 黄色系の色 */
 }
 .edit-ui {
     display: none;

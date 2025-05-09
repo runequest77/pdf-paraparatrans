@@ -65,6 +65,11 @@ function autoToggleChanged(event) {
         document.querySelectorAll('.src-text').forEach(el => {
             el.style.display = newState ? 'block' : 'none';
         });
+    } else if (id === 'toggleSrcJoined') {
+        // 「連結文」列のON/OFF
+        document.querySelectorAll('.src-joined').forEach(el => {
+            el.style.display = newState ? 'block' : 'none';
+        });
     } else if (id === 'toggleSrcReplaced') {
         // 「置換文」列のON/OFF
         document.querySelectorAll('.src-replaced').forEach(el => {
@@ -263,4 +268,3 @@ async function saveForce() {
     saveCurrentPageOrder();
     updateBookInfo();
 }
-
