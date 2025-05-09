@@ -27,6 +27,7 @@ async function fetchBookData() {
 async function transPage() {
     await saveCurrentPageOrder(); // 順序を保存してから翻訳 (saveOrderもasyncにする必要あり)
     if (!confirm("現在のページを翻訳します。よろしいですか？")) return;
+    showLog();
 
     try {
         const response = await fetch(`/api/paraparatrans/${encodeURIComponent(pdfName)}`, {
@@ -54,9 +55,10 @@ async function transPage() {
 }
 
 async function transAllPages() {
+    await saveCurrentPageOrder(); // saveOrderもasyncにする必要あり
     const totalPages = bookData.page_count;
     if (!confirm(`全 ${totalPages} ページを翻訳します。よろしいですか？`)) return;
-    await saveCurrentPageOrder(); // saveOrderもasyncにする必要あり
+    showLog();
 
     try {
         const response = await fetch(`/api/paraparatrans/${encodeURIComponent(pdfName)}`, {
@@ -85,6 +87,8 @@ async function transAllPages() {
 
 async function extractParagraphs(){
     if(!confirm("PDFを解析してJSONを新規生成します。よろしいですか？")) return;
+    showLog();
+
     let form = new FormData();
     try {
         const response = await fetch(`/api/extract_paragraphs/${encodeURIComponent(pdfName)}`, {
@@ -111,6 +115,7 @@ async function dictReplaceAll() {
     msg += "\n応答がなくてもページを閉じないでください。";
     msg += "\n\nよろしいですか？";
     if (!confirm(msg)) return;
+    showLog();
 
     try {
         const response = await fetch(`/api/dict_replace_all/${encodeURIComponent(pdfName)}`, {
@@ -154,7 +159,8 @@ async function autoTagging() {
     }
 }
 
-async function joinReplacedParagraphs() {
+async function joinParagraphs() {
+    await saveCurrentPageOrder(); // 順序を保存してから翻訳 (saveOrderもasyncにする必要あり)
     try {
         const response = await fetch(`/api/join_replaced_paragraphs/${encodeURIComponent(pdfName)}`, {
             method: 'POST',

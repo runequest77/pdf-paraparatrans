@@ -477,7 +477,8 @@ function updateBlockTag(paragraphDiv, blockTag) {
     paragraphDiv.classList.remove(
         ...Array.from(paragraphDiv.classList).filter(cls => cls.startsWith('block-tag-') || cls.startsWith('status-'))
     );
-    paragraphDiv.classList.add(`block-tag-${blockTag}`, `status-${currentStatus}`);
+    paragraphDiv.classList.add(`block-tag-${blockTag}`);
+    // paragraphDiv.classList.add(`block-tag-${blockTag}`, `status-${currentStatus}`);
     isPageEdited = true; // ページが編集されたことを示すフラグを立てる
 }
 

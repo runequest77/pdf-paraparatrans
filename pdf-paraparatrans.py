@@ -615,17 +615,14 @@ def update_paragraphs_api(pdf_name):
         return jsonify({"status": "error", "message": "title がありません"}), 400
 
     try:
-        print("step1")
         book_data = load_json(json_path)  # JSONファイルを読み込む
 
         request_title = request_data.get("title")
         if request_title is not None:
             book_data["title"] = request_title
 
-        print("step2")
 
         def apply_update(p, upd_value): # 第2引数は更新内容のオブジェクト
-            print("step21")
 
             p["modified_at"] = datetime.datetime.now().isoformat()
             p["src_text"] = upd_value.get("src_text", p.get("src_text"))
@@ -633,7 +630,6 @@ def update_paragraphs_api(pdf_name):
             p["trans_status"] = upd_value.get("trans_status", p.get("trans_status"))
             p["order"] = upd_value.get("order", p.get("order"))
             p["block_tag"] = upd_value.get("block_tag", p.get("block_tag"))
-            print("step22")
 
             group_id = upd_value.get("group_id")
             # group_idがparagraphs_dictに存在しない場合は、group_idを削除
@@ -641,7 +637,6 @@ def update_paragraphs_api(pdf_name):
                 p["group_id"] = group_id
             elif "group_id" in p:
                 del p["group_id"]  # group_idを削除
-            print("step23")
 
             join = upd_value.get("join")
             if join is not None and join == 1:
@@ -649,24 +644,18 @@ def update_paragraphs_api(pdf_name):
             elif "join" in p:
                 del p["join"]  # joinを削除
 
-        print("step3")
-
         request_paragraphs = request_data.get("paragraphs")
         for request_paragraph in request_paragraphs:
-            print("step10")
             page_number = str(request_paragraph.get("page_number"))
             id = str(request_paragraph.get("id"))
             print(f"page:{page_number} id:{id}")
             paragraph_dict = book_data["pages"][page_number]["paragraphs"][id]
-            print("step11")
 
             apply_update(paragraph_dict, request_paragraph)
 
-        print("step4")
 
         # 翻訳ステータスカウントを再計算
         recalc_trans_status_counts(book_data)
-        print("step5")
 
         atomicsave_json(json_path, book_data)
         return jsonify({"status": "ok"}), 200
