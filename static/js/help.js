@@ -83,7 +83,23 @@ const showFullHelp = async () => {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const markdownText = await response.text();
+
+    // Configure marked.js to generate IDs for headings
+    marked.setOptions({
+      headerIds: true,
+      headerPrefix: '', // Optional: add a prefix to IDs
+    });
+
     const htmlContent = marked.parse(markdownText);
+
+    // Extract headings for the table of contents
+    const headings = [];
+    const headingRegex = /^##\s*(.+)$/gm;
+    let match;
+    while ((match = headingRegex.exec(markdownText)) !== null) {
+      const id = match[1].trim().toLowerCase().replace(/\s+/g, '-'); // Generate ID similar to marked.js
+      headings.push({ id: id, text: match[1].trim() });
+    }
 
     // Create modal elements
     const modalOverlay = document.createElement('div');
@@ -107,7 +123,36 @@ const showFullHelp = async () => {
 
     const modalBody = document.createElement('div');
     modalBody.classList.add('help-modal-body');
-    modalBody.innerHTML = htmlContent;
+
+    // Create table of contents
+    const tocNav = document.createElement('nav');
+    tocNav.classList.add('help-toc');
+    const tocList = document.createElement('ul');
+    headings.forEach(heading => {
+      const listItem = document.createElement('li');
+      const link = document.createElement('a');
+      link.href = `#${heading.id}`;
+      link.textContent = heading.text;
+      link.onclick = (e) => {
+        e.preventDefault();
+        const targetId = link.getAttribute('href').substring(1);
+        const targetElement = modalBody.querySelector(`#${targetId}`);
+        if (targetElement) {
+          targetElement.scrollIntoView({ behavior: 'smooth' });
+        }
+      };
+      listItem.appendChild(link);
+      tocList.appendChild(listItem);
+    });
+    tocNav.appendChild(tocList);
+
+    const contentDiv = document.createElement('div');
+    contentDiv.classList.add('help-content');
+    contentDiv.innerHTML = htmlContent;
+
+    modalBody.appendChild(tocNav);
+    modalBody.appendChild(contentDiv);
+
 
     modalContent.appendChild(modalHeader);
     modalContent.appendChild(modalBody);

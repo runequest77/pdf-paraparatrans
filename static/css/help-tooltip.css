@@ -74,8 +74,48 @@
 
 .help-modal-body {
   flex-grow: 1; /* Allow body to grow and fill available space */
-  overflow-y: auto; /* Enable vertical scrolling for the body */
-  /* Add any specific styles for the markdown content here if needed */
+  overflow-y: hidden; /* Prevent scrolling on the body itself, scrolling is on content */
+  display: flex; /* Enable flexbox for two-pane layout */
+  flex-direction: row; /* Arrange children horizontally */
+}
+
+.help-toc {
+  flex: 0 0 200px; /* Prevent shrinking, prevent growing, set base width to 200px */
+  overflow-y: auto; /* Enable scrolling for the TOC */
+  padding-right: 10px; /* Add some space between TOC and content */
+  border-right: 1px solid #ccc; /* Separator line */
+}
+
+.help-toc ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.help-toc li {
+  margin-bottom: 5px;
+}
+
+.help-toc a {
+  text-decoration: none;
+  color: #007bff; /* Link color */
+}
+
+.help-toc a:hover {
+  text-decoration: underline;
+}
+
+.help-content {
+  flex: 1; /* Allow content to grow and fill remaining space */
+  overflow-y: auto; /* Enable scrolling for the content */
+  padding-left: 20px; /* Add some space between TOC and content */
+}
+
+/* Add any specific styles for the markdown content here if needed */
+/* For example, adjust heading margins within the modal body */
+.help-content h1, .help-content h2, .help-content h3, .help-content h4, .help-content h5, .help-content h6 {
+  margin-top: 1em;
+  margin-bottom: 0.5em;
 }
 
 /* Dark mode styles for the modal */
@@ -83,6 +123,14 @@
   .help-modal-content {
     background-color: #2c2c2c;
     color: #f5f5f5;
+  }
+
+  .help-toc a {
+    color: #89b4fa; /* Link color in dark mode */
+  }
+
+  .help-toc {
+    border-right-color: #555; /* Separator line color in dark mode */
   }
 
   .help-modal-header {
