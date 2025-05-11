@@ -65,6 +65,8 @@ from modules.parapara_join import join_replaced_paragraphs_in_file
 from modules.api_translate import translate_text
 from modules.parapara_trans import paraparatrans_json_file
 from modules.parapara_init import parapara_init  # parapara_initをインポート
+# スタイルによるblock_tag一括更新
+from modules.parapara_tagging_by_style import tag_paragraphs_by_style # 追加
 # 対訳HTMLの出力
 from modules.parapara_json2html import json2html
 
@@ -463,6 +465,32 @@ def auto_tagging_api(pdf_name):
     except Exception as e:
         return jsonify({"status": "error", "message": f"自動タグ付けエラー: {str(e)}"}), 500
     return jsonify({"status": "ok", "message": "自動タグ付け完了"}), 200
+
+# API: スタイルによるblock_tag一括更新
+@app.route("/api/update_block_tags_by_style/<pdf_name>", methods=["POST"])
+def update_block_tags_by_style_api(pdf_name):
+    data = request.get_json()
+    target_style = data.get("target_style")
+    target_tag = data.get("target_tag")
+
+    if not target_style or not target_tag:
+        return jsonify({"status": "error", "message": "target_style と target_tag は必須です"}), 400
+
+    pdf_path, json_path = get_paths(pdf_name)
+    if not os.path.exists(json_path):
+        return jsonify({"status": "error", "message": "JSONファイルが存在しません"}), 404
+
+    try:
+        # parapara_tagging_by_style.py の関数を呼び出す
+        tag_paragraphs_by_style(json_path, target_style, target_tag)
+
+        # 成功レスポンスを返す
+        return jsonify({"status": "ok", "message": "スタイルによるblock_tag一括更新が完了しました"}), 200
+
+    except Exception as e:
+        app.logger.error(f"スタイルによるblock_tag一括更新エラー: {str(e)}")
+        return jsonify({"status": "error", "message": f"スタイルによるblock_tag一括更新エラー: {str(e)}"}), 500
+
 
 @app.route("/api/join_replaced_paragraphs/<pdf_name>", methods=["POST"])
 def auto_join_replaced_paragraphs_api(pdf_name):

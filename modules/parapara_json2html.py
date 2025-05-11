@@ -11,6 +11,8 @@ def json2html(json_file_path: str):
     # 目次と本文のエントリを保持する変数
     toc_entries = []
     content_entries = ""
+    # グループ化用変数
+    open_group = None
     # 現在のページ番号を覚えておく
     current_page_number = None
 
@@ -115,7 +117,7 @@ def json2html(json_file_path: str):
         page_number = int(paragraph.get("page_number", 0))
         if page_number != current_page_number:
             current_page_number = page_number
-            content_entries += f'<div class="page-break"></div><h2>Page {page_number}</h2>'
+            content_entries += f'<div class="page-break"></div>Page {page_number}'
 
         # --- 追加: 空文字のみの段落をスキップ ---
         trans_text = paragraph.get("trans_text", "")
@@ -123,19 +125,35 @@ def json2html(json_file_path: str):
         if not trans_text.strip() and not src_joined.strip():
             continue
 
-        unique_paragraph_id = f"{paragraph.get('page_number', '0')}_{paragraph.get('id', '0')}"
-        block_tag = paragraph.get("block_tag", "div").lower()
-        if block_tag in ("header", "footer"):
+        # グループIDで記事を囲む
+        group_id = paragraph.get("group_id")
+        if group_id != open_group:
+            # 既存のグループを閉じる
+            if open_group is not None:
+                content_entries += '</div></div>'
+            # 新しいグループを開始
+            if group_id:
+                content_entries += f'<div class="article-group" data-group="{group_id}"><div class="paragraph-group">'
+            open_group = group_id
+
+        unique_paragraph_id = f"{paragraph.get('page_number','0')}_{paragraph.get('id','0')}"
+        block_tag = paragraph.get("block_tag","div").lower()
+        if block_tag in ("header","footer"):
             continue
 
+        # 段落を追加
         content_entries += f'''
         <div class="paragraph-container">
             <div class="paragraph-anchor" id="{unique_paragraph_id}"></div>
             <div class="paragraph-id hidden-text">{unique_paragraph_id}</div>
-            <div class="trans-text"><{paragraph.get("block_tag", "div")}>{trans_text}</{paragraph.get("block_tag", "div")}></div>
-            <div class="src-joined"><{paragraph.get("block_tag", "div")}>{src_joined}</{paragraph.get("block_tag", "div")}></div>
+            <div class="trans-text"><{paragraph.get("block_tag","div")}>{trans_text}</{paragraph.get("block_tag","div")}></div>
+            <div class="src-joined"><{paragraph.get("block_tag","div")}>{src_joined}</{paragraph.get("block_tag","div")}></div>
         </div>
         '''
+
+    # 最後のグループを閉じる
+    if open_group is not None:
+        content_entries += '</div></div>'
 
     # HTML全体の構造
     html_content = '''
@@ -151,23 +169,23 @@ def json2html(json_file_path: str):
                 font-family: Arial, sans-serif;
                 display: flex;
                 flex-direction: column;
+                background-color: #fff;
+                color: #000;
             }
             .header {
                 position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
+                top: 0; left: 0; right: 0;
                 display: flex;
                 align-items: center;
-                background-color: #333;
-                color: white;
+                background-color: #2e3b4e;
+                color: #fff;
                 z-index: 1000;
             }
             .header .buttons {
                 margin-right: auto;
             }
             .header button {
-                background: #444;
+                background: #3f4e62;
                 color: white;
                 border: none;
                 padding: 5px 10px;
@@ -183,28 +201,28 @@ def json2html(json_file_path: str):
                 font-size: 12px;
                 margin-left: 20px;
             }
+
+            .container {
+                display: flex;
+                margin-top: 40px;
+                height: calc(100vh - 50px);
+            }
             .toc {
-                background-color: #f0f0f0;
+                background-color: #f8f8f8;
+                color: #333;
                 padding: 2px;
                 border-right: 1px solid #ccc;
                 overflow-y: auto;
-                max-width: 25%; /* 目次の最大幅 */
+                max-width: 25%;
                 height: 100%;
             }
-            .container {
-                display: flex;
-                margin-top: 30px;             /* ヘッダ分のオフセット */
-                height: calc(100vh - 50px);   /* ヘッダ以外をペイン内スクロール領域に */
-            }
             .content {
-                flex: 1;              /* 残余スペースを占有 */
+                flex: 1;
                 padding: 8px;
                 overflow-y: auto;
-                height: 100%;         /* .container の高さいっぱい */
+                background-color: #ffffff;
             }
-            .hidden {
-                display: none;
-            }
+
             .paragraph-container {
                 display: flex;
                 gap: 10px;
@@ -223,31 +241,28 @@ def json2html(json_file_path: str):
                 font-family: monospace;
                 font-size: 80%;
             }
-            .src-joined, .trans-text {
+
+            .src-joined {
+                background-color: #fff8dc;
                 flex: 1;
-                padding: 5px 10px 5px 10px ;
+                padding: 5px 10px;
             }
             .trans-text {
-                background-color: #c8e6c9;
+                background-color: #e1f5e8;
+                flex: 1;
+                padding: 5px 10px;
             }
-            .src-joined {
-                background-color: #fff9c4;
-            }
+
             .hidden-text {
                 display: none;
             }
-            .paragraph-container p {
-                margin: 0;
-                padding: 1;
-                line-height: 1.5;
-                font-family: Arial, sans-serif;
-            }
+            .paragraph-container p,
             .paragraph-container div {
                 margin: 0;
-                padding: 1;
                 line-height: 1.5;
                 font-family: Arial, sans-serif;
             }
+
             .paragraph-container h1,
             .paragraph-container h2,
             .paragraph-container h3,
@@ -259,19 +274,51 @@ def json2html(json_file_path: str):
                 line-height: 1.5;
                 font-family: Arial, sans-serif;
             }
+
             h2 {
-                margin: 0;
-                padding: 4px;
-                line-height: 1.5;
-                font-family: Arial, sans-serif;
+                font-size: 180%;
+                color: #222;
+                border-left: 6px solid #a2a;
+                padding-left: 10px;
+                background-color: #f2e8f7;
             }
+            h3 {
+                font-size: 150%;
+                color: #114488;
+                border-left: 4px solid #88a;
+                padding-left: 8px;
+                background-color: #e5f0ff;
+            }
+            h4 {
+                font-size: 120%;
+                color: #333;
+                border-left: 3px solid #6a6;
+                padding-left: 6px;
+                background-color: #f2fff2;
+            }
+            h5 {
+                font-size: 110%;
+                font-weight: bold;
+                color: #444;
+            }
+            h6 {
+                font-weight: bold;
+                color: #555;
+            }
+
+            .paragraph-group {
+                padding: 6px;
+                border: 4px solid #c33;
+                background-color: #fff5f5;
+            }
+
             ul {
                 margin: 4px;
                 padding: 4px;
                 line-height: 1.2;
-                font-family: Arial, sans-serif;
-                list-style: none; /* デフォルトのリストスタイルを無効化 */
+                list-style: none;
             }
+
             .toc-item {
                 cursor: pointer;
                 margin-bottom: 2px;
@@ -289,20 +336,20 @@ def json2html(json_file_path: str):
                 text-decoration: underline;
             }
             .toc-item ul {
-                margin-left: 10px; /* 子リストのインデント */
-                border-left: 1px dotted #ccc; /* 階層を示す線 */
+                margin-left: 10px;
+                border-left: 1px dotted #ccc;
                 padding-left: 5px;
             }
             .toc-item ul.collapsed {
                 display: none;
             }
-            /* 各レベルのスタイル調整 */
             .toc-item.level-1 > a { font-weight: bold; margin-top: 5px; }
             .toc-item.level-2 > a { margin-left: 5px; }
             .toc-item.level-3 > a { margin-left: 10px; }
             .toc-item.level-4 > a { margin-left: 15px; }
             .toc-item.level-5 > a { margin-left: 20px; }
             .toc-item.level-6 > a { margin-left: 25px; }
+
             .toggle-indicator {
                 display: inline-block;
                 width: 1em;
@@ -310,36 +357,35 @@ def json2html(json_file_path: str):
                 cursor: pointer;
                 margin-right: 4px;
             }
-            /* 各ページごとに印刷時の改ページを挿入 */
+
             .page-break {
                 page-break-before: always;
                 margin: 20px 0;
             }
 
-            /* 新規: 現在表示ページの目次アイテムをハイライト */
             .toc-item.active-page > a {
-                color: #007bff; /* お好みの色に変更ください */
-                background-color: #e0f7fa;  /* お好みの色に変更ください */
+                color: #007bff;
+                background-color: #e0f7fa;
             }
 
-            /* ダークモード対応 */
+            /* ダークモード */
             @media (prefers-color-scheme: dark) {
                 body {
                     background-color: #1e1e1e;
-                    color: #d4d4d4;
+                    color: #e0e0e0;
                 }
                 .header {
-                    background-color: #333;
+                    background-color: #2c2c2c;
                     color: #fff;
                 }
                 .header button {
-                    background: #555;
+                    background: #444;
                     color: #fff;
                 }
                 .toc {
-                    background-color: #2d2d2d;
-                    border-right-color: #444;
+                    background-color: #2b2b2b;
                     color: #ccc;
+                    border-right-color: #444;
                 }
                 .toc-item a {
                     color: #ccc;
@@ -350,14 +396,41 @@ def json2html(json_file_path: str):
                 .content {
                     background-color: #1e1e1e;
                 }
-                .trans-text {
-                    background-color: #264f38;
-                }
                 .src-joined {
-                    background-color: #49423c;
+                    background-color: #3a3a2e;
+                }
+                .trans-text {
+                    background-color: #2f4f3a;
+                }
+                h2 {
+                    color: #ddd;
+                    background-color: #3e2f45;
+                    border-left-color: #cc99cc;
+                }
+                h3 {
+                    color: #aaccee;
+                    background-color: #2a3540;
+                    border-left-color: #6688aa;
+                }
+                h4 {
+                    color: #cfc;
+                    background-color: #2f3f2f;
+                    border-left-color: #6a6;
+                }
+                h5, h6 {
+                    color: #ccc;
+                }
+                .paragraph-group {
+                    background-color: #3f2a2a;
+                    border-color: #c66;
+                }
+                .toc-item.active-page > a {
+                    background-color: #35566a;
+                    color: #90caff;
                 }
             }
         </style>
+
     </head>
     <body>
         <div class="header">

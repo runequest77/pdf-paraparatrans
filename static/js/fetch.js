@@ -138,6 +138,7 @@ async function dictReplaceAll() {
     }
 }
 
+
 async function autoTagging() {
     try {
         const response = await fetch(`/api/auto_tagging/${encodeURIComponent(pdfName)}`, {
@@ -146,18 +147,46 @@ async function autoTagging() {
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
         });
-        const data = await response.json();
-        if (data.status === "ok") {
+        const result = await response.json();
+        if (result.status === "ok") {
             alert("自動タグ付けが成功しました");
             await fetchBookData(); // fetchBookDataもasyncなのでawait
         } else {
-            alert("自動タグ付けエラー: " + data.message);
+            alert("自動タグ付けエラー: " + result.message);
         }
     } catch (error) {
         console.error("autoTagging error:", error);
         alert("自動タグ付け中にエラーが発生しました");
     }
 }
+
+async function taggingByStyle(targetStyle, targetTag) {
+    try {
+        const response = await fetch(`/api/update_block_tags_by_style/${encodeURIComponent(pdfName)}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                target_style: targetStyle,
+                target_tag: targetTag
+            })
+        });
+
+        const result = await response.json();
+
+        if (result.status === "ok") {
+            alert("スタイルの一括更新が完了しました。");
+            await fetchBookData(); // fetchBookDataもasyncなのでawait
+        } else {
+            alert(`スタイルの一括更新に失敗しました: ${result.message}`);
+        }
+    } catch (error) {
+        console.error('スタイル一括更新エラー:', error);
+        alert('スタイルの一括更新中にエラーが発生しました。');
+    }
+}
+
 
 async function joinParagraphs() {
     await saveCurrentPageOrder(); // 順序を保存してから翻訳 (saveOrderもasyncにする必要あり)

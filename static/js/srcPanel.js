@@ -165,6 +165,7 @@ function renderParagraphs() {
                     <label><input type='radio' name='status-${p.id}' value='auto'> 自動翻訳</label>
                     <label><input type='radio' name='status-${p.id}' value='draft'> 下訳</label>
                     <label><input type='radio' name='status-${p.id}' value='fixed'> 確定</label>
+                    <button class='style-update-button'>スタイル一括更新</button>
                     <button class='save-button'>保存</button>
                 </div>
             </div>
@@ -174,11 +175,12 @@ function renderParagraphs() {
         // イベントリスナーの登録
         let editButton = divSrc.querySelector('.edit-button');
         let transButton = divSrc.querySelector('.trans-button');
+        let styleUpdateButton = divSrc.querySelector('.style-update-button'); // 追加
         let saveButton = divSrc.querySelector('.save-button');
         let srcText = divSrc.querySelector('.src-text');
         let transText = divSrc.querySelector('.trans-text');
         let blockTagSelect = divSrc.querySelector('.type-select');
-        let blockTagSpan = divSrc.querySelector('.block-tag');
+        let blockTagSpan = divSrc.querySelector('.block_tag'); // block_tag spanのクラス名修正
 
         blockTagSelect.value = p.block_tag;
         let statusRadio = divSrc.querySelector(`input[name='status-${p.id}'][value='${p.trans_status}']`);
@@ -186,6 +188,7 @@ function renderParagraphs() {
 
         editButton.addEventListener('click', () => toggleEditUI(divSrc));
         transButton.addEventListener('click', (e) => onTransButtonClick(e, p, divSrc));
+        styleUpdateButton.addEventListener('click', (e) => onStyleUpdateButtonClick(e, p, divSrc)); // 追加
         saveButton.addEventListener('click', (e) => onSaveButtonClick(e, p, divSrc, srcText, transText, blockTagSelect, blockTagSpan));
 
         // ラジオボタンの変更イベントリスナーを追加
@@ -195,6 +198,34 @@ function renderParagraphs() {
     window.autoToggle.dispatchAll();
     srcContainer.style.display = 'block'; // 再表示
 }
+
+// スタイル一括更新ボタンのクリックイベントハンドラ
+async function onStyleUpdateButtonClick(event, paragraph, divSrc) {
+    const targetStyle = paragraph.base_style; // 現在のパラグラフのスタイルを取得
+    const targetTag = divSrc.querySelector('.type-select').value; // 選択されているblock_tagを取得
+
+    // 対象スタイルを持つパラグラフの数をカウント
+    let count = 0;
+    for (const page of Object.values(bookData["pages"])) {
+        for (const p of Object.values(page["paragraphs"])) {
+            if (p.base_style === targetStyle) {
+                count++;
+            }
+        }
+    }
+
+    if (count === 0) {
+        alert(`スタイル '${targetStyle}' を持つパラグラフは見つかりませんでした。`);
+        return;
+    }
+
+    const confirmation = confirm(`このパラグラフと同じスタイル '${targetStyle}' のパラグラフ ${count} 件をすべて '${targetTag}' に更新します。よろしいですか？`);
+
+    if (confirmation) {
+        await taggingByStyle(targetStyle, targetTag);
+    }
+}
+
 
 function toggleSrcHtml(event) {
     const checked = event.target.checked;
