@@ -623,6 +623,8 @@ def update_paragraphs_api(pdf_name):
 
 
         def apply_update(p, upd_value): # 第2引数は更新内容のオブジェクト
+            # デバッグ用にupd_valueをprint
+            # print(json.dumps(upd_value, indent=2, ensure_ascii=False))
 
             p["modified_at"] = datetime.datetime.now().isoformat()
             p["src_text"] = upd_value.get("src_text", p.get("src_text"))
@@ -631,9 +633,9 @@ def update_paragraphs_api(pdf_name):
             p["order"] = upd_value.get("order", p.get("order"))
             p["block_tag"] = upd_value.get("block_tag", p.get("block_tag"))
 
-            group_id = upd_value.get("group_id")
+            group_id = upd_value.get("group_id", None)
             # group_idがparagraphs_dictに存在しない場合は、group_idを削除
-            if group_id is not None and group_id in p:
+            if group_id is not None:
                 p["group_id"] = group_id
             elif "group_id" in p:
                 del p["group_id"]  # group_idを削除
