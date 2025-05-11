@@ -317,6 +317,7 @@ function selectParagraphRange(startIndex, endIndex) {
     }
 }
 
+/*マウスクリック */
 document.addEventListener('click', (event) => {
     document.querySelectorAll('.edit-ui').forEach(editUI => {
         if (editUI.style.display === 'block') {
@@ -491,30 +492,76 @@ function updateBlockTag(paragraphDiv, blockTag) {
 }
 
 
-
-function handleBlockTagShortcut(key) {
-    const keyToTagMap = {
-        '0': 'p',
-        '1': 'h1',
-        '2': 'h2',
-        '3': 'h3',
-        '4': 'h4',
-        '5': 'h5',
-        '6': 'h6',
-        'p': 'p',
-        'l': 'li',
-        'u': 'ul',
-        'd': 'dd',
-        'h': 'header',
-        'f': 'footer'
-    };
-
-    const tag = keyToTagMap[key.toLowerCase()];
-    // 対象キー以外は無視される
-    if (tag) {
-        updateBlockTagForSelected(tag);
+/** @function: updateTransStatusForSelected */
+function updateTransStatusForSelected(transStatus) {
+    const selected = getSelectedParagraphsInOrder();
+    // 何も選択されていない場合はカレントレコードを更新
+    if (selected.length === 0) {
+        selected.push(document.querySelector('.paragraph-box.current'));
     }
+
+    selected.forEach(div => {
+        updateTransStatus(div, transStatus);
+    });
 }
+
+/** @function: updatetransStatus */
+function updateTransStatus(paragraphDiv, transStatus) {
+    const id = paragraphDiv.id.replace('paragraph-', '');
+    const paragraphDict = bookData["pages"][currentPage]["paragraphs"][id];
+    if (!paragraphDict) {
+        console.error(`Paragraph with ID ${id} not found in paragraphs`);
+        return;
+    }
+    paragraphDict.trans_status = transStatus;
+
+    // edit-boxのクラスを更新
+    const editBox = paragraphDiv.querySelector('.edit-box');
+    if (editBox) {
+        editBox.className = `edit-box status-${transStatus}`;
+    }
+
+    // edit-uiのクラスを更新
+    const editUi = paragraphDiv.querySelector('.edit-ui');
+    if (editUi) {
+        editUi.className = `edit-ui status-${transStatus}`;
+    }
+
+    // ラジオボタンの状態を更新
+    const statusRadio = paragraphDiv.querySelector(`input[name='status-${id}'][value='${transStatus}']`);
+    if (statusRadio) {
+        statusRadio.checked = true;
+    }
+
+    isPageEdited = true; // ページが編集されたことを示すフラグを立てる
+}
+
+
+
+
+// function handleBlockTagShortcut(key) {
+//     const keyToTagMap = {
+//         '0': 'p',
+//         '1': 'h1',
+//         '2': 'h2',
+//         '3': 'h3',
+//         '4': 'h4',
+//         '5': 'h5',
+//         '6': 'h6',
+//         'p': 'p',
+//         'l': 'li',
+//         'u': 'ul',
+//         'd': 'dd',
+//         'h': 'header',
+//         'f': 'footer'
+//     };
+
+//     const tag = keyToTagMap[key.toLowerCase()];
+//     // 対象キー以外は無視される
+//     if (tag) {
+//         updateBlockTagForSelected(tag);
+//     }
+// }
 
 
 function getAllParagraphs() {
@@ -675,6 +722,19 @@ function toggleJoinForSelected() {
     isPageEdited = true; // ページが編集されたことを示すフラグを立てる
 }
 
+function toggleEditUICurrent() {
+    const current = document.querySelector('.paragraph-box.current');
+    if (!current) return;
+    const editUI = current.querySelector('.edit-ui');
+    if (!editUI) return;
+    const isVisible = editUI && editUI.style.display === 'block';
+
+    if (isVisible) {
+        cancelEditUI(current);
+    } else {
+        toggleEditUI(current);
+    }
+}
 
 function toggleEditUI(divSrc) {
     const editUI = divSrc.querySelector('.edit-ui');
