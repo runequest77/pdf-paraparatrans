@@ -131,7 +131,7 @@ def json2html(json_file_path: str):
         content_entries += f'''
         <div class="paragraph-container">
             <div class="paragraph-anchor" id="{unique_paragraph_id}"></div>
-            <div class="paragraph-id">{unique_paragraph_id}</div>
+            <div class="paragraph-id hidden-text">{unique_paragraph_id}</div>
             <div class="trans-text"><{paragraph.get("block_tag", "div")}>{trans_text}</{paragraph.get("block_tag", "div")}></div>
             <div class="src-joined"><{paragraph.get("block_tag", "div")}>{src_joined}</{paragraph.get("block_tag", "div")}></div>
         </div>
@@ -188,6 +188,7 @@ def json2html(json_file_path: str):
                 padding: 2px;
                 border-right: 1px solid #ccc;
                 overflow-y: auto;
+                max-width: 25%; /* 目次の最大幅 */
                 height: 100%;
             }
             .container {
@@ -224,7 +225,7 @@ def json2html(json_file_path: str):
             }
             .src-joined, .trans-text {
                 flex: 1;
-                padding: 10px;
+                padding: 5px 10px 5px 10px ;
             }
             .trans-text {
                 background-color: #c8e6c9;
@@ -315,6 +316,12 @@ def json2html(json_file_path: str):
                 margin: 20px 0;
             }
 
+            /* 新規: 現在表示ページの目次アイテムをハイライト */
+            .toc-item.active-page > a {
+                color: #007bff; /* お好みの色に変更ください */
+                background-color: #e0f7fa;  /* お好みの色に変更ください */
+            }
+
             /* ダークモード対応 */
             @media (prefers-color-scheme: dark) {
                 body {
@@ -361,7 +368,7 @@ def json2html(json_file_path: str):
                 <button onclick="toggleSrc()">原文</button>
             </div>
             <span class="title">''' + title + '''</span>
-            <span class="powered">Powered by ParaParaTrans</span>
+            <span class="powered">Powered by PDF-ParaParaTrans</span>
         </div>
         <div class="container">
             <div class="toc" id="toc">
@@ -402,6 +409,33 @@ def json2html(json_file_path: str):
                 // 初期状態でh2以降を折りたたむ
                 document.querySelectorAll('.toc-item:not(.level-1) > ul')
                         .forEach(ul => ul.classList.add('collapsed'));
+
+                // 新規: 本文スクロールに合わせて目次をハイライト
+                const content = document.querySelector('.content');
+                function highlightTocItems() {
+                    const anchors = content.querySelectorAll('.paragraph-anchor');
+                    const containerRect = content.getBoundingClientRect();
+                    let currentPage = null;
+                    for (let anchor of anchors) {
+                        const rect = anchor.getBoundingClientRect();
+                        if (rect.top >= containerRect.top) {
+                            currentPage = anchor.id.split('_')[0];
+                            break;
+                        }
+                    }
+                    document.querySelectorAll('.toc-item').forEach(item =>
+                        item.classList.remove('active-page')
+                    );
+                    if (currentPage) {
+                        document.querySelectorAll(`.toc-item a[href^="#${currentPage}_"]`)
+                                .forEach(link =>
+                                    link.parentElement.classList.add('active-page')
+                                );
+                    }
+                }
+                content.addEventListener('scroll', highlightTocItems);
+                // 初回呼び出し
+                highlightTocItems();
             });
 
             function toggleToc() {
