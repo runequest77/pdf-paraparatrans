@@ -1,0 +1,80 @@
+/* static/css/dict.css */
+
+#dict-popup {
+    display: none; /* 初期状態は非表示 */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 20px;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    color: #333; /* デフォルトの文字色 */
+}
+
+#dict-popup h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+#dict-popup div {
+    margin-bottom: 10px;
+}
+
+#dict-popup label {
+    display: inline-block;
+    width: 80px; /* ラベルの幅を固定 */
+    margin-right: 10px;
+}
+
+#dict-popup input[type="text"],
+#dict-popup select {
+    width: 200px; /* 入力欄とセレクトボックスの幅を固定 */
+    padding: 5px;
+    border: 1px solid #ccc;
+    box-sizing: border-box; /* paddingとborderを幅に含める */
+}
+
+#dict-popup input[type="text"]#original-word {
+    background-color: #eee; /* 原語入力欄は読み取り専用なので背景色を変える */
+}
+
+#dict-popup button {
+    padding: 8px 15px;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+/* ダークモード対応 */
+@media (prefers-color-scheme: dark) {
+    #dict-popup {
+        background-color: #333;
+        border-color: #555;
+        color: #eee;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    #dict-popup input[type="text"],
+    #dict-popup select {
+        background-color: #555;
+        border-color: #777;
+        color: #eee;
+    }
+
+    #dict-popup input[type="text"]#original-word {
+        background-color: #444;
+    }
+
+    #dict-popup button {
+        background-color: #666;
+        color: #eee;
+        border: 1px solid #777;
+    }
+
+    #dict-popup button:hover {
+        background-color: #777;
+    }
+}

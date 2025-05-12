@@ -599,23 +599,24 @@ def update_paragraph_api(pdf_name):
     new_trans_text = data.get("trans_text")
     new_status = data.get("trans_status", "draft")
     new_block_tag = data.get("block_tag", "p")
-    new_join = data.get("join", 0)
 
-    print(json.dumps(data, indent=2, ensure_ascii=False))
+    print("update_paragraph_api:" + json.dumps(data, indent=2, ensure_ascii=False))
 
     pdf_path, json_path = get_paths(pdf_name)
     if not os.path.exists(json_path):
-        return jsonify({"status": "error", "message": "JSONが存在しません"}), 400
+        return jsonify({"status": "error", "message": "(update_paragraph_api 1)JSONが存在しません"}), 400
 
     book_data = load_json(json_path)
 
     paragraph = book_data["pages"][page_number]["paragraphs"][id]
-    # return jsonify({"status": "error", "message": "該当パラグラフが見つかりません"}), 404
+    if not paragraph:
+        return jsonify({"status": "error", "message": "(update_paragraph_api 2)該当パラグラフが見つかりません"}), 404
+
     paragraph["src_text"] = new_src_text
+    paragraph["trans_auto"] = new_trans_text
     paragraph["trans_text"] = new_trans_text
     paragraph["trans_status"] = new_status
     paragraph["block_tag"] = new_block_tag
-    paragraph["join"] = new_join
     paragraph["modified_at"] = datetime.datetime.now().isoformat()
     recalc_trans_status_counts(book_data) # recalc_trans_status_counts も辞書対応が必要
 
@@ -623,9 +624,9 @@ def update_paragraph_api(pdf_name):
         atomicsave_json(json_path, book_data)  # アトミックセーブ
         return jsonify({"status": "ok"}), 200
     except ValueError as ve:
-        return jsonify({"status": "error", "message": str(ve)}), 400
+        return jsonify({"status": "error", "message:": "(update_paragraph_api 3)" + str(ve)}), 400
     except Exception as e:
-        return jsonify({"status": "error", "message": f"更新中にエラーが発生しました: {str(e)}"}), 500
+        return jsonify({"status": "error", "message": f"(update_paragraph_api 4): {str(e)}"}), 500
 
 
 # 複数パラグラフを更新するAPI
@@ -705,11 +706,154 @@ def load_json(json_path: str):
     return data
 
 # アトミックセーブ
+def load_dict(dict_path):
+    """dict.txtを読み込み、パースしてリストのリストとして返す"""
+    dict_data = []
+    if not os.path.exists(dict_path):
+        return dict_data
+    with open(dict_path, "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            parts = line.split("\t")
+            if len(parts) >= 3:
+                # 原語, 訳語, 状態, (出現回数)
+                dict_data.append([parts[0], parts[1], int(parts[2]), int(parts[3]) if len(parts) > 3 and parts[3].isdigit() else 0])
+    return dict_data
+
+def save_dict(dict_path, dict_data):
+    """リストのリスト形式の辞書データをdict.txtに書き込む (アトミックセーブ)"""
+    tmp_fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(dict_path), suffix=".txt", text=True)
+    with os.fdopen(tmp_fd, "w", encoding="utf-8") as tmp_file:
+        for entry in dict_data:
+            # 出現回数が存在しない場合は0を補完
+            count = entry[3] if len(entry) > 3 else 0
+            tmp_file.write(f"{entry[0]}\t{entry[1]}\t{entry[2]}\t{count}\n")
+    os.replace(tmp_path, dict_path)
+
+
 def atomicsave_json(json_path, data):
     tmp_fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(json_path), suffix=".json", text=True)
     with os.fdopen(tmp_fd, "w", encoding="utf-8") as tmp_file:
         json.dump(data, tmp_file, ensure_ascii=False, indent=2)
     os.replace(tmp_path, json_path)
+
+# API: 単語辞書検索
+@app.route("/api/dict/search", methods=["POST"])
+def dict_search_api():
+    data = request.get_json()
+    word = data.get("word")
+
+    if not word:
+        return jsonify({"status": "error", "message": "単語が指定されていません"}), 400
+
+    dict_data = load_dict(DICT_PATH)
+    found_entry = None
+
+    # 検索ロジック
+    # 1. 状態0 (大文字小文字区別) で一致
+    for entry in dict_data:
+        if entry[2] == 0 and entry[0] == word:
+            found_entry = entry
+            break
+
+    # 2. 状態0で見つからず、状態1 (大文字小文字区別しない) で一致
+    if found_entry is None:
+        for entry in dict_data:
+            if entry[2] == 1 and entry[0].lower() == word.lower():
+                found_entry = entry
+                break
+
+    # 3. それ以外の状態で一致 (最初のマッチを採用)
+    if found_entry is None:
+        for entry in dict_data:
+            if entry[2] not in [0, 1] and entry[0].lower() == word.lower(): # ここも大文字小文字区別しない検索にするか要検討。今回は区別しない方向で。
+                 found_entry = entry
+                 break
+
+
+    if found_entry:
+        return jsonify({
+            "status": "ok",
+            "found": True,
+            "original_word": found_entry[0],
+            "translated_word": found_entry[1],
+            "status": found_entry[2]
+        }), 200
+    else:
+        # 見つからなかった場合は訳語ブランク、状態0を返す
+        return jsonify({
+            "status": "ok",
+            "found": False,
+            "original_word": word,
+            "translated_word": "",
+            "status": 0
+        }), 200
+
+# API: 単語辞書更新
+@app.route("/api/dict/update", methods=["POST"])
+def dict_update_api():
+    data = request.get_json()
+    original_word = data.get("original_word")
+    translated_word = data.get("translated_word")
+    status = data.get("status", 0) # 状態の既定値は0
+
+    if not original_word:
+        return jsonify({"status": "error", "message": "原語が指定されていません"}), 400
+
+    dict_data = load_dict(DICT_PATH)
+    updated = False
+
+    # 既存エントリの検索と更新
+    # 検索ロジックはsearchと同様の優先順位
+    found_index = -1
+
+    # 1. 状態0 (大文字小文字区別) で一致
+    for i, entry in enumerate(dict_data):
+        if entry[2] == 0 and entry[0] == original_word:
+            found_index = i
+            break
+
+    # 2. 状態0で見つからず、状態1 (大文字小文字区別しない) で一致
+    if found_index == -1:
+        for i, entry in enumerate(dict_data):
+            if entry[2] == 1 and entry[0].lower() == original_word.lower():
+                found_index = i
+                break
+
+    # 3. それ以外の状態で一致 (最初のマッチを採用)
+    if found_index == -1:
+         for i, entry in enumerate(dict_data):
+            if entry[2] not in [0, 1] and entry[0].lower() == original_word.lower():
+                 found_index = i
+                 break
+
+
+    if found_index != -1:
+        # 既存エントリを更新
+        dict_data[found_index][1] = translated_word
+        dict_data[found_index][2] = status
+        # 出現回数はそのまま
+        updated = True
+        app.logger.info(f"辞書更新: '{original_word}' -> '{translated_word}' (状態: {status})")
+    else:
+        # 新規エントリを追加
+        dict_data.append([original_word, translated_word, status, 0]) # 新規なので出現回数は0
+        updated = True
+        app.logger.info(f"辞書新規登録: '{original_word}' -> '{translated_word}' (状態: {status})")
+
+    if updated:
+        try:
+            save_dict(DICT_PATH, dict_data)
+            return jsonify({"status": "ok", "message": "辞書が更新されました"}), 200
+        except Exception as e:
+            app.logger.error(f"辞書ファイル書き込みエラー: {str(e)}")
+            return jsonify({"status": "error", "message": f"辞書ファイル書き込みエラー: {str(e)}"}), 500
+    else:
+        # 更新が不要な場合（ありえないはずだが念のため）
+        return jsonify({"status": "ok", "message": "辞書に変更はありません"}), 200
+
 
 if __name__ == "__main__":
     # portはenvファイルの設定に従う。未指定の場合は5077

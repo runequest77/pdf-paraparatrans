@@ -19,6 +19,7 @@
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
     <style class="book-data-styles"></style>   
     <script src="/static/js/floating_log.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dict.css') }}">
 
   </head>
 
@@ -34,12 +35,12 @@
             <span style="display:inline-block; margin: 2px;">
               <button onclick="extractParagraphs()" style="border: 2px solid #e74c3c" data-help-id="extract-paragraphs">1.パラグラフ抽出</button>
               <button onclick="autoTagging()" data-help-id="auto-tagging">(自動タグ付け)</button>
-              <button onclick="joinParagraphs()" data-help-id="join-paragraphs">(連結)</button>
+              <button onclick="joinParagraphs()" style="border: 2px solid #ffeb3b" data-help-id="join-paragraphs">2.連結</button>
               <button onclick="dictCreate()" data-help-id="create-dictionary">(辞書抽出)</button>
               <button onclick="dictTrans()" hidden data-help-id="translate-dictionary">(辞書翻訳)</button>
-              <button onclick="dictReplaceAll()" style="border: 2px solid #3498db" data-help-id="replace-all-translations">2.全対訳置換</button>
-              <button onclick="transAllPages()" style="border: 2px solid #ff9800; font-weight: bold;" data-help-id="translate-all-pages">3.全翻訳</button>
-              <button onclick="saveStructure()" hidden data-help-id="save-structure">4.構成ファイル出力</button>
+              <button onclick="dictReplaceAll()" style="border: 2px solid #3498db" data-help-id="replace-all-translations">3.全対訳置換</button>
+              <button onclick="transAllPages()" style="border: 2px solid #ff9800; font-weight: bold;" data-help-id="translate-all-pages">4.全翻訳</button>
+              <button onclick="saveStructure()" hidden data-help-id="save-structure">(構成ファイル出力)</button>
               <button onclick="exportHtml()" style="border: 2px solid #2ecc71;" data-help-id="export-html">5.対訳HTML出力</button>
               <button onclick="fetchBookData()" hidden data-help-id="reload-book-data">リロード</button>
               <button id="renderButton" hidden data-help-id="render-html">レンダリング</button>
@@ -57,7 +58,6 @@
               <button onclick="nextPage()" data-help-id="next-page">▶</button>
             </span>
             <span style="display:inline-block; margin: 2px;">
-              <button id="pageTransButton" style="border: 2px solid #ff9800; font-weight: bold;" data-help-id="translate-page">ページ翻訳</button>
               <span id="toggleSrcHtml" class="auto-toggle" data-auto-toggle="appearance:checkbox;storage:local" data-help-id="toggle-src-html">Html</span>
               <span id="toggleSrcText" class="auto-toggle" data-auto-toggle="appearance:checkbox;storage:local;default:true" data-help-id="toggle-src-text">原文</span>
               <span id="toggleSrcJoined" class="auto-toggle" data-auto-toggle="appearance:checkbox;storage:local" data-help-id="toggle-src-joined">連結文</span>
@@ -77,10 +77,12 @@
                 <td style="padding:0 5px;" id="countFixed">0</td>
               </tr>
             </table>
+            <button id="openDictButton" data-help-id="open-dictionary-popup">辞書登録</button>
+            <button id="pageTransButton" style="border: 2px solid #ff9800; font-weight: bold;" data-help-id="translate-page">ページ翻訳</button>
             <button id="openLogButton" onclick="showLog()" data-help-id="open-log">Log</button>
             <button id="openHotKeyButton" onclick="HotkeyMapper.showHelpWindow()" data-help-id="open-hotkey-mapper">HotKey</button>
-            <button id="saveOrderButton" data-help-id="save-structure-order">構造保存</button>
             <button id="show-full-help">Help</button>
+            <button id="saveOrderButton" data-help-id="save-structure-order">構造保存</button>
           </div>
         </div>
       </div>
@@ -120,6 +122,7 @@
   <script src="{{ url_for('static', filename='js/hotkey-mapper.js') }}" defer></script>    
   <script src="{{ url_for('static', filename='js/keyDown.js') }}" defer></script>    
   <script src="{{ url_for('static', filename='js/help.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/dict.js') }}"></script>
 </body>
 
 </html>

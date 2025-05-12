@@ -39,6 +39,8 @@ HotkeyMapper.map("Alt+N", () => updateTransStatusForSelected("none"), { descript
 HotkeyMapper.map("Alt+M", () => updateTransStatusForSelected("draft"), { description: "draft", useCapture : true });
 HotkeyMapper.map("Alt+,", () => updateTransStatusForSelected("fixed"), { description: "fixed", useCapture : true });
 
+HotkeyMapper.map("Alt+J", () => DictPopup.show(), { description: "対訳辞書登録", useCapture : true });
+
 HotkeyMapper.map("Alt+ArrowUp", () => moveSelectedByOffset(-1), { description: "選択範囲を上へ"});
 HotkeyMapper.map("Alt+ArrowDown", () => moveSelectedByOffset(1), { description: "選択範囲を下へ)"});
 

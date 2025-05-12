@@ -19,6 +19,15 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('saveOrderButton').addEventListener('click', saveForce);
     // ページ翻訳
     document.getElementById('pageTransButton').addEventListener('click', transPage);
+    // 辞書登録ボタン
+    document.getElementById('openDictButton').addEventListener('click', () => {
+        // DictPopup.show() は dict.js で定義されている
+        if (window.DictPopup) {
+            window.DictPopup.show();
+        } else {
+            console.error("DictPopup is not available.");
+        }
+    });
 
 
     window.autoToggle.init();

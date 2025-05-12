@@ -77,9 +77,9 @@ def replace_with_dict(text: str, dict_cs: Dict[str, str], dict_ci: Dict[str, str
         text = re.sub(pattern_ci, repl_ci, text)
     return text
 
-def count_alphabet_chars(text: str) -> int:
-    """アルファベットの文字数をカウント"""
-    return len(re.findall(r'[a-zA-Z]', text))
+# def count_alphabet_chars(text: str) -> int:
+#     """アルファベットの文字数をカウント"""
+#     return len(re.findall(r'[a-zA-Z]', text))
 
 def file_replace_with_dict(json_path: str, dict_file: str):
     
@@ -92,25 +92,24 @@ def file_replace_with_dict(json_path: str, dict_file: str):
     # 対象パラグラフ数
     progress = setup_progress(book_data.get("page_count", 0), "パラグラフ置換中......") # 辞書の要素数を総数とする
 
-    for page in book_data["pages"].values():
+    for page_number, page in book_data["pages"].items():
+        progress(f"{page_number} Page")
         for paragraph in page["paragraphs"].values():
-            progress(f"{paragraph.get('page', 'N/A')} Page") # page がない場合も考慮
-            if "src_joined" in paragraph:
-                replaced_text = replace_with_dict(paragraph["src_joined"], dict_cs, dict_ci)
-                # 対訳辞書の変更により、置換結果が以前と異なる場合は翻訳状態を "none" に変更
-                if replaced_text != paragraph.get("src_replaced") and paragraph.get("trans_status") == "auto":
-                    paragraph["trans_status"] = "none"
-                paragraph["src_replaced"] = replaced_text
-                
-                alphabet_count = count_alphabet_chars(replaced_text)
-                if alphabet_count < 1:
-                    paragraph["trans_auto"] = replaced_text
-                    paragraph["trans_text"] = replaced_text
-                    paragraph["trans_status"] = "fixed"
-                elif alphabet_count < 2:
-                    paragraph["trans_auto"] = replaced_text
-                    paragraph["trans_text"] = replaced_text
-                    paragraph["trans_status"] = "draft"
+            replaced_text = replace_with_dict(paragraph["src_joined"], dict_cs, dict_ci)
+            paragraph["src_replaced"] = replaced_text
+            # 対訳辞書の変更により、置換結果が以前と異なる場合は翻訳状態を "none" に変更
+            # if replaced_text != paragraph.get("src_replaced") and paragraph.get("trans_status") == "auto":
+            #     paragraph["trans_status"] = "none"
+            
+            # alphabet_count = count_alphabet_chars(replaced_text)
+            # if alphabet_count < 1:
+            #     paragraph["trans_auto"] = replaced_text
+            #     paragraph["trans_text"] = replaced_text
+            #     paragraph["trans_status"] = "fixed"
+            # elif alphabet_count < 2:
+            #     paragraph["trans_auto"] = replaced_text
+            #     paragraph["trans_text"] = replaced_text
+            #     paragraph["trans_status"] = "draft"
 
     atomicsave_json(json_path,book_data) # jsonを保存  
 
@@ -130,7 +129,6 @@ def atomicsave_json(json_path, data):
     with os.fdopen(tmp_fd, "w", encoding="utf-8") as tmp_file:
         json.dump(data, tmp_file, ensure_ascii=False, indent=2)
     os.replace(tmp_path, json_path)
-
 
 def main():
     if len(sys.argv) != 3:

@@ -89,9 +89,6 @@
     word-wrap: break-word;
     padding: 5px;
 }
-.src-joined {
-    border-left: 4px solid #ffeb3b; /* 黄色系の色 */
-}
 .edit-ui {
     display: none;
     position: absolute;
@@ -111,6 +108,9 @@
 }
 .src-text {
     border-left: 4px solid #e74c3c;
+}
+.src-joined {
+    border-left: 4px solid #ffeb3b; /* 黄色系の色 */
 }
 .src-replaced {
     border-left: 4px solid #3498db;
@@ -226,18 +226,21 @@
 /* 段落の左に棒を表示するためのインデントと位置設定 */
 .paragraph-box.group-start .src-html,
 .paragraph-box.group-start .src-text,
+.paragraph-box.group-start .src-joined,
 .paragraph-box.group-start .src-replaced,
 .paragraph-box.group-start .trans-auto,
 .paragraph-box.group-start .trans-text,
 
 .paragraph-box.group-middle .src-html,
 .paragraph-box.group-middle .src-text,
+.paragraph-box.group-middle .src-joined,
 .paragraph-box.group-middle .src-replaced,
 .paragraph-box.group-middle .trans-auto,
 .paragraph-box.group-middle .trans-text,
 
 .paragraph-box.group-end .src-html,
 .paragraph-box.group-end .src-text,
+.paragraph-box.group-end .src-joined,
 .paragraph-box.group-end .src-replaced,
 .paragraph-box.group-end .trans-auto,
 .paragraph-box.group-end .trans-text {
@@ -248,16 +251,19 @@
 /* 左の棒：共通スタイル（背景色と棒幅） */
 .paragraph-box.group-start .src-html::before,
 .paragraph-box.group-start .src-text::before,
+.paragraph-box.group-start .src-joined::before,
 .paragraph-box.group-start .src-replaced::before,
 .paragraph-box.group-start .trans-auto::before,
 .paragraph-box.group-start .trans-text::before,
 .paragraph-box.group-middle .src-html::before,
 .paragraph-box.group-middle .src-text::before,
+.paragraph-box.group-middle .src-joined::before,
 .paragraph-box.group-middle .src-replaced::before,
 .paragraph-box.group-middle .trans-auto::before,
 .paragraph-box.group-middle .trans-text::before,
 .paragraph-box.group-end .src-html::before,
 .paragraph-box.group-end .src-text::before,
+.paragraph-box.group-end .src-joined::before,
 .paragraph-box.group-end .src-replaced::before,
 .paragraph-box.group-end .trans-auto::before,
 .paragraph-box.group-end .trans-text::before {
@@ -274,6 +280,7 @@
 /* 上1/4円：startのみ上角丸 */
 .paragraph-box.group-start .src-html::before,
 .paragraph-box.group-start .src-text::before,
+.paragraph-box.group-start .src-joined::before,
 .paragraph-box.group-start .src-replaced::before,
 .paragraph-box.group-start .trans-auto::before,
 .paragraph-box.group-start .trans-text::before {
@@ -286,6 +293,7 @@
 /* 直線：middleは角なし */
 .paragraph-box.group-middle .src-html::before,
 .paragraph-box.group-middle .src-text::before,
+.paragraph-box.group-middle .src-joined::before,
 .paragraph-box.group-middle .src-replaced::before,
 .paragraph-box.group-middle .trans-auto::before,
 .paragraph-box.group-middle .trans-text::before {
@@ -297,6 +305,7 @@
 /* 下1/4円：endのみ下角丸 */
 .paragraph-box.group-end .src-html::before,
 .paragraph-box.group-end .src-text::before,
+.paragraph-box.group-end .src-joined::before,
 .paragraph-box.group-end .src-replaced::before,
 .paragraph-box.group-end .trans-auto::before,
 .paragraph-box.group-end .trans-text::before {

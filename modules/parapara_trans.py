@@ -3,9 +3,6 @@ parapara形式ファイルを指定ページ範囲内で翻訳する。
 
 """
 
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 import os
 import html
 import json
@@ -29,7 +26,8 @@ def process_group(paragraphs_group):
     texts = [f"【{para['id']}】{html.escape(para['src_replaced'])}" for para in paragraphs_group]
     concatenated_text = "".join(texts)
     # concatenated_textの最初の50文字をコンソールに出力
-    print("FOR DEBUG(LEFT50/1TRANS):" + concatenated_text[:50])
+    print("FOR DEBUG(LEFT50/1TRANS):" + concatenated_text)
+    # print("FOR DEBUG(LEFT50/1TRANS):" + concatenated_text[:50])
 
     try:
         translated_text = translate_text(concatenated_text, source="en", target="ja")
@@ -63,13 +61,12 @@ def process_group(paragraphs_group):
                 para = para_by_id[para_id]
                 para['trans_auto'] = translated_content
                 para['trans_text'] = translated_content
-                if para.get('trans_status') == 'none':
-                    para['trans_status'] = 'auto'
+                para['trans_status'] = 'auto'
                 para['modified_at'] = datetime.now().isoformat()
             else:
                 print(f"Warning: 翻訳結果のid {para_id} に対応する段落が見つかりません。")
         else:
-            print("Warning: 翻訳結果の形式が不正です。")
+            print("Warning: 翻訳結果のマッチ数が0。")
 
 def recalc_trans_status_counts(book_data):
     """
@@ -109,6 +106,11 @@ def paraparatrans_json_file(json_path, start_page, end_page):
     
     return book_data
 
+def count_alphabet_chars(text: str) -> int:
+    """アルファベットの文字数をカウント"""
+    return len(re.findall(r'[a-zA-Z]', text))
+
+
 def pagetrans(filepath, book_data, page_number):
     """
     各グループは5000文字以内に収まるように連結して翻訳され、各グループ処理後に必ずファイルへ保存する。
@@ -116,22 +118,30 @@ def pagetrans(filepath, book_data, page_number):
     print(f"ページ {page_number} の翻訳を開始します...")
 
     paragraphs_dict = book_data["pages"][str(page_number)].get("paragraphs", {}) # 辞書として取得
-    
-    # 指定されたページ範囲と未翻訳パラグラフで抽出し、page と order でソート
+
+    for para_id, paragraph in paragraphs_dict.items():
+        # ステータスに関わらず、自動翻訳をかけたらsrc_replacedが空の場合、trans_autoを空にする
+        # trans_textは触らない。確定させた翻訳は壊れないようにする。
+        if paragraph["src_replaced"] == "":
+            paragraph["trans_auto"] = ""
+        # statusがdraftとfixedは翻訳処理では触らない
+        if paragraph["trans_status"] in {"none", "auto"}:
+            # 翻訳対象テキストが英字2文字以下の場合常に自動翻訳済み扱い
+            if count_alphabet_chars(paragraph["src_replaced"]) < 3:
+                paragraph["trans_auto"] = paragraph["src_replaced"]
+                paragraph["trans_status"] = "auto"
+
+    # 指定されたページ範囲と未翻訳パラグラフで抽出
     filtered_paragraphs = [
         p for p in paragraphs_dict.values() # 辞書の値 (パラグラフオブジェクト) をイテレート
         if p.get("trans_status") == "none" 
         and p.get("block_tag") not in ("header", "footer")
     ]
-
-    # 全段落を page_number, order , column_order , bbox[1] を数値化して順にソート
     # 段落ごとに翻訳するならソートは不要に思えるが、なるべく多くの段落を一度に翻訳したほうが
     # 自動翻訳が文意を理解しやすいので、ページ内での順序は保持する。
     filtered_paragraphs.sort(key=lambda p: (
         int(p['page_number']),
-        int(p.get('order',0)),
-        int(p['column_order']),
-        float(p['bbox'][1])
+        int(p.get('order',0))
     ))
 
     current_group = []

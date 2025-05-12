@@ -160,12 +160,13 @@ function renderParagraphs() {
                             <option value="footer">footer</option>
                         </select>
                     </label>
+                    <button class='style-update-button'>同スタイルを一括更新</button>
+                    <span>  </span>
                     <button class='trans-button'>自動翻訳</button>
                     <label><input type='radio' name='status-${p.id}' value='none'> 未翻訳</label>
                     <label><input type='radio' name='status-${p.id}' value='auto'> 自動翻訳</label>
                     <label><input type='radio' name='status-${p.id}' value='draft'> 下訳</label>
                     <label><input type='radio' name='status-${p.id}' value='fixed'> 確定</label>
-                    <button class='style-update-button'>スタイル一括更新</button>
                     <button class='save-button'>保存</button>
                 </div>
             </div>
@@ -180,7 +181,7 @@ function renderParagraphs() {
         let srcText = divSrc.querySelector('.src-text');
         let transText = divSrc.querySelector('.trans-text');
         let blockTagSelect = divSrc.querySelector('.type-select');
-        let blockTagSpan = divSrc.querySelector('.block_tag'); // block_tag spanのクラス名修正
+        let blockTagSpan = divSrc.querySelector('.block-tag'); // 修正: block_tag spanのクラス名を正しく指定
 
         blockTagSelect.value = p.block_tag;
         let statusRadio = divSrc.querySelector(`input[name='status-${p.id}'][value='${p.trans_status}']`);
@@ -566,33 +567,6 @@ function updateTransStatus(paragraphDiv, transStatus) {
 
     isPageEdited = true; // ページが編集されたことを示すフラグを立てる
 }
-
-
-
-
-// function handleBlockTagShortcut(key) {
-//     const keyToTagMap = {
-//         '0': 'p',
-//         '1': 'h1',
-//         '2': 'h2',
-//         '3': 'h3',
-//         '4': 'h4',
-//         '5': 'h5',
-//         '6': 'h6',
-//         'p': 'p',
-//         'l': 'li',
-//         'u': 'ul',
-//         'd': 'dd',
-//         'h': 'header',
-//         'f': 'footer'
-//     };
-
-//     const tag = keyToTagMap[key.toLowerCase()];
-//     // 対象キー以外は無視される
-//     if (tag) {
-//         updateBlockTagForSelected(tag);
-//     }
-// }
 
 
 function getAllParagraphs() {

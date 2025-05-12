@@ -50,6 +50,8 @@ def join_replaced_paragraphs(book_data):
             buffers[tag] = ""
             prevs[tag] = None
 
+    
+
         if p.get('join', 0) == 1 and prevs[tag]:
             # join=1 の間はバッファに蓄積し、段落は空文字+draft
             curr = p.get('src_text', '')
@@ -57,44 +59,40 @@ def join_replaced_paragraphs(book_data):
                 b = buffers[tag]
                 buffers[tag] = b + " " + curr if b else curr
             p['src_joined'] = ''
-            p['src_replaced'] = ''
-            p['trans_auto'] = ''
-            p['trans_text'] = ''
-            p['trans_status'] = "draft"
+            # p['src_replaced'] = ''
+            # p['trans_auto'] = ''
+            # p['trans_text'] = ''
+            # p['trans_status'] = "draft"
+        elif p.get('join', 0) == 1:
+            p['src_joined'] = ''
         else:
-            # joinが解除された場合翻訳状態をリセット
-            if p['src_joined'] != p['src_text']:
-                p['src_joined'] = p['src_text']
-                p['src_replaced'] = p['src_text']
-                p['trans_auto'] = p['src_text']
-                p['trans_text'] = p['src_text']
-                p['trans_status'] = "none"
-
-            # バッファがあればまとめて prev にフラッシュ
+            # join=0 の段落はバッファをフラッシュして src_joined にセット
+            p['src_joined'] = p['src_text']
+            # p['src_replaced'] = p['src_text']
+            # p['trans_auto'] = p['src_text']
+            # p['trans_text'] = p['src_text']
+            # p['trans_status'] = "none"
+            # バッファがあればまとめて 連結先の行(prev) にフラッシュ
             buf = buffers[tag]
             if prevs[tag] and buf:
-                orig = prevs[tag].get('src_joined', '')
+                orig = prevs[tag].get('src_text', '')
                 merged = (orig + " " + buf).strip()
-                if merged != orig:
-                    prevs[tag]['trans_status'] = "none"
                 prevs[tag]['src_joined'] = merged
-                prevs[tag]['src_replaced'] = merged
-                prevs[tag]['trans_auto'] = merged
-                prevs[tag]['trans_text'] = merged
+                curr = prevs[tag].get('src_joined', '')
+                if merged != curr:
+                    prevs[tag]['trans_status'] = "none"
             buffers[tag] = ""
             prevs[tag] = p
 
     # ドキュメント末尾で各 block_tag のバッファをフラッシュ
     for tag, buf in buffers.items():
         if prevs[tag] and buf:
-            orig = prevs[tag].get('src_joined', '')
+            orig = prevs[tag].get('src_text', '')
             merged = (orig + " " + buf).strip()
-            if merged != orig:
-                prevs[tag]['trans_status'] = "none"
             prevs[tag]['src_joined'] = merged
-            prevs[tag]['src_replaced'] = merged
-            prevs[tag]['trans_auto'] = merged
-            prevs[tag]['trans_text'] = merged
+            cur = prevs[tag].get('src_joined', '')
+            if merged != cur:
+                prevs[tag]['trans_status'] = "none"
 
     return book_data
 

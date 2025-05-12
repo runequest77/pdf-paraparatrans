@@ -45,6 +45,7 @@ async function transPage() {
             console.error('エラー:', data.message);
             alert('翻訳エラー(response): ' + data.message);
         }
+        hideLog();
     } catch (error) {
         console.error('Error:', error);
         alert('翻訳中にエラー(catch)');
@@ -140,6 +141,12 @@ async function dictReplaceAll() {
 
 
 async function autoTagging() {
+    let msg = "全ページのblock_tagがpであるパラグラフに対して独自ルールでおおまかなタグ付けを行います";
+    msg += "\n1回だけの実行を推奨します。";
+    msg += "\nすでにp以外に設定しているblock_tagは変更されませんが、見出しからpに変更したパラグラフは再度見出しに戻ります。";
+    msg += "\n\nよろしいですか？";
+    if (!confirm(msg)) return;
+
     try {
         const response = await fetch(`/api/auto_tagging/${encodeURIComponent(pdfName)}`, {
             method: 'POST',
@@ -366,6 +373,7 @@ async function transParagraph(paragraph, divSrc) {
             divSrc.querySelector('.trans-auto').innerHTML = paragraph.trans_auto;
             divSrc.querySelector('.trans-text').innerHTML = paragraph.trans_text;
             let autoRadio = divSrc.querySelector(`input[name='status-${paragraph.id}'][value='auto']`);
+            updateEditUiBackground(divSrc, paragraph.trans_status);
             if (autoRadio) { autoRadio.checked = true; }
         } else {
             console.error("パラグラフ更新エラー:", data.message);
