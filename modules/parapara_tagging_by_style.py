@@ -18,6 +18,9 @@ def tag_paragraphs_by_style(file_path, target_style, target_tag):
         # 各ページの各段落をループ処理
         for page_number, page_data in book_data["pages"].items():
             for paragraph_id, paragraph in page_data["paragraphs"].items():
+                if len(paragraph["trans_text"])<2:
+                    # 置換後の文字列が2文字未満の場合、行頭文字のことが多いのでスキップ
+                    continue
                 # 段落のbase_styleが対象スタイルと一致するか確認
                 if paragraph.get("base_style") == target_style:
                     # block_tagを指定された値に設定

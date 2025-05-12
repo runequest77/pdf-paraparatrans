@@ -68,10 +68,14 @@ def join_replaced_paragraphs(book_data):
         else:
             # join=0 の段落はバッファをフラッシュして src_joined にセット
             p['src_joined'] = p['src_text']
-            # p['src_replaced'] = p['src_text']
-            # p['trans_auto'] = p['src_text']
-            # p['trans_text'] = p['src_text']
-            # p['trans_status'] = "none"
+            # join解除対策　文字列が空の場合だけ原文セット
+            if p['src_replaced']=='':
+                p['src_replaced'] = p['src_text']
+            if p['trans_auto']=='':
+                p['trans_auto'] = p['src_text']
+            if p['trans_text']=='':
+                p['trans_text'] = p['src_text']
+                p['trans_status'] = "none"
             # バッファがあればまとめて 連結先の行(prev) にフラッシュ
             buf = buffers[tag]
             if prevs[tag] and buf:

@@ -18,7 +18,7 @@ function headlineParagraphs() {
           column_order: paragraphDict["column_order"] || 0,
           y0: paragraphDict["bbox"][1],
           block_tag: paragraphDict["block_tag"],
-          src_text:paragraphDict["src_text"],
+          src_joined:paragraphDict["src_joined"],
           trans_text:paragraphDict["trans_text"]
         });
       }
@@ -71,7 +71,7 @@ function renderTocTableRows(tocNode) {
         <tr id="${rowId}" class="${rowClass}" data-row-id="${node.rowId}" data-id="${node.id}" data-parent="${parentId || ""}" data-nest-level="${node.nestLevel}" data-open="true">
           <td class="toc-page">${node.page_number}</td>
           <td class="toc-src toc-${node.block_tag}">
-            ${toggleMarker}<a href="#" data-id="${node.id}" data-page-number="${node.page_number}">${node.src_text}</a>
+            ${toggleMarker}<a href="#" data-id="${node.id}" data-page-number="${node.page_number}">${node.src_joined}</a>
           <td class="toc-trans toc-${node.block_tag}">
             ${toggleMarker}<a href="#" data-id="${node.id}" data-page-number="${node.page_number}">${node.trans_text}</a>
           </td>
@@ -98,7 +98,7 @@ function buildTocTree(paragraphsArray) { // 引数を配列として受け取る
     id: "-1", // ルートノードのIDは特別扱い
     page_number: "-1",
     block_tag: "h0",
-    src_text: "src_root",
+    src_joined: "src_root",
     trans_text: "trans_root",
     level: 0,
     nestLevel: 0,
@@ -114,7 +114,7 @@ function buildTocTree(paragraphsArray) { // 引数を配列として受け取る
       id: headline.id,
       page_number: headline.page_number,
       block_tag: headline.block_tag,
-      src_text: headline.src_text,
+      src_joined: headline.src_joined,
       trans_text: headline.trans_text,
       level,
       nestLevel: 0,
