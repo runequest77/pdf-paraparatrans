@@ -294,6 +294,7 @@ async function saveCurrentPageOrder() {
                 page_number: paragraphDict.page_number,
                 order: paragraphDict.order,
                 block_tag: paragraphDict.block_tag,
+                trans_status: paragraphDict.trans_status,
                 group_id: paragraphDict?.group_id,
                 join: paragraphDict?.join
             }

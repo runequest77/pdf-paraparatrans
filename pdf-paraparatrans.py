@@ -168,12 +168,17 @@ def index():
     files = settings.get("files", {})
     pdf_dict = get_pdf_files()
     for pdf_name, file_data in files.items():
-        if pdf_dict[pdf_name]["json_path"] != "":
-            pdf_dict[pdf_name].update({
-                "title": file_data.get("title", pdf_name),
-                "auto_count": file_data.get("trans_status_counts", {}).get("auto", 0),
-                "fixed_count": file_data.get("trans_status_counts", {}).get("fixed", 0)
-            })
+        # JSONファイルの存在に関わらず trans_status_counts を初期化または更新
+        trans_counts = file_data.get("trans_status_counts", {})
+        pdf_dict[pdf_name].update({
+            "title": file_data.get("title", pdf_name),
+            "trans_status_counts": {
+                "none": trans_counts.get("none", 0),
+                "auto": trans_counts.get("auto", 0),
+                "draft": trans_counts.get("draft", 0),
+                "fixed": trans_counts.get("fixed", 0)
+            }
+        })
     
     # フィルタ処理
     filter_text = request.args.get("filter", "").lower().strip()
@@ -594,11 +599,11 @@ def recalc_trans_status_counts(book_data):
 def update_paragraph_api(pdf_name):
     data = request.get_json()
     page_number = str(data.get("page_number"))
-    id = str(data.get("id"))
-    new_src_text = data.get("src_text")
-    new_trans_text = data.get("trans_text")
-    new_status = data.get("trans_status", "draft")
-    new_block_tag = data.get("block_tag", "p")
+    id = str(data["id"])
+    new_src_text = data["src_text"]
+    new_trans_text = data["trans_text"]
+    new_status = data["trans_status"]
+    new_block_tag = data["block_tag"]
 
     print("update_paragraph_api:" + json.dumps(data, indent=2, ensure_ascii=False))
 
@@ -643,6 +648,8 @@ def update_paragraphs_api(pdf_name):
     if not request_data or "title" not in request_data:
         return jsonify({"status": "error", "message": "title がありません"}), 400
 
+    print("update_paragraphs_api:" + json.dumps(request_data, indent=2, ensure_ascii=False))
+
     try:
         book_data = load_json(json_path)  # JSONファイルを読み込む
 
@@ -679,7 +686,7 @@ def update_paragraphs_api(pdf_name):
         for request_paragraph in request_paragraphs:
             page_number = str(request_paragraph.get("page_number"))
             id = str(request_paragraph.get("id"))
-            print(f"page:{page_number} id:{id}")
+            # print(f"page:{page_number} id:{id}")
             paragraph_dict = book_data["pages"][page_number]["paragraphs"][id]
 
             apply_update(paragraph_dict, request_paragraph)

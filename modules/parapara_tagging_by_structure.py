@@ -93,7 +93,7 @@ def set_analized_block_tag_to_paragraphs(book_data):
                 continue
 
             style = paragraph.get("base_style","")
-            if len(paragraph["replaced_text"])<2:
+            if len(paragraph["src_replaced"])<2:
                 # 置換後の文字列が2文字未満の場合、行頭文字のことが多いのでスキップ
                 continue
             block_tag = analyzed_head_styles.get(style, {}).get("block_tag", "p")

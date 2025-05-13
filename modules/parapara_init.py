@@ -30,7 +30,7 @@ def parapara_init(data_folder):
                     data = json.load(f)
 
                 # 4. data["version"]が1.0.0でなければ以降の処理はスキップ
-                if data.get("version") != "1.0.0":
+                if data.get("version") != "2.0.0":
                     # JSONファイルはあるがバージョンが異なる場合はスキップ
                     continue
 

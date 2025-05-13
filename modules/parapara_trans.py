@@ -118,6 +118,7 @@ def pagetrans(filepath, book_data, page_number):
     print(f"ページ {page_number} の翻訳を開始します...")
 
     paragraphs_dict = book_data["pages"][str(page_number)].get("paragraphs", {}) # 辞書として取得
+    print(f"FOR DEBUG:段落数: {len(paragraphs_dict)}")
 
     for para_id, paragraph in paragraphs_dict.items():
         # ステータスに関わらず、自動翻訳をかけたらsrc_replacedが空の場合、trans_autoを空にする
@@ -131,7 +132,6 @@ def pagetrans(filepath, book_data, page_number):
                 paragraph["trans_auto"] = paragraph["src_replaced"]
                 paragraph["trans_status"] = "auto"
 
-    # 指定されたページ範囲と未翻訳パラグラフで抽出
     filtered_paragraphs = [
         p for p in paragraphs_dict.values() # 辞書の値 (パラグラフオブジェクト) をイテレート
         if p.get("trans_status") == "none" 
@@ -144,11 +144,14 @@ def pagetrans(filepath, book_data, page_number):
         int(p.get('order',0))
     ))
 
+    print(f"翻訳対象段落数: {len(filtered_paragraphs)}")
+
     current_group = []
     current_length = 0
     # 4000文字を上限にグループ化して翻訳処理を実施
     for para in filtered_paragraphs:
         text_to_add = f"【{para['id']}】{para['src_replaced']}"
+        print(f"FOR DEBUG:{text_to_add}")
         if current_length + len(text_to_add) > 4000:
             if current_group:
                 process_group(current_group)
