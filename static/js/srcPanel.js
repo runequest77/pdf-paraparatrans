@@ -283,6 +283,7 @@ async function saveParagraphData(paragraphDict) {
                 page_number: paragraphDict.page_number,
                 id: paragraphDict.id,
                 src_text: paragraphDict.src_text,
+                trans_auto: paragraphDict.trans_auto,
                 trans_text: paragraphDict.trans_text,
                 trans_status: paragraphDict.trans_status,
                 block_tag: paragraphDict.block_tag
@@ -893,4 +894,71 @@ function selectUntilPreviousHeading() {
 
     // 選択範囲の先頭をカレントにしてフォーカス
     setCurrentParagraph(index, true);
+}
+
+/** @function resetTranslationForParagraph
+ * 指定されたパラグラフの翻訳関連情報をリセットする
+ * src_joined の内容を src_replaced, trans_auto, trans_text にコピーし、翻訳状態を none に戻す
+ */
+async function resetTranslation(paragraphDict) {
+    if (paragraphDict) {
+        paragraphDict.src_replaced = paragraphDict.src_joined;
+        paragraphDict.trans_auto = paragraphDict.src_joined; // src_joined をコピー
+        paragraphDict.trans_text = paragraphDict.src_joined; // src_joined をコピー
+        paragraphDict.trans_status = 'none'; // 翻訳状態を none にリセット
+
+        try {
+            await saveParagraphData(paragraphDict);
+        } catch (error) {
+            console.error('Error saving paragraph:', error);
+            alert('データ保存中にエラーが発生しました。詳細はコンソールを確認してください。');
+        }
+
+        // DOM要素の表示も更新が必要であればここに追加
+        const paragraphDiv = document.getElementById(`paragraph-${paragraphDict.id}`);
+        if (paragraphDiv) {
+            paragraphDiv.querySelector('.src-replaced').innerText = paragraphDict.src_replaced;
+            paragraphDiv.querySelector('.trans-auto').innerText = paragraphDict.trans_auto;
+            paragraphDiv.querySelector('.trans-text').innerText = paragraphDict.trans_text;
+            // ステータス表示の更新
+            const editBox = paragraphDiv.querySelector('.edit-box');
+            if (editBox) {
+                editBox.className = `edit-box status-${paragraphDict.trans_status}`;
+            }
+            const editUi = paragraphDiv.querySelector('.edit-ui');
+            if (editUi) {
+                editUi.className = `edit-ui status-${paragraphDict.trans_status}`;
+            }
+             const statusRadio = paragraphDiv.querySelector(`input[name='status-${paragraphDict.id}'][value='${paragraphDict.trans_status}']`);
+            if (statusRadio) {
+                statusRadio.checked = true;
+            }
+        }
+        isPageEdited = true; // ページが編集されたことを示すフラグを立てる
+    } else {
+        console.warn("resetTranslationForParagraph: paragraphDict is undefined.");
+    }
+}
+
+/** @function resetTranslationForSelectedParagraphs
+ * 選択されたすべてのパラグラフの翻訳関連情報をリセットする
+ */
+async function resetTranslationForSelected() {
+    if (!confirm("選択されたパラグラフのJoined列を翻訳列にコピーします。よろしいですか？")) return;
+
+    const selectedParagraphs = getSelectedParagraphsInOrder(); // 選択されたパラグラフのDOM要素を取得
+    if (selectedParagraphs.length === 0) {
+        console.warn("選択されたパラグラフがありません。");
+        return;
+    }
+
+    for (const divP of selectedParagraphs) {
+        const id = divP.id.replace('paragraph-', '');
+        const paragraphDict = bookData["pages"][currentPage]["paragraphs"][id];
+        if (paragraphDict) {
+            await resetTranslation(paragraphDict);
+        } else {
+            console.warn(`resetTranslationForSelectedParagraphs: Paragraph with ID ${id} not found in paragraphs.`);
+        }
+    }
 }

@@ -619,6 +619,7 @@ def update_paragraph_api(pdf_name):
     page_number = str(data.get("page_number"))
     id = str(data["id"])
     new_src_text = data["src_text"]
+    new_trans_auto = data["trans_auto"]
     new_trans_text = data["trans_text"]
     new_status = data["trans_status"]
     new_block_tag = data["block_tag"]
@@ -636,7 +637,7 @@ def update_paragraph_api(pdf_name):
         return jsonify({"status": "error", "message": "(update_paragraph_api 2)該当パラグラフが見つかりません"}), 404
 
     paragraph["src_text"] = new_src_text
-    paragraph["trans_auto"] = new_trans_text
+    paragraph["trans_auto"] = new_trans_auto
     paragraph["trans_text"] = new_trans_text
     paragraph["trans_status"] = new_status
     paragraph["block_tag"] = new_block_tag
