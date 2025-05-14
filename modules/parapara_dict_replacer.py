@@ -81,35 +81,38 @@ def replace_with_dict(text: str, dict_cs: Dict[str, str], dict_ci: Dict[str, str
 #     """アルファベットの文字数をカウント"""
 #     return len(re.findall(r'[a-zA-Z]', text))
 
-def file_replace_with_dict(json_path: str, dict_file: str):
+def file_replace_with_dict(json_path: str, dict_file: str, start_page: int, end_page: int):
     
-    print(f"処理を開始します")
+    print(f"処理を開始します ({start_page} 〜 {end_page} ページ)")
     dict_cs, dict_ci = load_dictionary(dict_file)
     print(f"辞書の読み込みが完了しました: {dict_file}")
     
     book_data = load_json(json_path) # jsonを読み込んでobjectを戻す
 
-    # 対象パラグラフ数
-    progress = setup_progress(book_data.get("page_count", 0), "パラグラフ置換中......") # 辞書の要素数を総数とする
+    # 対象ページ範囲のパラグラフに対して処理
+    progress = setup_progress(end_page - start_page + 1, "パラグラフ置換中......")
 
-    for page_number, page in book_data["pages"].items():
-        progress(f"{page_number} Page")
-        for paragraph in page["paragraphs"].values():
-            replaced_text = replace_with_dict(paragraph["src_joined"], dict_cs, dict_ci)
-            paragraph["src_replaced"] = replaced_text
-            # 対訳辞書の変更により、置換結果が以前と異なる場合は翻訳状態を "none" に変更
-            # if replaced_text != paragraph.get("src_replaced") and paragraph.get("trans_status") == "auto":
-            #     paragraph["trans_status"] = "none"
-            
-            # alphabet_count = count_alphabet_chars(replaced_text)
-            # if alphabet_count < 1:
-            #     paragraph["trans_auto"] = replaced_text
-            #     paragraph["trans_text"] = replaced_text
-            #     paragraph["trans_status"] = "fixed"
-            # elif alphabet_count < 2:
-            #     paragraph["trans_auto"] = replaced_text
-            #     paragraph["trans_text"] = replaced_text
-            #     paragraph["trans_status"] = "draft"
+    for page_number in range(start_page, end_page + 1):
+        page_key = str(page_number)
+        if page_key in book_data["pages"]:
+            progress(f"{page_number} Page")
+            page = book_data["pages"][page_key]
+            for paragraph in page["paragraphs"].values():
+                replaced_text = replace_with_dict(paragraph["src_joined"], dict_cs, dict_ci)
+                paragraph["src_replaced"] = replaced_text
+                # 対訳辞書の変更により、置換結果が以前と異なる場合は翻訳状態を "none" に変更
+                # if replaced_text != paragraph.get("src_replaced") and paragraph.get("trans_status") == "auto":
+                #     paragraph["trans_status"] = "none"
+                
+                # alphabet_count = count_alphabet_chars(replaced_text)
+                # if alphabet_count < 1:
+                #     paragraph["trans_auto"] = replaced_text
+                #     paragraph["trans_text"] = replaced_text
+                #     paragraph["trans_status"] = "fixed"
+                # elif alphabet_count < 2:
+                #     paragraph["trans_auto"] = replaced_text
+                #     paragraph["trans_text"] = replaced_text
+                #     paragraph["trans_status"] = "draft"
 
     atomicsave_json(json_path,book_data) # jsonを保存  
 
@@ -131,14 +134,42 @@ def atomicsave_json(json_path, data):
     os.replace(tmp_path, json_path)
 
 def main():
-    if len(sys.argv) != 3:
-        print("使い方: python translate_json.py 翻訳データ.json 対訳辞書.csv")
+    if len(sys.argv) == 3:
+        trans_json = sys.argv[1]
+        dict_file = sys.argv[2]
+        # 全ページ処理の場合、開始ページと終了ページをJSONデータから取得
+        try:
+            book_data = load_json(trans_json)
+            start_page = 1 # 通常、ページは1から始まる
+            end_page = book_data.get("page_count", 0)
+            if end_page == 0:
+                 print(f"エラー: {trans_json} にページ情報が見つかりません。")
+                 return
+        except FileNotFoundError:
+            print(f"エラー: ファイルが見つかりません - {trans_json}")
+            return
+        except json.JSONDecodeError:
+            print(f"エラー: JSONファイルの読み込みに失敗しました - {trans_json}")
+            return
+        except Exception as e:
+            print(f"エラー: ファイル読み込み中に予期せぬエラーが発生しました - {e}")
+            return
+
+    elif len(sys.argv) == 5:
+        trans_json = sys.argv[1]
+        dict_file = sys.argv[2]
+        try:
+            start_page = int(sys.argv[3])
+            end_page = int(sys.argv[4])
+        except ValueError:
+            print("エラー: 開始ページと終了ページは整数で指定してください。")
+            return
+    else:
+        print("使い方1: python parapara_dict_replacer.py <翻訳データ.json> <対訳辞書.csv>")
+        print("使い方2: python parapara_dict_replacer.py <翻訳データ.json> <対訳辞書.csv> <開始ページ> <終了ページ>")
         return
     
-    trans_json = sys.argv[1]
-    dict_file = sys.argv[2]
-    
-    file_replace_with_dict(trans_json, dict_file)
+    file_replace_with_dict(trans_json, dict_file, start_page, end_page)
 
 if __name__ == "__main__":
     main()

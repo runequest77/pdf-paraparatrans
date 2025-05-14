@@ -480,7 +480,9 @@ function moveSelectedByOffset(offset) {
 
 /** @function getSelectedParagraphsInOrder */
 function getSelectedParagraphsInOrder() {
-    return Array.from(document.querySelectorAll('.paragraph-box.selected'));
+    return Array.from(
+        document.querySelectorAll('.paragraph-box.selected, .paragraph-box.current')
+    );
 }
 
 /** @function: updateBlockTagForSelected */
@@ -596,7 +598,7 @@ function setCurrentParagraph(index, isShiftHeld = false) {
 
     if (!current) return; // インデックスが無効な場合は何もしない
     current.classList.add('current');
-    current.classList.add('selected');
+    // current.classList.add('selected');
 
     current.scrollIntoView({ block: 'center', behavior: 'smooth' });
 
@@ -705,6 +707,7 @@ function toggleGroupSelectedParagraphs() {
  * 選択されたパラグラフに対して join クラスをトグルする
  */
 function toggleJoinForSelected() {
+    
     const selectedParagraphs = getSelectedParagraphsInOrder(); // 選択されたパラグラフを取得
     if (selectedParagraphs.length === 0) {
         console.warn("選択されたパラグラフがありません。");

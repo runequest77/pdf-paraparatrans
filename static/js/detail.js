@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 構成保存
     document.getElementById('saveOrderButton').addEventListener('click', saveForce);
     // ページ翻訳
+    document.getElementById('pageDictReplaceButton').addEventListener('click', dictReplacePage);
     document.getElementById('pageTransButton').addEventListener('click', transPage);
     // 辞書登録ボタン
     document.getElementById('openDictButton').addEventListener('click', () => {

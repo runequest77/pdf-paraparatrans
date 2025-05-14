@@ -34,7 +34,7 @@ const DictPopup = {
             <h3>単語辞書登録</h3>
             <div>
                 <label for="original-word">原語:</label>
-                <input type="text" id="original-word" readonly>
+                <input type="text" id="original-word">
             </div>
             <div>
                 <label for="translated-word">訳語:</label>

@@ -329,6 +329,24 @@ def dict_replace_all_api(pdf_name):
         return jsonify({"status": "error", "message": f"辞書適用中のエラー: {str(e)}"}), 500
     return jsonify({"status": "ok"}), 200
 
+# API:ファイルの指定ページに辞書置換
+@app.route("/api/dict_replace_page/<pdf_name>", methods=["POST"])
+def dict_replace_page_api(pdf_name):
+    page_number = request.form.get("page_number", type=int)
+    if not pdf_name or page_number is None:
+        return jsonify({"status": "error", "message": "pdf_name, page_number は必須です"}), 400
+    if not os.path.exists(DICT_PATH):
+        return jsonify({"status": "error", "message": "dict.txtが存在しません2"}), 404
+    pdf_path, json_path = get_paths(pdf_name)
+    if not os.path.exists(json_path):
+        return jsonify({"status": "error", "message": "対象のJSONファイルが存在しません"}), 404
+    try:
+        file_replace_with_dict(json_path, DICT_PATH, page_number, page_number)
+    except Exception as e:
+        return jsonify({"status": "error", "message": f"辞書適用中のエラー: {str(e)}"}), 500
+    return jsonify({"status": "ok"}), 200
+
+
 @app.route("/api/paraparatrans/<pdf_name>", methods=["POST"])
 def paraparatrans_api(pdf_name):
     start_page = request.form.get("start_page", type=int)

@@ -55,6 +55,37 @@ async function transPage() {
     }
 }
 
+/** @function dictReplacePage */
+async function dictReplacePage() {
+    await saveCurrentPageOrder(); // 順序を保存してから置換
+    if (!confirm("現在のページを対訳辞書で置換します。よろしいですか？")) return;
+    showLog();
+
+    try {
+        const response = await fetch(`/api/dict_replace_page/${encodeURIComponent(pdfName)}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: '&page_number=' + encodeURIComponent(currentPage)
+        });
+        const data = await response.json();
+        if (data.status === "ok") {
+            console.log('ページ対訳置換が成功しました。');
+        } else {
+            console.error('エラー:', data.message);
+            alert('ページ対訳置換エラー(response): ' + data.message);
+        }
+        hideLog();
+    } catch (error) {
+        console.error('Error:', error);
+        alert('ページ対訳置換中にエラー(catch)');
+    } finally {
+        // 成功・失敗に関わらず必ず実行
+        await fetchBookData();
+    }
+}
+
 async function transAllPages() {
     await saveCurrentPageOrder(); // saveOrderもasyncにする必要あり
     const totalPages = bookData.page_count;

@@ -1,9 +1,9 @@
 /** 画面に対するショートカットキーを */
 
-HotkeyMapper.map("ArrowUp", moveCurrentParagraphUp, { description: "パラグラフを移動(上)"});
-HotkeyMapper.map("ArrowDown", moveCurrentParagraphDown, { description: "パラグラフを移動(下)"});
-HotkeyMapper.map("Shift+ArrowUp", moveCurrentParagraphUp, { description: "選択しならが移動(上)"});
-HotkeyMapper.map("Shift+ArrowDown", moveCurrentParagraphDown, { description: "選択しながら移動(下)"});
+HotkeyMapper.map("ArrowUp", () => moveCurrentParagraphUp(false), { description: "パラグラフを移動(上)"});
+HotkeyMapper.map("ArrowDown", () => moveCurrentParagraphDown(false), { description: "パラグラフを移動(下)"});
+HotkeyMapper.map("Shift+ArrowUp", () => moveCurrentParagraphUp(true), { description: "選択しならが移動(上)"});
+HotkeyMapper.map("Shift+ArrowDown", () => moveCurrentParagraphDown(true), { description: "選択しながら移動(下)"});
 
 HotkeyMapper.map("Ctrl+ArrowUp", () => focusNearestHeading(-1), { description: "前の見出し"});
 HotkeyMapper.map("Ctrl+ArrowDown", () => focusNearestHeading(1), { description: "次の見出し"});
@@ -36,8 +36,12 @@ HotkeyMapper.map("Alt++", toggleJoinForSelected, { description: "結合/解除" 
 HotkeyMapper.map("Alt+;", toggleJoinForSelected, { description: "結合/解除" });
 
 HotkeyMapper.map("Alt+N", () => updateTransStatusForSelected("none"), { description: "none", useCapture : true });
+HotkeyMapper.map("Alt+7", () => updateTransStatusForSelected("none"), { description: "none", useCapture : true });
+HotkeyMapper.map("Alt+A", () => updateTransStatusForSelected("auto"), { description: "auto", useCapture : true });
 HotkeyMapper.map("Alt+M", () => updateTransStatusForSelected("draft"), { description: "draft", useCapture : true });
+HotkeyMapper.map("Alt+8", () => updateTransStatusForSelected("draft"), { description: "draft", useCapture : true });
 HotkeyMapper.map("Alt+,", () => updateTransStatusForSelected("fixed"), { description: "fixed", useCapture : true });
+HotkeyMapper.map("Alt+9", () => updateTransStatusForSelected("fixed"), { description: "fixed", useCapture : true });
 
 HotkeyMapper.map("Alt+J", () => DictPopup.show(), { description: "対訳辞書登録", useCapture : true });
 
@@ -70,11 +74,11 @@ function rollDown() {
     }
 }
 
-function moveCurrentParagraphUp() {
-    moveCurrentParagraphBy(-1, event.shiftKey);
+function moveCurrentParagraphUp(shiftKey) {
+    moveCurrentParagraphBy(-1, shiftKey);
 }
-function moveCurrentParagraphDown() {
-    moveCurrentParagraphBy(1, event.shiftKey);
+function moveCurrentParagraphDown(shiftKey) {
+    moveCurrentParagraphBy(1, shiftKey);
 }
 
 function toggleGroupSelectedParagraphsUp() {
