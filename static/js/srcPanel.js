@@ -55,7 +55,7 @@ async function onSaveButtonClick(event, paragraph, divSrc, srcText, transText, b
 // サーバー保存
     try {
         await saveParagraphData(paragraphDict);
-        updateEditUiBackground(divSrc, paragraphDict);
+        updateEditUiBackground(divSrc, paragraphDict.trans_status);
     } catch (error) {
         console.error('Error saving paragraph:', error);
         alert('データ保存中にエラーが発生しました。詳細はコンソールを確認してください。');
@@ -144,6 +144,7 @@ function renderParagraphs() {
                     <span class="block-tag">${p.block_tag}</span>
                 </div>
                 <div class='edit-ui ${statusClass}'>
+                    <button class='reset-translation-button'>翻訳クリア</button>
                     <label>種別:
                         <select class="type-select">
                             <option value="p">p</option>
@@ -182,6 +183,7 @@ function renderParagraphs() {
         let transText = divSrc.querySelector('.trans-text');
         let blockTagSelect = divSrc.querySelector('.type-select');
         let blockTagSpan = divSrc.querySelector('.block-tag'); // 修正: block_tag spanのクラス名を正しく指定
+        let resetTranslationButton = divSrc.querySelector('.reset-translation-button'); // 追加
 
         blockTagSelect.value = p.block_tag;
         let statusRadio = divSrc.querySelector(`input[name='status-${p.id}'][value='${p.trans_status}']`);
@@ -191,6 +193,7 @@ function renderParagraphs() {
         transButton.addEventListener('click', (e) => onTransButtonClick(e, p, divSrc));
         styleUpdateButton.addEventListener('click', (e) => onStyleUpdateButtonClick(e, p, divSrc)); // 追加
         saveButton.addEventListener('click', (e) => onSaveButtonClick(e, p, divSrc, srcText, transText, blockTagSelect, blockTagSpan));
+        resetTranslationButton.addEventListener('click', (e) => resetTranslation(p)); // 追加
 
         // ラジオボタンの変更イベントリスナーを追加
         addRadioChangeListener(divSrc, p);
