@@ -48,6 +48,8 @@ HotkeyMapper.map("Alt+C", resetTranslationForSelected, { description: "翻訳ク
 
 HotkeyMapper.map("Alt+ArrowUp", () => moveSelectedByOffset(-1), { description: "選択範囲を上へ"});
 HotkeyMapper.map("Alt+ArrowDown", () => moveSelectedByOffset(1), { description: "選択範囲を下へ)"});
+HotkeyMapper.map("Ctrl+Alt+ArrowUp", () => moveSelectedBefore(0), { description: "選択範囲を先頭へ"});
+HotkeyMapper.map("Ctrl+Alt+ArrowDown", () => moveSelectedAfter(9999), { description: "選択範囲を末尾へ)"});
 
 HotkeyMapper.map("F2", () => toggleEditUICurrent(), { description: "編集切り替え", useCapture : true });
 
@@ -87,12 +89,6 @@ function toggleGroupSelectedParagraphsUp() {
 }
 function toggleGroupSelectedParagraphsDown() {
     toggleGroupSelectedParagraphs(1);
-}
-function moveSelectedByOffsetUp(event) {
-    moveSelectedByOffset(-1,event.shiftKey);
-}
-function moveSelectedByOffsetDown(event) {
-    moveSelectedByOffset(1,event.shiftKey);
 }
 
 function onKeyDown(event, divSrc, paragraph, srcText, transText, blockTagSpan) {

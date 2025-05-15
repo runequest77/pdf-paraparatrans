@@ -386,100 +386,56 @@ document.addEventListener('click', (event) => {
 });
 
 /** @function moveSelectedAfter */
-// 選択されたパラグラフを指定されたIDの後ろに移動
-function moveSelectedAfter(targetId) {
+// “targetIndex” を受け取り、同じインデックスにある要素を取得して挿入
+function moveSelectedAfter(targetIndex) {
     const container = document.getElementById('srcParagraphs');
-    const all = Array.from(container.querySelectorAll('.paragraph-box'));
     const selected = getSelectedParagraphsInOrder();
-    const unselected = all.filter(p => !p.classList.contains('selected'));
-
-    const result = [];
-    let inserted = false;
-
-    for (const p of unselected) {
-        result.push(p);
-        if (p.id === targetId) {
-            result.push(...selected);
-            inserted = true;
-        }
-    }
-
-    if (!inserted) result.push(...selected); // 末尾に入れる
-
-    // 再配置（すでに要素なので remove/append でOK）
-    for (const p of result) {
-        container.appendChild(p);
-    }
-
-    isPageEdited = true; // ページが編集されたことを示すフラグを立てる
+    const children = container.children;
+    // 下限チェックのみ。上限を超えたら末尾扱い
+    if (targetIndex < 0) return;
+    // nextSibling が null なら appendChild と同義で末尾に移動
+    const refNode = targetIndex >= children.length
+        ? null
+        : children[targetIndex].nextSibling;
+    selected.forEach(el => container.insertBefore(el, refNode));
+    isPageEdited = true;
 }
 
 /** @function moveSelectedBefore */
-function moveSelectedBefore(targetId) {
+// “targetIndex” を受け取り、同じインデックスにある要素を取得して挿入
+function moveSelectedBefore(targetIndex) {
     const container = document.getElementById('srcParagraphs');
-    const all = Array.from(container.querySelectorAll('.paragraph-box'));
     const selected = getSelectedParagraphsInOrder();
-    const unselected = all.filter(p => !p.classList.contains('selected'));
-
-    const result = [];
-    let inserted = false;
-
-    for (const p of unselected) {
-        if (p.id === targetId) {
-            result.push(...selected); // ここで先に入れる（前に）
-            inserted = true;
-        }
-        result.push(p);
-    }
-
-    if (!inserted) result.push(...selected); // 最後に挿入
-
-    for (const p of result) {
-        container.appendChild(p);
-    }
-
-    isPageEdited = true; // ページが編集されたことを示すフラグを立てる
+    const children = container.children;
+    // 範囲チェック
+    if (targetIndex < 0 || targetIndex >= children.length) return;
+    const target = children[targetIndex];
+    selected.forEach(el => container.insertBefore(el, target));
+    isPageEdited = true;
 }
 
 /** @function moveSelectedByOffset 
- * 選択されたパラグラフ範囲を指定されたオフセット分だけ移動
- * 
- * ※ 実際には選択されたパラグラフではなく、その前後のパラグラフを操作する
-*/
+ * 選択されたパラグラフ範囲をオフセット分だけ in-place 移動 */
 function moveSelectedByOffset(offset) {
-    const container = document.getElementById('srcParagraphs');
-    const all = Array.from(container.querySelectorAll('.paragraph-box'));
-    const selected = getSelectedParagraphsInOrder();
-    if (selected.length === 0) return;
+  const container = document.getElementById('srcParagraphs');
+  const selected = getSelectedParagraphsInOrder();
+  if (selected.length === 0) return;
 
-    const firstIndex = all.indexOf(selected[0]);
-    const lastIndex = all.indexOf(selected[selected.length - 1]);
+  const children = Array.from(container.children);
+  // 選択要素の先頭/末尾インデックスを取得
+  const idxs = selected.map(el => children.indexOf(el)).sort((a, b) => a - b);
+  const from = offset < 0 ? idxs[0] : idxs[idxs.length - 1];
+  const to = from + offset;
+  if (to < 0 || to >= children.length) return;
 
-    let targetIndex;
-    if (offset < 0) {
-        targetIndex = firstIndex - 1;
-    } else {
-        targetIndex = lastIndex + 1;
-    }
+  const target = children[to];
+  // 前に挿入するなら target、自動末尾扱いなら target.nextSibling
+  const refNode = offset < 0 ? target : target.nextSibling;
+  selected.forEach(el => container.insertBefore(el, refNode));
 
-    if (targetIndex < 0 || targetIndex >= all.length) return;
-
-    const target = all[targetIndex];
-    if (selected.includes(target)) return;
-
-    if (offset < 0) {
-        // 上へ → 前に挿入する
-        moveSelectedBefore(target.id);
-    } else {
-        // 下へ → 後ろに挿入する
-        moveSelectedAfter(target.id);
-    }
-
-    currentParagraphIndex = targetIndex;
-    isPageEdited = true;
-
-    // カレント行にスクロール
-    target.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  currentParagraphIndex = to;
+  isPageEdited = true;
+  target.scrollIntoView({ block: 'center', behavior: 'smooth' });
 }
 
 /** @function getSelectedParagraphsInOrder */
