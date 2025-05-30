@@ -121,15 +121,15 @@
 .trans-text {
     border-left: 4px solid #2ecc71;
 }
-.block-tag-ignore {
-    color: #ccc;
-    background-color: #333 !important;
-}
 .block-tag-header {
     color: #ccc;
     background-color: #333 !important;
 }
 .block-tag-footer {
+    color: #ccc;
+    background-color: #333 !important;
+}
+.block-tag-remove {
     color: #ccc;
     background-color: #333 !important;
 }
@@ -179,6 +179,22 @@
     background-color: #b8e994; /* 明るい緑色 */
     color: black;
 }
+
+.block-tag-li {
+    font-family: monospace;
+    font-weight: bold;
+    background-color: var(--li-bg);
+    color: var(--li-fg);
+    border-bottom: var(--li-fg) 3px solid;
+}
+.block-tag-tr {
+    font-family: monospace;
+    font-weight: bold;
+    background-color: var(--tr-bg);
+    color: var(--tr-fg);
+    border-bottom: var(--tr-fg) 3px solid;
+}
+
 
 /* 編集状態の背景色と文字色を統一 */
 .editing .paragraph-box {

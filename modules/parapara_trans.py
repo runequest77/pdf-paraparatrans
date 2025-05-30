@@ -177,7 +177,7 @@ def load_json(json_path: str):
 
 # アトミックセーブ
 def atomicsave_json(json_path, data):
-    tmp_fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(json_path), suffix=".json", text=True)
+    tmp_fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(json_path), suffix=".tmp", text=True)
     with os.fdopen(tmp_fd, "w", encoding="utf-8") as tmp_file:
         json.dump(data, tmp_file, ensure_ascii=False, indent=2)
     os.replace(tmp_path, json_path)

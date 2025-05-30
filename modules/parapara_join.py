@@ -59,18 +59,18 @@ def join_replaced_paragraphs(book_data):
                 b = buffers[tag]
                 buffers[tag] = b + " " + curr if b else curr
             p['src_joined'] = ''
-            # p['src_replaced'] = ''
+            p['src_replaced'] = ''
             # p['trans_auto'] = ''
             # p['trans_text'] = ''
             # p['trans_status'] = "draft"
         elif p.get('join', 0) == 1:
             p['src_joined'] = ''
+            p['src_replaced'] = ''
         else:
             # join=0 の段落はバッファをフラッシュして src_joined にセット
             p['src_joined'] = p['src_text']
+            p['src_replaced'] = p['src_text']
             # join解除対策　文字列が空の場合だけ原文セット
-            if p['src_replaced']=='':
-                p['src_replaced'] = p['src_text']
             if p['trans_auto']=='':
                 p['trans_auto'] = p['src_text']
             if p['trans_text']=='':
@@ -82,6 +82,7 @@ def join_replaced_paragraphs(book_data):
                 orig = prevs[tag].get('src_text', '')
                 merged = (orig + " " + buf).strip()
                 prevs[tag]['src_joined'] = merged
+                prevs[tag]['src_replaced'] = merged
                 curr = prevs[tag].get('src_joined', '')
                 if merged != curr:
                     prevs[tag]['trans_status'] = "none"
@@ -94,6 +95,7 @@ def join_replaced_paragraphs(book_data):
             orig = prevs[tag].get('src_text', '')
             merged = (orig + " " + buf).strip()
             prevs[tag]['src_joined'] = merged
+            prevs[tag]['src_replaced'] = merged
             cur = prevs[tag].get('src_joined', '')
             if merged != cur:
                 prevs[tag]['trans_status'] = "none"

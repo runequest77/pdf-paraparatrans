@@ -26,22 +26,20 @@ HotkeyMapper.map("Alt+3", () => updateBlockTagForSelected("h3"), { description: 
 HotkeyMapper.map("Alt+4", () => updateBlockTagForSelected("h4"), { description: "h4", useCapture : true });
 HotkeyMapper.map("Alt+5", () => updateBlockTagForSelected("h5"), { description: "h5", useCapture : true });
 HotkeyMapper.map("Alt+6", () => updateBlockTagForSelected("h6"), { description: "h6", useCapture : true });
-HotkeyMapper.map("Alt+H", () => updateBlockTagForSelected("header"), { description: "header", useCapture : true });
-HotkeyMapper.map("Alt+F", () => updateBlockTagForSelected("footer"), { description: "footer", useCapture : true });
+HotkeyMapper.map("Alt+7", () => updateBlockTagForSelected("header"), { description: "header", useCapture : true });
+HotkeyMapper.map("Alt+8", () => updateBlockTagForSelected("footer"), { description: "footer", useCapture : true });
+HotkeyMapper.map("Alt+9", () => updateBlockTagForSelected("remove"), { description: "remove", useCapture : true });
 HotkeyMapper.map("Alt+L", () => updateBlockTagForSelected("li"), { description: "li", useCapture : true });
-HotkeyMapper.map("Alt+T", () => updateBlockTagForSelected("td"), { description: "td", useCapture : true });
+HotkeyMapper.map("Alt+T", () => updateBlockTagForSelected("tr"), { description: "tr", useCapture : true });
 
 HotkeyMapper.map("Alt+.", toggleGroupSelectedParagraphs, { description: "グループ化/解除" });
 HotkeyMapper.map("Alt++", toggleJoinForSelected, { description: "結合/解除" });
 HotkeyMapper.map("Alt+;", toggleJoinForSelected, { description: "結合/解除" });
 
 HotkeyMapper.map("Alt+N", () => updateTransStatusForSelected("none"), { description: "none", useCapture : true });
-HotkeyMapper.map("Alt+7", () => updateTransStatusForSelected("none"), { description: "none", useCapture : true });
 HotkeyMapper.map("Alt+A", () => updateTransStatusForSelected("auto"), { description: "auto", useCapture : true });
-HotkeyMapper.map("Alt+M", () => updateTransStatusForSelected("draft"), { description: "draft", useCapture : true });
-HotkeyMapper.map("Alt+8", () => updateTransStatusForSelected("draft"), { description: "draft", useCapture : true });
-HotkeyMapper.map("Alt+,", () => updateTransStatusForSelected("fixed"), { description: "fixed", useCapture : true });
-HotkeyMapper.map("Alt+9", () => updateTransStatusForSelected("fixed"), { description: "fixed", useCapture : true });
+HotkeyMapper.map("Alt+D", () => updateTransStatusForSelected("draft"), { description: "draft", useCapture : true });
+HotkeyMapper.map("Alt+F", () => updateTransStatusForSelected("fixed"), { description: "fixed", useCapture : true });
 
 HotkeyMapper.map("Alt+J", () => DictPopup.show(), { description: "対訳辞書登録", useCapture : true });
 HotkeyMapper.map("Alt+C", resetTranslationForSelected, { description: "翻訳クリア", useCapture : true });

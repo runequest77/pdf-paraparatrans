@@ -35,6 +35,15 @@ html, body {
   
     --h6-bg: #b8e994;
     --h6-fg: black;
+
+    --li-bg: #dfe6e9;
+    --li-fg: black;
+
+    --tr-bg: #ecf0f1;
+    --tr-alt-bg: #dcdde1;
+    --tr-fg: black;
+    --tr-header-bg: #34495e;
+    --tr-header-fg: white;
 }
 
 /* 背景色を適用 */

@@ -62,12 +62,13 @@ async function dictReplacePage() {
     showLog();
 
     try {
-        const response = await fetch(`/api/dict_replace_page/${encodeURIComponent(pdfName)}`, {
+        const response = await fetch(`/api/dict_replace_pages/${encodeURIComponent(pdfName)}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
-            body: '&page_number=' + encodeURIComponent(currentPage)
+            body: '&start_page=' + encodeURIComponent(currentPage) +
+                '&end_page=' + encodeURIComponent(currentPage)
         });
         const data = await response.json();
         if (data.status === "ok") {
@@ -85,6 +86,38 @@ async function dictReplacePage() {
         await fetchBookData();
     }
 }
+
+async function dictReplaceAll() {
+    let msg = "全ページに対して対訳辞書による置換を行います";
+    msg += "\nこの処理は時間がかかります。";
+    msg += "\n応答がなくてもページを閉じないでください。";
+    msg += "\n\nよろしいですか？";
+    if (!confirm(msg)) return;
+    showLog();
+
+    try {
+        const response = await fetch(`/api/dict_replace_pages/${encodeURIComponent(pdfName)}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: '&start_page=1' +
+                '&end_page=' + bookData.page_count
+        });
+        const data = await response.json();
+        if (data.status === "ok") {
+            await fetchBookData(); // fetchBookDataもasyncなのでawait
+            alert("全対訳置換が成功しました");
+        } else {
+            console.error("対訳置換エラー:", data.message);
+            alert("対訳置換エラー: " + data.message);
+        }
+    } catch (error) {
+        console.error("dictReplaceAllエラー:", error);
+        alert("dictReplaceAll エラー: " + error);
+    }
+}
+
 
 async function transAllPages() {
     await saveCurrentPageOrder(); // saveOrderもasyncにする必要あり
@@ -138,35 +171,6 @@ async function extractParagraphs(){
     } catch (error) {
         console.error("extractParagraphs error:", error);
         alert("パラグラフ抽出中にエラーが発生しました。");
-    }
-}
-
-async function dictReplaceAll() {
-    let msg = "全ページに対して対訳辞書による置換を行います";
-    msg += "\nこの処理は時間がかかります。";
-    msg += "\n応答がなくてもページを閉じないでください。";
-    msg += "\n\nよろしいですか？";
-    if (!confirm(msg)) return;
-    showLog();
-
-    try {
-        const response = await fetch(`/api/dict_replace_all/${encodeURIComponent(pdfName)}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            }
-        });
-        const data = await response.json();
-        if (data.status === "ok") {
-            await fetchBookData(); // fetchBookDataもasyncなのでawait
-            alert("全対訳置換が成功しました");
-        } else {
-            console.error("対訳置換エラー:", data.message);
-            alert("対訳置換エラー: " + data.message);
-        }
-    } catch (error) {
-        console.error("dictReplaceAllエラー:", error);
-        alert("dictReplaceAll エラー: " + error);
     }
 }
 
@@ -227,6 +231,13 @@ async function taggingByStyle(targetStyle, targetTag) {
 
 
 async function joinParagraphs() {
+    let msg = "全ページのパラグラフに対して結合処理を行います";
+    msg += "\n「置換文」列の置換はいったんリセットされます。";
+    msg += "\nこの処理で「訳文」列が変更されることはありません。";
+    msg += "\n\nよろしいですか？";
+    if (!confirm(msg)) return;
+
+
     await saveCurrentPageOrder(); // 順序を保存してから翻訳 (saveOrderもasyncにする必要あり)
     try {
         const response = await fetch(`/api/join_replaced_paragraphs/${encodeURIComponent(pdfName)}`, {
@@ -237,14 +248,14 @@ async function joinParagraphs() {
         });
         const data = await response.json();
         if (data.status === "ok") {
-            alert("置換文結合成功しました\n再読み込みを行います");
+            alert("「連結文」「置換文」列を更新しました\n再読み込みを行います");
             await fetchBookData(); // fetchBookDataもasyncなのでawait
         } else {
-            alert("置換文結合エラー: " + data.message);
+            alert("連結文結合エラー: " + data.message);
         }
     } catch (error) {
         console.error("autoTagging error:", error);
-        alert("置換文結合中にエラーが発生しました");
+        alert("連結文結合中にエラーが発生しました");
     }
 }
 

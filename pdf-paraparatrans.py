@@ -315,37 +315,38 @@ def export_html_api(pdf_name):
     return jsonify({"status": "ok"}), 200
 
 
-# API:ファイルへの辞書全置換
-@app.route("/api/dict_replace_all/<pdf_name>", methods=["POST"])
-def dict_replace_all_api(pdf_name):
-    if not os.path.exists(DICT_PATH):
-        return jsonify({"status": "error", "message": "dict.txtが存在しません2"}), 404
-    pdf_path, json_path = get_paths(pdf_name)
-    if not os.path.exists(json_path):
-        return jsonify({"status": "error", "message": "対象のJSONファイルが存在しません"}), 404
-    try:
-        file_replace_with_dict(json_path, DICT_PATH)
-    except Exception as e:
-        return jsonify({"status": "error", "message": f"辞書適用中のエラー: {str(e)}"}), 500
-    return jsonify({"status": "ok"}), 200
+# # API:ファイルへの辞書全置換
+# @app.route("/api/dict_replace_all/<pdf_name>", methods=["POST"])
+# def dict_replace_all_api(pdf_name):
+#     if not os.path.exists(DICT_PATH):
+#         return jsonify({"status": "error", "message": "dict.txtが存在しません2"}), 404
+#     pdf_path, json_path = get_paths(pdf_name)
+#     if not os.path.exists(json_path):
+#         return jsonify({"status": "error", "message": "対象のJSONファイルが存在しません"}), 404
+#     try:
+#         file_replace_with_dict(json_path, DICT_PATH)
+#     except Exception as e:
+#         return jsonify({"status": "error", "message": f"辞書適用中のエラー: {str(e)}"}), 500
+#     return jsonify({"status": "ok"}), 200
+
 
 # API:ファイルの指定ページに辞書置換
-@app.route("/api/dict_replace_page/<pdf_name>", methods=["POST"])
+@app.route("/api/dict_replace_pages/<pdf_name>", methods=["POST"])
 def dict_replace_page_api(pdf_name):
-    page_number = request.form.get("page_number", type=int)
-    if not pdf_name or page_number is None:
-        return jsonify({"status": "error", "message": "pdf_name, page_number は必須です"}), 400
+    start_page = request.form.get("start_page", type=int)
+    end_page = request.form.get("end_page", type=int)
+    if not pdf_name or start_page is None or end_page is None:
+        return jsonify({"status": "error", "message": "pdf_name, start_page, end_page は必須です"}), 400
     if not os.path.exists(DICT_PATH):
         return jsonify({"status": "error", "message": "dict.txtが存在しません2"}), 404
     pdf_path, json_path = get_paths(pdf_name)
     if not os.path.exists(json_path):
         return jsonify({"status": "error", "message": "対象のJSONファイルが存在しません"}), 404
     try:
-        file_replace_with_dict(json_path, DICT_PATH, page_number, page_number)
+        file_replace_with_dict(json_path, DICT_PATH, start_page, end_page)
     except Exception as e:
         return jsonify({"status": "error", "message": f"辞書適用中のエラー: {str(e)}"}), 500
     return jsonify({"status": "ok"}), 200
-
 
 @app.route("/api/paraparatrans/<pdf_name>", methods=["POST"])
 def paraparatrans_api(pdf_name):
@@ -760,7 +761,7 @@ def save_dict(dict_path, dict_data):
 
 
 def atomicsave_json(json_path, data):
-    tmp_fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(json_path), suffix=".json", text=True)
+    tmp_fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(json_path), suffix=".tmp", text=True)
     with os.fdopen(tmp_fd, "w", encoding="utf-8") as tmp_file:
         json.dump(data, tmp_file, ensure_ascii=False, indent=2)
     os.replace(tmp_path, json_path)
