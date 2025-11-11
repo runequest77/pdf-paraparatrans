@@ -8,6 +8,9 @@ TRANSLATOR = os.getenv("TRANSLATOR", "google").lower()
 if TRANSLATOR == "deepl":
     from api_translate_deepl import translate_text as translate_text_env
     print("Using DeepL translator.")
+elif TRANSLATOR == "google_v3":
+    from api_translate_google_v3 import translate_text as translate_text_env
+    print("Using Google v3 translator.")
 else:
     from api_translate_google import translate_text as translate_text_env
     print("Using Google translator.")

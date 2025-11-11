@@ -27,7 +27,7 @@ def translate_text(text, source="en", target="ja"):
         raise Exception(f"Request Error: {str(e)}")
 
 if __name__ == '__main__':
-    html_text = "deepl:<p>Hello <strong>ParaParaTrans</strong>!</p>"
+    html_text = "google:<p>Hello <strong>ParaParaTrans</strong>!</p>"
     try:
         translated_text = translate_text(html_text)
         print(translated_text)
