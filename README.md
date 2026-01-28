@@ -1,3 +1,8 @@
+こちらは旧版です。
+以降サポートされることはありませんので、paraparatrans2を利用してください。
+https://github.com/runequest77/pdf-paraparatrans2
+
+
 # PDF ParaParaTrans
 **英文のPDF** から **パラグラフを解析して段落を抽出** し、原文と訳文を左右で対比させながら翻訳できるツールです。
 
